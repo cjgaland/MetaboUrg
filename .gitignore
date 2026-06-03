@@ -1,0 +1,9 @@
+# Material de referencia (PDFs SAEDYN, Excel, HTML antiguo) — no publicar
+Apoyo/
+
+# Sistema operativo
+.DS_Store
+*.swp
+
+# Configuración local de Claude Code (servidor de preview, permisos)
+.claude/

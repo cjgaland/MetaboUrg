@@ -1,0 +1,19 @@
+{
+  "name": "Trastornos de la Glucemia · Urgencias y planta",
+  "short_name": "Glucemia",
+  "description": "Diagnóstico y tratamiento de hiperglucemia simple, cetoacidosis, estado hiperosmolar e hipoglucemia. Apoyo clínico hospitalario.",
+  "id": "/Glucemia/",
+  "scope": "./",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0c1726",
+  "theme_color": "#0c1726",
+  "lang": "es",
+  "icons": [
+    { "src": "icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "categories": ["medical", "utilities", "health"]
+}
