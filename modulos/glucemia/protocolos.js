@@ -162,7 +162,32 @@ const NOTAS_FUENTE = {
     "y anión gap normalizado) — no basta con normalizar la glucemia."
 };
 
+// ── Parámetros de tratamiento de la CAD (auditables) ──────
+// Por defecto SEEN/ADA 2024. La variante SAEDYN 2017 se muestra como nota.
+const CAD_CFG = {
+  insulina_uikgh: 0.1,            // perfusión inicial (UI/kg/h), SIN bolo por defecto
+  insulina_uikgh_reducida: 0.05, // al alcanzar el objetivo de glucemia
+  bolo_uikg_saedyn: 0.1,         // variante SAEDYN: bolo IV inicial
+  basal_uikg_debut: 0.25,        // insulina basal si début (UI/kg/día)
+  prep_ui: 50, prep_ml: 50,      // preparación: 50 UI en 50 ml SSF → 1 UI/ml (ml/h = UI/h)
+  glu_objetivo_min: 200, glu_objetivo_max: 250,   // mg/dl
+  glu_anadir_glucosa: 250,       // mg/dl: al bajar a este nivel, añadir glucosa
+  fluido_1h_mlkg_min: 15, fluido_1h_mlkg_max: 20, // ml/kg en la 1ª hora
+  fluido_1h_max_ml: 1500,        // tope razonable de la 1ª hora
+  bolo_shock_ml: 500,            // bolo si TA sistólica < 90 mmHg
+  descenso_glu_min: 50, descenso_glu_max: 75,     // mg/dl/h objetivo
+  na_corr_umbral_045: 135,       // Na corregido ≥ → considerar salino 0,45%
+  k_bajo: 3.3, k_alto: 5.3, k_obj_min: 4, k_obj_max: 5,
+  kcl_por_litro_min: 20, kcl_por_litro_max: 40,        // mEq KCl por litro de suero
+  kcl_reposicion_h_min: 10, kcl_reposicion_h_max: 20,  // mEq/h si K < 3,3
+  bicarbonato_ph_umbral: 7.0,    // variante SAEDYN: bicarbonato solo si pH ≤ 7,0
+  na_deseado: 140,               // Na objetivo para el déficit de agua (mEq/l)
+  act_factor: 0.6,               // factor de agua corporal total (×peso)
+  perdidas_mlkg: 25              // pérdidas diarias estimadas en CAD (ml/kg)
+};
+
 // Exponer como globales (sin módulos ES, igual que DosisPed)
+window.CAD_CFG = CAD_CFG;
 window.UMBRAL = UMBRAL;
 window.GRAVEDAD_CAD = GRAVEDAD_CAD;
 window.CUADROS = CUADROS;

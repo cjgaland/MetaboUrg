@@ -123,6 +123,85 @@
 
       <div id="triaje-resultado"></div>
     </section>
+
+    <!-- VISTA: TRATAMIENTO DE LA CAD -->
+    <section class="view" id="view-cad" data-titulo="Cetoacidosis diabética">
+      <h1 class="view-titulo">Cetoacidosis diabética — tratamiento</h1>
+      <p class="view-intro">Pauta de fluidos, insulina y potasio calculada según el peso y la situación del paciente. Por defecto SEEN/ADA-EASD 2024; la variante SAEDYN 2017 se muestra como nota.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos del paciente</div>
+        <div class="fields">
+          <div class="field">
+            <label for="c-peso">Peso</label>
+            <div class="input-wrap"><input id="c-peso" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">kg</span></div>
+          </div>
+          <div class="field">
+            <label for="c-glucosa">Glucemia</label>
+            <div class="input-wrap"><input id="c-glucosa" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+          </div>
+          <div class="field">
+            <label for="c-k">Potasio (K⁺)</label>
+            <div class="input-wrap"><input id="c-k" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mEq/l</span></div>
+          </div>
+          <div class="field">
+            <label for="c-ph">pH venoso</label>
+            <div class="input-wrap"><input id="c-ph" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/></div>
+          </div>
+          <div class="field">
+            <label for="c-hco3">Bicarbonato</label>
+            <div class="input-wrap"><input id="c-hco3" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mEq/l</span></div>
+          </div>
+          <div class="field">
+            <label for="c-na">Sodio (Na⁺)</label>
+            <div class="input-wrap"><input id="c-na" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mEq/l</span></div>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Datos adicionales <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);">— opcionales, para parámetros calculados</span></div>
+        <div class="fields">
+          <div class="field">
+            <label for="c-urea">Urea</label>
+            <div class="input-wrap"><input id="c-urea" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+            <span class="hint">para osmolaridad total</span>
+          </div>
+          <div class="field">
+            <label for="c-eb">Exceso de bases (EB)</label>
+            <div class="input-wrap"><input id="c-eb" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mEq/l</span></div>
+            <span class="hint">para déficit de HCO₃</span>
+          </div>
+          <div class="field">
+            <label for="c-crea">Creatinina sérica</label>
+            <div class="input-wrap"><input id="c-crea" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+          </div>
+          <div class="field">
+            <label for="c-naorina">Na en orina</label>
+            <div class="input-wrap"><input id="c-naorina" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mEq/l</span></div>
+            <span class="hint">para FE de Na</span>
+          </div>
+          <div class="field">
+            <label for="c-creaorina">Creatinina en orina</label>
+            <div class="input-wrap"><input id="c-creaorina" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+            <span class="hint">para FE de Na</span>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="c-shock"><span class="dot"></span>TA sistólica &lt; 90 / shock</label>
+          <label class="toggle"><input type="checkbox" id="c-debut"><span class="dot"></span>Début (sin insulina previa)</label>
+          <label class="toggle"><input type="checkbox" id="c-oliguria"><span class="dot"></span>Oligoanuria / I. renal</label>
+          <label class="toggle"><input type="checkbox" id="c-consciencia"><span class="dot"></span>Alteración de consciencia</label>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-calcular-cad" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-limpiar-cad">Limpiar</button>
+        </div>
+      </div>
+
+      <div id="cad-resultado"></div>
+    </section>
   </main>
 
   <!-- MODAL BIENVENIDA -->
@@ -138,6 +217,7 @@
           <li>Triaje diagnóstico: hiperglucemia, cetosis, cetoacidosis (CAD), estado hiperosmolar (EHH) e hipoglucemia.</li>
           <li>Protocolos de tratamiento con cálculos por peso y analítica.</li>
           <li>Informe copiable para pegar en la historia clínica.</li>
+          <li><b>Próximamente:</b> trastornos hidroelectrolíticos (Na, K, Ca, P, Mg).</li>
         </ul>
         <h4>Fuentes</h4>
         <ul>
@@ -198,5 +278,6 @@
   <script src="shared/informe.js"></script>
   <script src="modulos/glucemia/protocolos.js"></script>
   <script src="modulos/glucemia/glucemia.js"></script>
+  <script src="modulos/glucemia/cad.js"></script>
 </body>
 </html>

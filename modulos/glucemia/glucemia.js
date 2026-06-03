@@ -18,7 +18,7 @@ App.registrarRuta("/glucemia/triaje", {
 // ── Sub-hub: módulos de glucemia ──────────────────────────
 const GLUCEMIA_MODULOS = [
   { titulo: "Triaje diagnóstico", desc: "Introduce datos → identifica el cuadro.", icono: "🔎", color: "var(--brand)", hash: "#/glucemia/triaje" },
-  { titulo: "Cetoacidosis (CAD)", desc: "Fluidos, insulina y potasio.", icono: "⚠️", color: "var(--c-cad)", proximamente: true },
+  { titulo: "Cetoacidosis (CAD)", desc: "Fluidos, insulina y potasio.", icono: "⚠️", color: "var(--c-cad)", hash: "#/glucemia/cad" },
   { titulo: "Estado hiperosmolar", desc: "Corrección lenta de la osmolalidad.", icono: "💧", color: "var(--c-ehh)", proximamente: true },
   { titulo: "Hipoglucemia", desc: "Tratamiento según consciencia.", icono: "🍬", color: "var(--c-hipo)", proximamente: true },
   { titulo: "Insulinización IV", desc: "Perfusión y objetivos 140–180.", icono: "💉", color: "var(--c-insulina)", proximamente: true },
@@ -157,11 +157,16 @@ function renderResultadoTriaje() {
       '<div class="result-divider"></div>' +
       '<ul class="criterio-list">' + crit + "</ul>" +
       calc + avisos + trat + nota +
-      '<div class="acciones-result"><button class="btn btn-secundario" id="btn-recalcular">Recalcular</button></div>' +
+      '<div class="acciones-result">' +
+        ((res.cuadroId === "cad" || res.cuadroId === "mixto") ? '<button class="btn btn-primario" id="btn-ir-cad">Ir al tratamiento de CAD →</button>' : "") +
+        '<button class="btn btn-secundario" id="btn-recalcular">Recalcular</button>' +
+      "</div>" +
     "</div>" +
     App.informe.bloque(construirInforme());
 
   document.getElementById("btn-recalcular").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  const btnCad = document.getElementById("btn-ir-cad");
+  if (btnCad) btnCad.addEventListener("click", () => { App.estado.paciente = d; App.navegar("#/glucemia/cad"); });
   App.informe.bind();
   cont.scrollIntoView({ behavior: "smooth", block: "start" });
 }

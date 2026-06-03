@@ -12,10 +12,21 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.06";
+const APP_VERSION = "2026.07";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.07",
+    fecha: "Junio 2026",
+    titulo: "Calculadora de cetoacidosis (CAD)",
+    cambios: [
+      "Nueva calculadora de tratamiento de la cetoacidosis diabética: fluidos, insulina, potasio y bicarbonato calculados según el peso y la situación del paciente, con dosis, composición de sueros y ritmos de perfusión.",
+      "Panel de «Datos calculados» antes del tratamiento: osmolaridad, agua corporal total, déficit de agua, pérdidas estimadas, fracción de excreción de Na y déficit de bicarbonato.",
+      "Acceso directo desde el triaje con los datos ya rellenados, e informe copiable completo.",
+      "Cada apartado del tratamiento se distingue con un color suave."
+    ]
+  },
   {
     version: "2026.06",
     fecha: "Junio 2026",
@@ -62,6 +73,7 @@ const App = {
     "/": { view: "view-hub", crumbs: [["Inicio", "#/"]] }
   },
   inits: [],
+  estado: {},   // almacén compartido entre módulos (p. ej. datos del paciente del triaje)
   registrarRuta(hash, def) { this.rutas[hash] = def; },
   alIniciar(fn) { this.inits.push(fn); },
   navegar(hash) { location.hash = hash; },
@@ -110,6 +122,7 @@ function renderRuta() {
       (ultimo ? "" : '<span class="crumb-sep">›</span>');
   }).join("");
   bc.querySelectorAll(".crumb").forEach(b => b.addEventListener("click", () => App.navegar(b.dataset.hash)));
+  if (typeof r.onShow === "function") { try { r.onShow(); } catch (e) { console.error(e); } }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 window.addEventListener("hashchange", renderRuta);
