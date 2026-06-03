@@ -7,12 +7,12 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Glucemia" />
-  <meta name="description" content="Diagnóstico y tratamiento de trastornos de la glucemia: hiperglucemia, cetoacidosis, estado hiperosmolar e hipoglucemia. Apoyo clínico hospitalario." />
+  <meta name="apple-mobile-web-app-title" content="MetaboUrg" />
+  <meta name="description" content="MetaboUrg · Urgencias endocrino-metabólicas: diagnóstico y tratamiento de los trastornos de la glucemia (CAD, EHH, hipoglucemia) y, a futuro, electrolitos. Apoyo clínico hospitalario." />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icon-192.svg" />
   <link rel="apple-touch-icon" href="icon-192.svg" />
-  <title>Trastornos de la Glucemia</title>
+  <title>MetaboUrg · Urgencias endocrino-metabólicas</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -27,8 +27,8 @@
         </svg>
       </span>
       <span class="header-titles">
-        <span class="header-title">Glucemia</span>
-        <span class="header-subtitle">Diagnóstico y tratamiento · hospitalario</span>
+        <span class="header-title">MetaboUrg</span>
+        <span class="header-subtitle">Urgencias endocrino-metabólicas</span>
       </span>
     </button>
 
@@ -52,8 +52,8 @@
     <nav class="breadcrumb" id="breadcrumb"></nav>
 
     <!-- VISTA: PORTAL (hub de trastornos) -->
-    <section class="view" id="view-hub" data-titulo="Endocrinología y Metabolismo">
-      <h1 class="view-titulo">Endocrinología y Metabolismo</h1>
+    <section class="view" id="view-hub" data-titulo="Urgencias endocrino-metabólicas">
+      <h1 class="view-titulo">Urgencias endocrino-metabólicas</h1>
       <p class="view-intro">Utilidades de apoyo clínico hospitalario. Elige el área. La información sigue las guías actuales de las sociedades científicas (SEEN, SAEDYN) y el consenso ADA/EASD 2024.</p>
       <div class="card-grid" id="hub-cards"></div>
       <footer class="app-footer">
@@ -129,7 +129,7 @@
   <div class="modal" id="modal-bienvenida">
     <div class="modal-box">
       <div class="modal-head">
-        <div><div class="modal-titulo">Trastornos de la Glucemia</div><div class="modal-subtitulo">Apoyo clínico hospitalario</div></div>
+        <div><div class="modal-titulo">MetaboUrg</div><div class="modal-subtitulo">Urgencias endocrino-metabólicas · apoyo clínico</div></div>
       </div>
       <div class="modal-body">
         <div class="disclaimer"><b>Aviso importante.</b> Esta herramienta es un apoyo a la decisión clínica y <b>no la sustituye</b>. El facultativo es responsable de verificar todo cálculo, dosis y pauta antes de aplicarlos, según el contexto del paciente y los protocolos de su centro.</div>
@@ -193,7 +193,10 @@
 
   <div class="toast" id="toast"><span id="toast-text"></span></div>
 
-  <script src="protocolos.js"></script>
-  <script src="app.js"></script>
+  <script src="shared/core.js"></script>
+  <script src="shared/formulas.js"></script>
+  <script src="shared/informe.js"></script>
+  <script src="modulos/glucemia/protocolos.js"></script>
+  <script src="modulos/glucemia/glucemia.js"></script>
 </body>
 </html>

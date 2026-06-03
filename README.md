@@ -1,10 +1,10 @@
-# Trastornos de la Glucemia
+# MetaboUrg · Urgencias endocrino-metabólicas
 
-Utilidad clínica (PWA) de apoyo al **diagnóstico y tratamiento de los trastornos agudos de la glucemia** en el adulto hospitalizado: hiperglucemia simple, cetosis, cetoacidosis diabética (CAD), estado hiperglucémico hiperosmolar (EHH) e hipoglucemia.
+Portal de utilidades clínicas (PWA) de apoyo al **diagnóstico y tratamiento de las urgencias endocrino-metabólicas** en el adulto hospitalizado.
 
-Forma parte de un portal de utilidades de **Endocrinología y Metabolismo** (a futuro: sodio, potasio, calcio, fósforo y magnesio).
+Primer módulo: **Trastornos de la Glucemia** (hiperglucemia simple, cetosis, cetoacidosis diabética/CAD, estado hiperglucémico hiperosmolar/EHH e hipoglucemia). A futuro: trastornos hidroelectrolíticos (sodio, potasio, calcio, fósforo y magnesio).
 
-🔗 **App:** https://cjgaland.github.io/Glucemia/
+🔗 **App:** https://cjgaland.github.io/MetaboUrg/
 
 ## Características
 
@@ -14,24 +14,29 @@ Forma parte de un portal de utilidades de **Endocrinología y Metabolismo** (a f
 - **Informe copiable** para pegar en la historia clínica.
 - PWA instalable y **offline**; modo claro/oscuro; aviso de **nueva versión** al actualizar.
 
-## Tecnología
+## Arquitectura
 
-HTML, CSS y JavaScript puro (sin frameworks ni dependencias). PWA con Service Worker (network-first). Se sirve como sitio estático en GitHub Pages.
+SPA única (un `index.html`, un Service Worker, una caché → navegación instantánea sin saltos), con el código organizado en módulos. HTML/CSS/JS puro, sin frameworks ni dependencias.
 
 ```
-index.html      Estructura + modales
-styles.css      Estilos (tokens claro/oscuro, responsive)
-app.js          Lógica: enrutado, motor diagnóstico, informe, PWA
-protocolos.js   Datos clínicos (umbrales, gravedad, tratamientos)
-sw.js           Service Worker
-manifest.json   Manifest PWA
+index.html                    Shell + vistas + modales
+styles.css                    Estilos (tokens claro/oscuro, responsive)
+shared/
+  core.js                     Enrutado, temas, portal, novedades, PWA/actualización
+  formulas.js                 Fórmulas clínicas (osmolalidad, Na corregido, …)
+  informe.js                  Generador de informe copiable
+modulos/
+  glucemia/
+    protocolos.js             Datos clínicos (umbrales, gravedad, tratamientos)
+    glucemia.js               Vistas y lógica del módulo (triaje, …)
+sw.js · manifest.json · icon-*.svg
 ```
 
 ## Fuentes
 
 - Consenso **ADA/EASD/JBDS/AACE/DTS 2024** — Hyperglycemic Crises in Adults (Diabetes Care 2024;47:1257).
 - **SEEN** — Sociedad Española de Endocrinología y Nutrición.
-- **SAEDYN** — Sociedad Andaluza de Endocrinología, Diabetes y Nutrición (folletos de insulinización IV y SC, 2017).
+- **SAEDYN** — Sociedad Andaluza de Endocrinología, Diabetes y Nutrición (insulinización IV y SC, 2017).
 
 ## Aviso
 

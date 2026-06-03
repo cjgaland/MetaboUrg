@@ -1,8 +1,8 @@
 {
-  "name": "Trastornos de la Glucemia · Urgencias y planta",
-  "short_name": "Glucemia",
-  "description": "Diagnóstico y tratamiento de hiperglucemia simple, cetoacidosis, estado hiperosmolar e hipoglucemia. Apoyo clínico hospitalario.",
-  "id": "/Glucemia/",
+  "name": "MetaboUrg · Urgencias endocrino-metabólicas",
+  "short_name": "MetaboUrg",
+  "description": "Diagnóstico y tratamiento de urgencias endocrino-metabólicas: trastornos de la glucemia (CAD, EHH, hipoglucemia) y, a futuro, electrolitos. Apoyo clínico hospitalario.",
+  "id": "/MetaboUrg/",
   "scope": "./",
   "start_url": "./index.html",
   "display": "standalone",

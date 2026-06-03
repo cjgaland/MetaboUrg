@@ -1,19 +1,22 @@
 // ============================================================
-//  sw.js — Service Worker · Trastornos de la Glucemia
+//  sw.js — Service Worker · MetaboUrg
 //  Estrategia network-first con fallback a caché (uso offline).
 //  El SW nuevo NO hace skipWaiting() en install: queda en espera
 //  hasta que el usuario pulsa "Actualizar" en el banner de la app.
-//  ▶ Al desplegar cambios, incrementar CACHE_NAME (glucemia-vN+1)
+//  ▶ Al desplegar cambios, incrementar CACHE_NAME (metabourg-vN+1)
 //    para que los usuarios vean el banner "Nueva versión disponible".
 // ============================================================
 
-const CACHE_NAME = "glucemia-v1";
+const CACHE_NAME = "metabourg-v2";
 
 const ASSETS = [
   "./index.html",
   "./styles.css",
-  "./app.js",
-  "./protocolos.js",
+  "./shared/core.js",
+  "./shared/formulas.js",
+  "./shared/informe.js",
+  "./modulos/glucemia/protocolos.js",
+  "./modulos/glucemia/glucemia.js",
   "./manifest.json",
   "./icon-192.svg",
   "./icon-512.svg"
