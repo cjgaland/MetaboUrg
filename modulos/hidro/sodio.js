@@ -13,10 +13,11 @@ App.registrarRuta("/hidro/hipernatremia",  { view: "view-hipernatremia", onShow:
 // ── Utilidades comunes ─────────────────────────────────────
 function redNa(n, dec) { const f = Math.pow(10, dec || 0); return Math.round(n * f) / f; }
 function cardTrat(titulo, num, sub, lineas, color) {
+  const g = App.util.glosar;
   return '<div class="trat-card" style="--trat-color:' + (color || "var(--c-hipo)") + '">' +
     "<h3>" + escHtml(titulo) + "</h3>" +
     (num ? '<div class="dosis-grande">' + num + (sub ? " <small>" + escHtml(sub) + "</small>" : "") + "</div>" : "") +
-    (lineas && lineas.length ? '<ul class="trat-list">' + lineas.map(l => "<li>" + l + "</li>").join("") + "</ul>" : "") +
+    (lineas && lineas.length ? '<ul class="trat-list">' + lineas.map(l => "<li>" + g(l) + "</li>").join("") + "</ul>" : "") +
     "</div>";
 }
 function setVal(id, v) { const e = document.getElementById(id); if (e && v !== null && v !== undefined) e.value = (typeof v === "number" ? String(v).replace(".", ",") : v); }

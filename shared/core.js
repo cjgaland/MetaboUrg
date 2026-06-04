@@ -12,10 +12,18 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.13";
+const APP_VERSION = "2026.14";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.14",
+    fecha: "Junio 2026",
+    titulo: "Glosario con tooltips",
+    cambios: [
+      "Los epónimos y tecnicismos del texto de ayuda (Chvostek, Trousseau, Kussmaul, torsade de pointes, onda U, taquifilaxia, mielinólisis, Adrogué-Madias…) aparecen subrayados y muestran una breve explicación al pasar el ratón o tocarlos."
+    ]
+  },
   {
     version: "2026.13",
     fecha: "Junio 2026",
@@ -209,6 +217,48 @@ function pintarTarjetas(contId, lista) {
   cont.innerHTML = lista.map(tarjetaHTML).join("");
   cont.querySelectorAll(".card[data-hash]").forEach(b => b.addEventListener("click", () => App.navegar(b.dataset.hash)));
 }
+// ── Glosario: tooltips para epónimos y tecnicismos ────────
+const GLOSARIO = {
+  "chvostek": "Signo de Chvostek: contracción de los músculos faciales al percutir el nervio facial; refleja la hiperexcitabilidad neuromuscular de la hipocalcemia.",
+  "trousseau": "Signo de Trousseau: espasmo carpopedal al inflar el manguito de presión por encima de la sistólica durante unos minutos; típico de la hipocalcemia.",
+  "kussmaul": "Respiración de Kussmaul: respiración rápida y profunda que compensa una acidosis metabólica (p. ej., la cetoacidosis).",
+  "torsades de pointes": "Torsade de pointes: taquicardia ventricular polimórfica asociada a un QT largo; potencialmente mortal.",
+  "torsade de pointes": "Torsade de pointes: taquicardia ventricular polimórfica asociada a un QT largo; potencialmente mortal.",
+  "torsades": "Torsade de pointes: taquicardia ventricular polimórfica asociada a un QT largo; potencialmente mortal.",
+  "onda u": "Onda U: pequeña deflexión positiva tras la onda T en el ECG; característica de la hipopotasemia.",
+  "taquifilaxia": "Taquifilaxia: pérdida rápida de la eficacia de un fármaco con su uso repetido (p. ej., la calcitonina tras 48-72 h).",
+  "mielinólisis": "Síndrome de desmielinización osmótica (mielinólisis central pontina): daño cerebral por corregir la hiponatremia demasiado deprisa.",
+  "desmielinización osmótica": "Síndrome de desmielinización osmótica (mielinólisis central pontina): daño cerebral por corregir la hiponatremia demasiado deprisa.",
+  "adrogué-madias": "Fórmula de Adrogué-Madias: estima el cambio del sodio sérico que produce 1 litro de un fluido; ayuda a planificar la corrección."
+};
+const GLOSS_RE = new RegExp(
+  Object.keys(GLOSARIO).sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"),
+  "gi"
+);
+// Envuelve los términos del glosario con un tooltip, sin tocar las etiquetas HTML
+function glosar(html) {
+  if (!html || typeof html !== "string") return html;
+  return html.replace(/(<[^>]+>)|([^<]+)/g, (full, tag, text) => {
+    if (tag) return tag;
+    return text.replace(GLOSS_RE, m => {
+      const def = GLOSARIO[m.toLowerCase()];
+      return def ? '<abbr class="gloss" tabindex="0" data-tip="' + escHtml(def) + '">' + m + "</abbr>" : m;
+    });
+  });
+}
+App.util.glosar = glosar;
+
+// Evita que el tooltip se salga por la derecha: si el término está en la
+// mitad derecha de la pantalla, el globo se ancla a la derecha.
+function posicionarTip(e) {
+  const g = e.target && e.target.closest && e.target.closest(".gloss");
+  if (!g) return;
+  const r = g.getBoundingClientRect();
+  g.classList.toggle("tip-right", r.left > window.innerWidth * 0.5);
+}
+document.addEventListener("pointerover", posicionarTip, true);
+document.addEventListener("focusin", posicionarTip, true);
+
 // Tarjeta plegable de "Síntomas y signos" bajo el formulario de una vista
 function insertarSintomas(viewId, items) {
   const view = document.getElementById(viewId);
@@ -219,7 +269,7 @@ function insertarSintomas(viewId, items) {
   det.className = "sintomas-card";
   det.innerHTML =
     '<summary><span class="sint-ic">🩺</span><span>Síntomas y signos</span></summary>' +
-    '<div class="sint-body"><ul>' + items.map(i => "<li>" + i + "</li>").join("") + "</ul>" +
+    '<div class="sint-body"><ul>' + items.map(i => "<li>" + glosar(i) + "</li>").join("") + "</ul>" +
     '<p class="sint-fuente">Recordatorio orientativo basado en la literatura; no sustituye la valoración clínica.</p></div>';
   form.insertAdjacentElement("afterend", det);
 }
