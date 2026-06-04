@@ -5,25 +5,17 @@
 //  protocolos.js (UMBRAL, GRAVEDAD_CAD, CUADROS, NOTAS_FUENTE).
 // ============================================================
 
-// ── Rutas del módulo ───────────────────────────────────────
-App.registrarRuta("/glucemia", {
-  view: "view-glucemia",
-  crumbs: [["Inicio", "#/"], ["Glucemia", "#/glucemia"]]
-});
-App.registrarRuta("/glucemia/triaje", {
-  view: "view-triaje",
-  crumbs: [["Inicio", "#/"], ["Glucemia", "#/glucemia"], ["Triaje diagnóstico", "#/glucemia/triaje"]]
-});
+// ── Rutas del módulo (el sub-hub se pinta desde AREAS en core.js) ──
+App.registrarRuta("/glucemia", { view: "view-glucemia" });
+App.registrarRuta("/glucemia/diagnostico", { view: "view-triaje" });
 
-// ── Sub-hub: módulos de glucemia ──────────────────────────
-const GLUCEMIA_MODULOS = [
-  { titulo: "Triaje diagnóstico", desc: "Introduce datos → identifica el cuadro.", icono: "🔎", color: "var(--brand)", hash: "#/glucemia/triaje" },
-  { titulo: "Cetoacidosis (CAD)", desc: "Fluidos, insulina y potasio.", icono: "⚠️", color: "var(--c-cad)", hash: "#/glucemia/cad" },
-  { titulo: "Estado hiperosmolar", desc: "Corrección lenta de la osmolalidad.", icono: "💧", color: "var(--c-ehh)", hash: "#/glucemia/ehh" },
-  { titulo: "Hipoglucemia", desc: "Tratamiento según consciencia.", icono: "🍬", color: "var(--c-hipo)", hash: "#/glucemia/hipoglucemia" },
-  { titulo: "Insulinización IV", desc: "Perfusión y objetivos 140–180.", icono: "💉", color: "var(--c-insulina)", hash: "#/glucemia/insulina-iv" },
-  { titulo: "Insulinización SC", desc: "Basal-bolus-corrección.", icono: "🧪", color: "var(--c-insulina)", hash: "#/glucemia/insulina-sc" }
-];
+// Módulo de tratamiento recomendado según el cuadro (cuadro.modulo)
+const DESTINO = {
+  cad:            { nombre: "Cetoacidosis (CAD)",   hash: "#/glucemia/cad" },
+  ehh:            { nombre: "Estado hiperosmolar",  hash: "#/glucemia/ehh" },
+  hipoglucemia:   { nombre: "Hipoglucemia",         hash: "#/glucemia/hipoglucemia" },
+  "insulina-sc":  { nombre: "Insulinización SC",    hash: "#/glucemia/insulina-sc" }
+};
 
 // ============================================================
 //  MOTOR DIAGNÓSTICO
@@ -210,22 +202,17 @@ function renderResultadoTriaje() {
       '<div class="result-divider"></div>' +
       '<ul class="criterio-list">' + crit + "</ul>" +
       calc + avisos + trat + nota +
+      (DESTINO[cuadro.modulo] ? '<div class="result-reco"><span class="result-reco-ic">→</span><span>Módulo recomendado según los datos: <b>' + escHtml(DESTINO[cuadro.modulo].nombre) + "</b></span></div>" : "") +
       '<div class="acciones-result">' +
-        ((res.cuadroId === "cad" || res.cuadroId === "mixto") ? '<button class="btn btn-primario" id="btn-ir-cad">Ir al tratamiento de CAD →</button>' : "") +
-        (res.cuadroId === "ehh" ? '<button class="btn btn-primario" id="btn-ir-ehh">Ir al tratamiento de EHH →</button>' : "") +
-        (res.cuadroId === "hipoglucemia" ? '<button class="btn btn-primario" id="btn-ir-hipo">Ir al tratamiento de hipoglucemia →</button>' : "") +
-        (cuadro.modulo === "insulina-sc" ? '<button class="btn btn-primario" id="btn-ir-sc">Ir a insulinización SC →</button>' : "") +
+        (DESTINO[cuadro.modulo] ? '<button class="btn btn-primario" id="btn-ir-modulo">Ir a ' + escHtml(DESTINO[cuadro.modulo].nombre) + " →</button>" : "") +
         '<button class="btn btn-secundario" id="btn-recalcular">Recalcular</button>' +
       "</div>" +
     "</div>" +
     App.informe.bloque(construirInforme());
 
   document.getElementById("btn-recalcular").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-  const irA = (id, hash) => { const b = document.getElementById(id); if (b) b.addEventListener("click", () => { App.estado.paciente = d; App.navegar(hash); }); };
-  irA("btn-ir-cad", "#/glucemia/cad");
-  irA("btn-ir-ehh", "#/glucemia/ehh");
-  irA("btn-ir-hipo", "#/glucemia/hipoglucemia");
-  irA("btn-ir-sc", "#/glucemia/insulina-sc");
+  const btnMod = document.getElementById("btn-ir-modulo");
+  if (btnMod && DESTINO[cuadro.modulo]) btnMod.addEventListener("click", () => { App.estado.paciente = d; App.navegar(DESTINO[cuadro.modulo].hash); });
   App.informe.bind();
   cont.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -289,7 +276,6 @@ const TRIAJE_CHECKS = ["t-cetonuria", "t-consciencia", "t-ic", "t-erc", "t-ado-m
 const TRIAJE_SELECTS = ["t-erc-estadio", "t-tipodm"];
 
 App.alIniciar(function () {
-  App.ui.pintarTarjetas("glucemia-cards", GLUCEMIA_MODULOS);
   document.getElementById("btn-diagnosticar").addEventListener("click", renderResultadoTriaje);
 
   // Campos condicionales: FGe/estadio al marcar ERC; desglose de insulina según tipo de DM

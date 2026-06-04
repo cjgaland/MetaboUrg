@@ -104,20 +104,10 @@ body {
 button { font-family: inherit; cursor: pointer; }
 input, select { font-family: inherit; }
 
-body, .app-header, .card, .view, .field, .result-card, .report-card,
-.modal-box, .seg-btn, .crumb { transition: background .25s ease, border-color .25s ease, color .25s ease; }
+body, .topbar, .sidebar, .card, .view, .field, .result-card, .report-card,
+.modal-box, .seg-btn { transition: background .25s ease, border-color .25s ease, color .25s ease; }
 
-/* ── Header ────────────────────────────────────────────── */
-.app-header {
-  position: sticky; top: 0; z-index: 100;
-  height: var(--header-h);
-  background: color-mix(in srgb, var(--bg-2) 92%, transparent);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 16px; gap: 12px;
-}
-.header-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+/* ── Marca (logo + títulos), reutilizada en sidebar y topbar ── */
 .header-logo {
   width: 38px; height: 38px; flex: none; border-radius: 11px;
   background: linear-gradient(135deg, var(--brand), var(--brand-2));
@@ -150,15 +140,101 @@ body, .app-header, .card, .view, .field, .result-card, .report-card,
 #btn-novedades.activa .punto { display: block; }
 @keyframes campaneo { 0%,90%,100% { transform: rotate(0); } 93% { transform: rotate(-12deg); } 96% { transform: rotate(12deg); } }
 
-/* ── Layout ────────────────────────────────────────────── */
-.app-main { max-width: var(--maxw); margin: 0 auto; padding: 18px 16px 60px; }
+/* ── Shell: sidebar + contenido ─────────────────────────── */
+:root { --sidebar-w: 274px; --content-max: 1320px; --tool-max: 1040px; }
 
-/* Migas de pan */
-.breadcrumb { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; font-size: 0.84rem; }
-.crumb { color: var(--text-2); background: none; border: none; padding: 4px 2px; font-weight: 600; }
-.crumb:hover { color: var(--brand); }
-.crumb.actual { color: var(--text-1); }
-.crumb-sep { color: var(--text-3); }
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+  background: var(--bg-2); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 90; overflow-y: auto;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.sidebar-brand {
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 15px 16px; background: none; border: none;
+  border-bottom: 1px solid var(--border); text-align: left; flex: none;
+}
+.sidebar-nav { padding: 10px; display: flex; flex-direction: column; gap: 3px; }
+.side-area-head { display: flex; align-items: center; gap: 2px; }
+.side-area-link {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px;
+  padding: 9px 10px; background: none; border: none; color: var(--text-1);
+  font-weight: 700; font-size: 0.9rem; border-radius: 10px; text-align: left;
+}
+.side-area-link:hover { background: var(--bg-3); }
+.side-area.area-activa > .side-area-head .side-area-link { color: var(--brand); }
+.side-area-ic { font-size: 1.05rem; flex: none; }
+.side-area-tt { line-height: 1.18; }
+.side-chevron-btn {
+  background: none; border: none; color: var(--text-3); padding: 6px 8px;
+  border-radius: 8px; font-size: 0.7rem; transition: transform .25s ease; flex: none;
+}
+.side-chevron-btn:hover { color: var(--text-1); }
+.side-area.abierta > .side-area-head .side-chevron-btn { transform: rotate(180deg); }
+.side-area-modulos {
+  max-height: 0; overflow: hidden; transition: max-height .3s ease;
+  display: flex; flex-direction: column; gap: 2px; margin-left: 16px;
+}
+.side-area.abierta .side-area-modulos { max-height: 460px; }
+.side-mod {
+  display: flex; align-items: center; gap: 8px; padding: 7px 10px;
+  background: none; border: none; border-left: 2px solid transparent;
+  color: var(--text-2); font-size: 0.84rem; border-radius: 0 8px 8px 0; text-align: left;
+}
+.side-mod:hover { background: var(--bg-3); color: var(--text-1); }
+.side-mod.activa { color: var(--brand); background: var(--brand-dim); border-left-color: var(--brand); font-weight: 600; }
+.side-mod.prox { opacity: .5; cursor: default; }
+.side-mod-pt { flex: 1; }
+.side-mod-star { color: var(--brand); font-size: 0.68rem; }
+
+.sidebar-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 85;
+  opacity: 0; pointer-events: none; transition: opacity .25s ease;
+}
+.sidebar-backdrop.visible { opacity: 1; pointer-events: auto; }
+
+.app-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+.topbar {
+  position: sticky; top: 0; z-index: 80;
+  height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
+  background: color-mix(in srgb, var(--bg-2) 92%, transparent); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.topbar-spacer { flex: 1; }
+.topbar-brand { display: none; align-items: center; gap: 9px; background: none; border: none; }
+.header-logo-sm { width: 30px; height: 30px; border-radius: 9px; }
+.hamburguesa { display: none; }
+
+/* ── Layout del contenido ──────────────────────────────── */
+.app-main { max-width: var(--content-max); margin: 0 auto; padding: 22px 28px 64px; }
+.form-card, #triaje-resultado, #cad-resultado, #ehh-resultado,
+#sc-resultado, #iv-resultado, #hipo-resultado { max-width: var(--tool-max); }
+
+/* Aviso no bloqueante "empieza por Diagnóstico" */
+.vista-aviso {
+  display: flex; align-items: center; gap: 10px; max-width: var(--tool-max);
+  background: var(--brand-dim); border: 1px solid var(--brand); border-radius: var(--radius);
+  padding: 10px 14px; margin-bottom: 18px; font-size: 0.86rem; color: var(--text-1);
+}
+.vista-aviso-ic { flex: none; }
+.vista-aviso-tx { flex: 1; }
+.vista-aviso-ir { background: var(--brand); color: #fff; border: none; border-radius: 10px; padding: 6px 12px; font-weight: 700; font-size: 0.8rem; white-space: nowrap; }
+.vista-aviso-x { background: none; border: none; color: var(--text-2); font-size: 0.9rem; padding: 2px 4px; }
+.vista-aviso-x:hover { color: var(--text-1); }
+
+@media (max-width: 880px) {
+  .sidebar { transform: translateX(-100%); transition: transform .28s ease; box-shadow: var(--shadow); }
+  .sidebar.movil-abierta { transform: none; }
+  .app-content { margin-left: 0; }
+  .hamburguesa { display: grid; }
+  .topbar-brand { display: flex; }
+  .app-main { padding: 18px 16px 56px; }
+}
+@media (min-width: 881px) {
+  .sidebar-backdrop { display: none; }
+}
 
 /* ── Vistas ────────────────────────────────────────────── */
 .view { display: none; animation: viewIn .28s ease; }
@@ -196,6 +272,27 @@ body, .app-header, .card, .view, .field, .result-card, .report-card,
   text-transform: uppercase; letter-spacing: .04em; color: var(--text-3);
   border: 1px solid var(--border); border-radius: 20px; padding: 2px 8px;
 }
+.card-badge-go { color: var(--brand); border-color: var(--brand); background: var(--brand-dim); }
+
+/* Tarjeta destacada (Diagnóstico y Antecedentes) — banner a todo el ancho */
+.card.destacado {
+  grid-column: 1 / -1;
+  display: grid; grid-template-columns: auto 1fr; gap: 2px 18px; align-items: center;
+  padding: 20px 22px;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--brand) 13%, var(--bg-2)), var(--bg-2) 70%);
+  border-color: var(--brand);
+}
+.card.destacado .card-icono { grid-row: 1 / 3; margin-bottom: 0; width: 48px; height: 48px; font-size: 1.5rem; }
+.card.destacado .card-titulo { font-size: 1.14rem; }
+.card.destacado .card-desc { max-width: 60ch; }
+
+/* Recomendación de módulo en el resultado del diagnóstico */
+.result-reco {
+  display: flex; align-items: center; gap: 9px; margin: 14px 0 6px; padding: 11px 14px;
+  background: var(--brand-dim); border: 1px solid var(--brand); border-radius: var(--radius);
+  font-size: 0.9rem; color: var(--text-1);
+}
+.result-reco-ic { color: var(--brand); font-weight: 800; }
 
 /* ── Formularios (triaje) ──────────────────────────────── */
 .form-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 16px; }

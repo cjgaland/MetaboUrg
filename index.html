@@ -17,9 +17,9 @@
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="app-header">
-    <button class="header-brand" id="brand-home" title="Inicio" style="background:none;border:none;">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <button class="sidebar-brand" id="sidebar-brand" title="Inicio">
       <span class="header-logo">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <path d="M12 3 C12 3 6 10 6 14 a6 6 0 0 0 12 0 C18 10 12 3 12 3 Z" fill="currentColor"/>
@@ -31,25 +31,39 @@
         <span class="header-subtitle">Urgencias endocrino-metabólicas</span>
       </span>
     </button>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-    <div class="header-actions">
-      <button class="icon-btn" id="btn-novedades" title="Novedades de la versión" aria-label="Novedades" style="display:none;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="punto"></span>
+  <div class="app-content">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="icon-btn hamburguesa" id="btn-menu" title="Menú" aria-label="Abrir menú">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
-      <button class="icon-btn" id="btn-info" title="Acerca de, fuentes y aviso legal" aria-label="Información">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <button class="topbar-brand" id="brand-home" title="Inicio">
+        <span class="header-logo header-logo-sm">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3 C12 3 6 10 6 14 a6 6 0 0 0 12 0 C18 10 12 3 12 3 Z" fill="currentColor"/><path d="M12 11v5M9.5 13.5h5" stroke="#0c1726" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </span>
+        <span class="header-title">MetaboUrg</span>
       </button>
-      <button class="icon-btn" id="btn-tema" title="Tema claro/oscuro" aria-label="Cambiar tema">
-        <svg class="icon-luna" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <svg class="icon-sol" width="18" height="18" viewBox="0 0 24 24" fill="none" style="display:none"><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-  </header>
+      <div class="topbar-spacer"></div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-novedades" title="Novedades de la versión" aria-label="Novedades" style="display:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="punto"></span>
+        </button>
+        <button class="icon-btn" id="btn-info" title="Acerca de, fuentes y aviso legal" aria-label="Información">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-tema" title="Tema claro/oscuro" aria-label="Cambiar tema">
+          <svg class="icon-luna" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="icon-sol" width="18" height="18" viewBox="0 0 24 24" fill="none" style="display:none"><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </header>
 
-  <main class="app-main">
-    <!-- Migas de pan -->
-    <nav class="breadcrumb" id="breadcrumb"></nav>
+    <main class="app-main">
 
     <!-- VISTA: PORTAL (hub de trastornos) -->
     <section class="view" id="view-hub" data-titulo="Urgencias endocrino-metabólicas">
@@ -65,14 +79,14 @@
     <!-- VISTA: GLUCEMIA (sub-hub) -->
     <section class="view" id="view-glucemia" data-titulo="Trastornos de la Glucemia">
       <h1 class="view-titulo">Trastornos de la Glucemia</h1>
-      <p class="view-intro">Empieza por el <b>triaje diagnóstico</b>: introduce los datos del paciente y la herramienta identifica el cuadro y te lleva a su tratamiento.</p>
+      <p class="view-intro">Empieza por <b>Diagnóstico y Antecedentes</b>: introduce los datos del paciente y la herramienta identifica el cuadro y te recomienda su tratamiento.</p>
       <div class="card-grid" id="glucemia-cards"></div>
     </section>
 
     <!-- VISTA: TRIAJE DIAGNÓSTICO -->
-    <section class="view" id="view-triaje" data-titulo="Triaje diagnóstico">
-      <h1 class="view-titulo">Triaje diagnóstico</h1>
-      <p class="view-intro">Introduce los datos disponibles. No hace falta rellenar todo: la herramienta valora con lo que tengas y te avisa de qué falta para mayor precisión.</p>
+    <section class="view" id="view-triaje" data-titulo="Diagnóstico y Antecedentes">
+      <h1 class="view-titulo">Diagnóstico y Antecedentes</h1>
+      <p class="view-intro">Introduce los datos disponibles y los antecedentes. No hace falta rellenar todo: la herramienta valora con lo que tengas, identifica el cuadro y te recomienda el módulo de tratamiento.</p>
 
       <div class="form-card">
         <div class="form-card-titulo">Datos del paciente</div>
@@ -505,7 +519,15 @@
 
       <div id="hipo-resultado"></div>
     </section>
-  </main>
+
+    <!-- VISTA: TRASTORNOS HIDROELECTROLÍTICOS (sub-hub) -->
+    <section class="view" id="view-hidro" data-titulo="Trastornos Hidroelectrolíticos">
+      <h1 class="view-titulo">Trastornos Hidroelectrolíticos</h1>
+      <p class="view-intro">Próximamente: diagnóstico y manejo de los trastornos del sodio, potasio, calcio, fósforo y magnesio. En desarrollo.</p>
+      <div class="card-grid" id="hidro-cards"></div>
+    </section>
+    </main>
+  </div>
 
   <!-- MODAL BIENVENIDA -->
   <div class="modal" id="modal-bienvenida">

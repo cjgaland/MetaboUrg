@@ -12,10 +12,23 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.08";
+const APP_VERSION = "2026.09";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.09",
+    fecha: "Junio 2026",
+    titulo: "Nueva navegación y diseño",
+    cambios: [
+      "Menú lateral con áreas desplegables: navega entre los módulos desde el lateral o desde las tarjetas. En el móvil, menú hamburguesa.",
+      "Mejor aprovechamiento del ancho de pantalla en ordenador, manteniendo el texto legible.",
+      "El «triaje» pasa a llamarse «Diagnóstico y Antecedentes», se muestra destacado y recomienda de forma explícita el módulo de tratamiento adecuado.",
+      "Al entrar directamente a un tratamiento se recuerda empezar por «Diagnóstico y Antecedentes».",
+      "Corregido el solape de la barra superior con la hora y la batería en el móvil.",
+      "Estructura preparada para crecer: trastornos hidroelectrolíticos y futuras áreas."
+    ]
+  },
   {
     version: "2026.08",
     fecha: "Junio 2026",
@@ -127,14 +140,10 @@ function renderRuta() {
   document.querySelectorAll(".view").forEach(v => v.classList.remove("activa"));
   const vista = document.getElementById(r.view);
   if (vista) vista.classList.add("activa");
-  const bc = document.getElementById("breadcrumb");
-  bc.innerHTML = r.crumbs.map((c, i) => {
-    const ultimo = i === r.crumbs.length - 1;
-    return '<button class="crumb' + (ultimo ? " actual" : "") + '" data-hash="' + c[1] + '">' + escHtml(c[0]) + "</button>" +
-      (ultimo ? "" : '<span class="crumb-sep">›</span>');
-  }).join("");
-  bc.querySelectorAll(".crumb").forEach(b => b.addEventListener("click", () => App.navegar(b.dataset.hash)));
+  const vinoConDatos = !!App.estado.paciente;
   if (typeof r.onShow === "function") { try { r.onShow(); } catch (e) { console.error(e); } }
+  sincronizarSidebar();
+  gestionarAvisoDiagnostico(vinoConDatos);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 window.addEventListener("hashchange", renderRuta);
@@ -142,9 +151,11 @@ window.addEventListener("hashchange", renderRuta);
 // ── Tarjetas (portal y sub-hubs) ──────────────────────────
 function tarjetaHTML(c) {
   const prox = c.proximamente;
-  return '<button class="card' + (prox ? " proximamente" : "") + '" ' +
+  const dest = c.destacado;
+  return '<button class="card' + (prox ? " proximamente" : "") + (dest ? " destacado" : "") + '" ' +
     (prox ? "" : 'data-hash="' + c.hash + '"') + ' style="--card-color:' + c.color + '">' +
     (prox ? '<span class="card-badge">Próximamente</span>' : "") +
+    (dest ? '<span class="card-badge card-badge-go">Empieza aquí</span>' : "") +
     '<span class="card-icono">' + c.icono + "</span>" +
     '<span class="card-titulo">' + escHtml(c.titulo) + "</span>" +
     '<span class="card-desc">' + escHtml(c.desc) + "</span></button>";
@@ -157,14 +168,125 @@ function pintarTarjetas(contId, lista) {
 }
 App.ui = { pintarTarjetas, tarjetaHTML };
 
-// ── Portal: mapa de áreas (hub) ───────────────────────────
-const HUB = [
-  { titulo: "Trastornos de la Glucemia", desc: "Hiperglucemia, cetoacidosis, hiperosmolar e hipoglucemia.", icono: "🩸", color: "var(--brand)", hash: "#/glucemia" },
-  { titulo: "Sodio", desc: "Hipo e hipernatremia.", icono: "🧂", color: "var(--c-hipo)", proximamente: true },
-  { titulo: "Potasio", desc: "Hipo e hiperpotasemia.", icono: "🍌", color: "var(--c-insulina)", proximamente: true },
-  { titulo: "Calcio", desc: "Hipo e hipercalcemia.", icono: "🦴", color: "var(--c-hiper)", proximamente: true },
-  { titulo: "Fósforo y Magnesio", desc: "Trastornos del P y del Mg.", icono: "⚗️", color: "var(--c-ehh)", proximamente: true }
+// ── Portal: árbol de áreas y módulos (fuente única) ───────
+// Alimenta a la vez el sidebar, las tarjetas del portal y los sub-hubs.
+// Escalable: añadir un área nueva (p. ej. Tiroides) es una entrada más.
+const AREAS = [
+  {
+    id: "glucemia",
+    titulo: "Trastornos de la Glucemia",
+    desc: "Diagnóstico, CAD, hiperosmolar, hipoglucemia e insulinización.",
+    icono: "🩸", color: "var(--brand)", hash: "#/glucemia",
+    cardsId: "glucemia-cards", diagnostico: "#/glucemia/diagnostico",
+    modulos: [
+      { titulo: "Diagnóstico y Antecedentes", desc: "Introduce datos → identifica el cuadro y te lleva a su tratamiento.", icono: "🔎", color: "var(--brand)", hash: "#/glucemia/diagnostico", destacado: true },
+      { titulo: "Cetoacidosis (CAD)", desc: "Fluidos, insulina y potasio.", icono: "⚠️", color: "var(--c-cad)", hash: "#/glucemia/cad", aviso: true },
+      { titulo: "Estado hiperosmolar", desc: "Corrección lenta de la osmolalidad.", icono: "💧", color: "var(--c-ehh)", hash: "#/glucemia/ehh", aviso: true },
+      { titulo: "Hipoglucemia", desc: "Tratamiento según consciencia.", icono: "🍬", color: "var(--c-hipo)", hash: "#/glucemia/hipoglucemia", aviso: true },
+      { titulo: "Insulinización IV", desc: "Perfusión y objetivos 140–180.", icono: "💉", color: "var(--c-insulina)", hash: "#/glucemia/insulina-iv", aviso: true },
+      { titulo: "Insulinización SC", desc: "Basal-bolo-corrección.", icono: "🧪", color: "var(--c-insulina)", hash: "#/glucemia/insulina-sc", aviso: true }
+    ]
+  },
+  {
+    id: "hidro",
+    titulo: "Trastornos Hidroelectrolíticos",
+    desc: "Sodio, potasio, calcio, fósforo y magnesio.",
+    icono: "🧪", color: "var(--c-hipo)", hash: "#/hidro",
+    cardsId: "hidro-cards",
+    modulos: [
+      { titulo: "Hiponatremia", desc: "Sodio bajo.", icono: "🧂", color: "var(--c-hipo)", proximamente: true },
+      { titulo: "Hipernatremia", desc: "Sodio alto.", icono: "🧂", color: "var(--c-ehh)", proximamente: true },
+      { titulo: "Hipopotasemia", desc: "Potasio bajo.", icono: "🍌", color: "var(--c-insulina)", proximamente: true },
+      { titulo: "Hiperpotasemia", desc: "Potasio alto.", icono: "🍌", color: "var(--c-cad)", proximamente: true },
+      { titulo: "Calcio", desc: "Hipo e hipercalcemia.", icono: "🦴", color: "var(--c-hiper)", proximamente: true },
+      { titulo: "Fósforo y Magnesio", desc: "Trastornos del P y del Mg.", icono: "⚗️", color: "var(--violet)", proximamente: true }
+    ]
+  }
 ];
+window.AREAS = AREAS;
+
+// Rutas de los sub-hubs de cada área (id → view-<id>)
+AREAS.forEach(a => App.registrarRuta(a.hash.replace(/^#/, ""), { view: "view-" + a.id }));
+
+// Tarjetas del portal = áreas de nivel superior
+const HUB = AREAS.map(a => ({ titulo: a.titulo, desc: a.desc, icono: a.icono, color: a.color, hash: a.hash }));
+
+// Pintar los sub-hubs (tarjetas de módulos de cada área)
+function pintarSubHubs() {
+  AREAS.forEach(a => { if (document.getElementById(a.cardsId)) pintarTarjetas(a.cardsId, a.modulos); });
+}
+
+// ── Sidebar de navegación (acordeón por área) ─────────────
+function construirSidebar() {
+  const nav = document.getElementById("sidebar-nav");
+  if (!nav) return;
+  nav.innerHTML = AREAS.map(a => {
+    const mods = a.modulos.map(m => {
+      const prox = m.proximamente;
+      return '<button class="side-mod' + (prox ? " prox" : "") + '"' + (prox ? " disabled" : ' data-hash="' + m.hash + '"') + '>' +
+        '<span class="side-mod-pt">' + escHtml(m.titulo) + "</span>" + (m.destacado ? '<span class="side-mod-star">★</span>' : "") + "</button>";
+    }).join("");
+    return '<div class="side-area" data-area="' + a.id + '">' +
+      '<div class="side-area-head">' +
+        '<button class="side-area-link" data-hash="' + a.hash + '"><span class="side-area-ic">' + a.icono + '</span><span class="side-area-tt">' + escHtml(a.titulo) + "</span></button>" +
+        '<button class="side-chevron-btn" data-area="' + a.id + '" aria-label="Desplegar">▾</button>' +
+      "</div>" +
+      '<div class="side-area-modulos">' + mods + "</div></div>";
+  }).join("");
+  nav.querySelectorAll(".side-mod[data-hash]").forEach(b => b.addEventListener("click", () => { App.navegar(b.dataset.hash); cerrarSidebarMovil(); }));
+  nav.querySelectorAll(".side-area-link").forEach(b => b.addEventListener("click", () => {
+    const area = b.closest(".side-area"); area.classList.add("abierta");
+    App.navegar(b.dataset.hash); cerrarSidebarMovil();
+  }));
+  nav.querySelectorAll(".side-chevron-btn").forEach(b => b.addEventListener("click", () => {
+    b.closest(".side-area").classList.toggle("abierta");
+  }));
+}
+
+function sincronizarSidebar() {
+  const nav = document.getElementById("sidebar-nav");
+  if (!nav) return;
+  const h = location.hash || "#/";
+  nav.querySelectorAll(".side-mod").forEach(b => b.classList.toggle("activa", b.dataset.hash === h));
+  AREAS.forEach(a => {
+    const contiene = a.hash === h || a.modulos.some(m => m.hash === h);
+    const el = nav.querySelector('.side-area[data-area="' + a.id + '"]');
+    if (!el) return;
+    el.classList.toggle("area-activa", contiene);
+    if (contiene) el.classList.add("abierta");
+  });
+}
+
+// Aviso no bloqueante "empieza por Diagnóstico" al entrar directo a un tratamiento
+function gestionarAvisoDiagnostico(vinoConDatos) {
+  document.querySelectorAll(".vista-aviso").forEach(e => e.remove());
+  const h = location.hash;
+  let area = null, mod = null;
+  AREAS.forEach(a => a.modulos.forEach(m => { if (m.hash === h) { area = a; mod = m; } }));
+  if (!mod || !mod.aviso || vinoConDatos || !area.diagnostico) return;
+  if (sessionStorage.getItem("aviso-dx-off") === "1") return;
+  const view = document.querySelector(".view.activa");
+  if (!view) return;
+  const div = document.createElement("div");
+  div.className = "vista-aviso";
+  div.innerHTML = '<span class="vista-aviso-ic">ℹ️</span>' +
+    '<span class="vista-aviso-tx">Para una valoración completa, empieza por <b>Diagnóstico y Antecedentes</b>.</span>' +
+    '<button class="vista-aviso-ir">Ir →</button><button class="vista-aviso-x" aria-label="Cerrar">✕</button>';
+  const intro = view.querySelector(".view-intro");
+  if (intro) intro.insertAdjacentElement("afterend", div); else view.insertBefore(div, view.firstChild);
+  div.querySelector(".vista-aviso-ir").addEventListener("click", () => App.navegar(area.diagnostico));
+  div.querySelector(".vista-aviso-x").addEventListener("click", () => { sessionStorage.setItem("aviso-dx-off", "1"); div.remove(); });
+}
+
+// Sidebar en móvil (drawer)
+function abrirSidebarMovil() {
+  const s = document.getElementById("sidebar"), b = document.getElementById("sidebar-backdrop");
+  if (s) s.classList.add("movil-abierta"); if (b) b.classList.add("visible");
+}
+function cerrarSidebarMovil() {
+  const s = document.getElementById("sidebar"), b = document.getElementById("sidebar-backdrop");
+  if (s) s.classList.remove("movil-abierta"); if (b) b.classList.remove("visible");
+}
 
 // ============================================================
 //  NOVEDADES / CHANGELOG
@@ -246,8 +368,18 @@ function mostrarBanner(reg) {
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
   pintarTarjetas("hub-cards", HUB);
+  pintarSubHubs();
+  construirSidebar();
   renderRuta();
   renderHistorial();
+
+  // Sidebar: hamburguesa (móvil) y marca → inicio
+  const bm = document.getElementById("btn-menu");
+  if (bm) bm.addEventListener("click", abrirSidebarMovil);
+  const bd = document.getElementById("sidebar-backdrop");
+  if (bd) bd.addEventListener("click", cerrarSidebarMovil);
+  const sb = document.getElementById("sidebar-brand");
+  if (sb) sb.addEventListener("click", () => { App.navegar("#/"); cerrarSidebarMovil(); });
 
   const linea = "Versión " + APP_VERSION + " · " + APP_ANIO;
   const elFooter = document.getElementById("app-version");
