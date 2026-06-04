@@ -12,10 +12,18 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.15";
+const APP_VERSION = "2026.16";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.16",
+    fecha: "Junio 2026",
+    titulo: "Fuentes científicas ampliadas",
+    cambios: [
+      "En «Acerca de», las fuentes se agrupan por áreas e incluyen las referencias internacionales de los trastornos hidroelectrolíticos, tiroideos y suprarrenales (guía europea de hiponatremia, UK Kidney Association, Endocrine Society, JCEM 2025, NICE NG243, Society for Endocrinology, Merck/MSD y EMCrit)."
+    ]
+  },
   {
     version: "2026.15",
     fecha: "Junio 2026",

@@ -488,6 +488,7 @@ body, .topbar, .sidebar, .card, .view, .field, .result-card, .report-card,
 .modal-body p { color: var(--text-2); font-size: 0.9rem; margin-bottom: 11px; }
 .modal-body h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-1); margin: 16px 0 7px; }
 .modal-body ul { margin: 0 0 11px 18px; color: var(--text-2); font-size: 0.88rem; }
+.fuentes-grupo { font-weight: 700; font-size: 0.78rem; color: var(--text-1); margin: 10px 0 2px !important; }
 .modal-body ul li { margin-bottom: 4px; }
 .modal-body a { color: var(--brand); }
 .modal-foot { padding: 0 22px 20px; }
