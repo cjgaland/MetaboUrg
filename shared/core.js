@@ -12,10 +12,21 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.14";
+const APP_VERSION = "2026.15";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.15",
+    fecha: "Junio 2026",
+    titulo: "Tiroides y suprarrenales",
+    cambios: [
+      "Nueva área Patología Tiroidea: tormenta tiroidea (con calculadora de la escala de Burch-Wartofsky) y coma mixedematoso.",
+      "Nueva área Trastornos Suprarrenales: crisis suprarrenal aguda, apoplejía, Addison, Cushing, feocromocitoma e hiperaldosteronismo primario (Conn), cada uno con diagnóstico, manejo y síntomas.",
+      "Glosario ampliado con más epónimos y tecnicismos (SIADH, Burch-Wartofsky, Wolff-Chaikoff, Jod-Basedow, Waterhouse-Friderichsen, Cullen, Grey-Turner, metanefrinas…).",
+      "Fuentes: JCEM 2025, NICE NG243, Endocrine Society, Merck/MSD y EMCrit."
+    ]
+  },
   {
     version: "2026.14",
     fecha: "Junio 2026",
@@ -229,7 +240,20 @@ const GLOSARIO = {
   "taquifilaxia": "Taquifilaxia: pérdida rápida de la eficacia de un fármaco con su uso repetido (p. ej., la calcitonina tras 48-72 h).",
   "mielinólisis": "Síndrome de desmielinización osmótica (mielinólisis central pontina): daño cerebral por corregir la hiponatremia demasiado deprisa.",
   "desmielinización osmótica": "Síndrome de desmielinización osmótica (mielinólisis central pontina): daño cerebral por corregir la hiponatremia demasiado deprisa.",
-  "adrogué-madias": "Fórmula de Adrogué-Madias: estima el cambio del sodio sérico que produce 1 litro de un fluido; ayuda a planificar la corrección."
+  "adrogué-madias": "Fórmula de Adrogué-Madias: estima el cambio del sodio sérico que produce 1 litro de un fluido; ayuda a planificar la corrección.",
+  "siadh": "SIADH: secreción inadecuada de ADH; causa hiponatremia euvolémica por retención de agua.",
+  "anión gap": "Anión gap: diferencia entre los iones medidos (Na − [Cl + HCO₃]); aumenta en la cetoacidosis y otras acidosis.",
+  "glasgow": "Escala de Glasgow: valora el nivel de consciencia de 3 (coma profundo) a 15 (normal).",
+  "burch-wartofsky": "Escala de Burch-Wartofsky: puntúa la probabilidad de tormenta tiroidea (≥ 45 muy probable; 25-44 inminente).",
+  "wolff-chaikoff": "Efecto Wolff-Chaikoff: el yodo en exceso frena de forma transitoria la liberación de hormona tiroidea; base de su uso en la tormenta.",
+  "jod-basedow": "Fenómeno de Jod-Basedow: hipertiroidismo inducido por yodo; por eso el yodo se administra DESPUÉS de la tionamida.",
+  "waterhouse-friderichsen": "Síndrome de Waterhouse-Friderichsen: hemorragia suprarrenal bilateral con insuficiencia suprarrenal aguda, típica de la sepsis meningocócica.",
+  "mixedema": "Mixedema: edema duro por depósito de mucopolisacáridos en el hipotiroidismo grave; el coma mixedematoso es su forma extrema.",
+  "cosintropina": "Cosintropina (ACTH sintética): se usa en el test de estimulación para diagnosticar la insuficiencia suprarrenal.",
+  "metanefrinas": "Metanefrinas: metabolitos de las catecolaminas; su elevación en plasma u orina es la prueba clave del feocromocitoma.",
+  "cullen": "Signo de Cullen: equimosis periumbilical por hemorragia retroperitoneal o intraabdominal (p. ej., pancreatitis).",
+  "grey-turner": "Signo de Grey-Turner: equimosis en los flancos por hemorragia retroperitoneal.",
+  "exoftalmos": "Exoftalmos: protrusión de los globos oculares; típico de la oftalmopatía de Graves-Basedow."
 };
 const GLOSS_RE = new RegExp(
   Object.keys(GLOSARIO).sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"),
@@ -313,6 +337,32 @@ const AREAS = [
       { titulo: "Hipofosfatemia", desc: "Fósforo bajo: reposición oral o IV.", icono: "⚗️", color: "var(--c-hipo)", hash: "#/hidro/hipofosfatemia" },
       { titulo: "Hipermagnesemia", desc: "Magnesio alto: calcio y eliminación.", icono: "🧲", color: "var(--c-ehh)", hash: "#/hidro/hipermagnesemia" },
       { titulo: "Hipomagnesemia", desc: "Magnesio bajo: sulfato de magnesio.", icono: "🧲", color: "var(--c-insulina)", hash: "#/hidro/hipomagnesemia" }
+    ]
+  },
+  {
+    id: "tiroides",
+    titulo: "Patología Tiroidea",
+    desc: "Tormenta tiroidea y coma mixedematoso.",
+    icono: "🦋", color: "var(--amber)", hash: "#/tiroides",
+    cardsId: "tiroides-cards",
+    modulos: [
+      { titulo: "Tormenta tiroidea", desc: "Crisis tirotóxica: Burch-Wartofsky y tratamiento.", icono: "🔥", color: "var(--c-cad)", hash: "#/tiroides/tormenta" },
+      { titulo: "Coma mixedematoso", desc: "Hipotiroidismo descompensado.", icono: "❄️", color: "var(--c-hipo)", hash: "#/tiroides/mixedema" }
+    ]
+  },
+  {
+    id: "suprarrenal",
+    titulo: "Trastornos Suprarrenales",
+    desc: "Crisis, apoplejía, Addison, Cushing, feocromocitoma y Conn.",
+    icono: "🔺", color: "var(--green)", hash: "#/suprarrenal",
+    cardsId: "suprarrenal-cards",
+    modulos: [
+      { titulo: "Crisis suprarrenal aguda", desc: "Hidrocortisona y fluidos sin demora.", icono: "🚨", color: "var(--c-cad)", hash: "#/suprarrenal/crisis" },
+      { titulo: "Apoplejía suprarrenal", desc: "Hemorragia/infarto suprarrenal.", icono: "🩸", color: "var(--c-cad)", hash: "#/suprarrenal/apoplejia" },
+      { titulo: "Síndrome de Addison", desc: "Insuf. suprarrenal primaria crónica.", icono: "🟤", color: "var(--c-ehh)", hash: "#/suprarrenal/addison" },
+      { titulo: "Síndrome de Cushing", desc: "Hipercortisolismo: cribado y manejo.", icono: "🌙", color: "var(--c-hiper)", hash: "#/suprarrenal/cushing" },
+      { titulo: "Feocromocitoma", desc: "Metanefrinas y bloqueo alfa.", icono: "⚡", color: "var(--violet)", hash: "#/suprarrenal/feocromocitoma" },
+      { titulo: "Hiperaldosteronismo (Conn)", desc: "Aldosterona/renina; espironolactona.", icono: "🧪", color: "var(--c-insulina)", hash: "#/suprarrenal/conn" }
     ]
   }
 ];

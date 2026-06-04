@@ -7,7 +7,7 @@
 //    para que los usuarios vean el banner "Nueva versión disponible".
 // ============================================================
 
-const CACHE_NAME = "metabourg-v10";
+const CACHE_NAME = "metabourg-v11";
 
 const ASSETS = [
   "./index.html",
@@ -28,6 +28,9 @@ const ASSETS = [
   "./modulos/hidro/calcio.js",
   "./modulos/hidro/fosforo.js",
   "./modulos/hidro/magnesio.js",
+  "./modulos/endo/protocolos.js",
+  "./modulos/endo/tiroides.js",
+  "./modulos/endo/suprarrenal.js",
   "./modulos/sintomas.js",
   "./manifest.json",
   "./icon-192.svg",

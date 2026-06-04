@@ -100,6 +100,58 @@
       "Convulsiones.",
       "Arritmias, incluida la <b>torsade de pointes</b>.",
       "Suele asociar hipopotasemia e hipocalcemia refractarias."
+    ],
+
+    // ── Tiroides ──
+    "view-tormenta": [
+      "Fiebre alta (a menudo > 39 °C) y sudoración profusa.",
+      "Taquicardia marcada, fibrilación auricular e insuficiencia cardíaca.",
+      "Agitación, delirio, psicosis, convulsiones o coma.",
+      "Náuseas, vómitos, diarrea e ictericia.",
+      "Suele haber bocio, <b>exoftalmos</b> u otros signos de hipertiroidismo de base."
+    ],
+    "view-mixedema": [
+      "Hipotermia, bradicardia e hipotensión.",
+      "Letargia, estupor o coma; reflejos lentos.",
+      "Piel seca, edema (<b>mixedema</b>), macroglosia y voz ronca.",
+      "Hipoventilación, hiponatremia e hipoglucemia."
+    ],
+
+    // ── Suprarrenales ──
+    "view-crisis-sr": [
+      "Hipotensión y shock que no responde a fluidos ni vasopresores.",
+      "Náuseas, vómitos y dolor abdominal (puede simular un abdomen agudo).",
+      "Debilidad intensa, fiebre y confusión.",
+      "Hiponatremia, hiperpotasemia e hipoglucemia."
+    ],
+    "view-apoplejia": [
+      "Dolor brusco en el flanco, la espalda o el abdomen.",
+      "Hipotensión, fiebre y deterioro general (insuficiencia suprarrenal aguda).",
+      "Contexto de sepsis (<b>Waterhouse-Friderichsen</b> en la meningococemia), anticoagulación o postoperatorio."
+    ],
+    "view-addison": [
+      "Astenia, debilidad y pérdida de peso progresivas.",
+      "Hiperpigmentación de piel y mucosas; avidez por la sal.",
+      "Hipotensión ortostática, náuseas y dolor abdominal.",
+      "Hiponatremia, hiperpotasemia y, a veces, hipoglucemia."
+    ],
+    "view-cushing": [
+      "Obesidad central, cara de luna llena y giba dorsal.",
+      "Estrías rojo-vinosas anchas, piel fina y hematomas fáciles.",
+      "Debilidad muscular proximal, hipertensión y diabetes.",
+      "Osteoporosis, trastornos del ánimo y mayor riesgo de infecciones."
+    ],
+    "view-feocromocitoma": [
+      "Crisis de cefalea, sudoración y palpitaciones (tríada clásica).",
+      "Hipertensión paroxística o mantenida, palidez, temblor y ansiedad.",
+      "Pérdida de peso e hiperglucemia.",
+      "Los episodios pueden desencadenarse por estrés, fármacos o manipulación del tumor."
+    ],
+    "view-conn": [
+      "Hipertensión, a menudo resistente al tratamiento.",
+      "Hipopotasemia (calambres, debilidad, poliuria), aunque el potasio puede ser normal.",
+      "Habitualmente sin edemas.",
+      "Tendencia a la alcalosis metabólica."
     ]
   };
 

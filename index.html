@@ -886,6 +886,153 @@
       </div>
       <div id="hm-resultado"></div>
     </section>
+
+    <!-- SUB-HUB: PATOLOGÍA TIROIDEA -->
+    <section class="view" id="view-tiroides" data-titulo="Patología Tiroidea">
+      <h1 class="view-titulo">Patología Tiroidea</h1>
+      <p class="view-intro">Emergencias del tiroides: tormenta tiroidea (con escala de Burch-Wartofsky) y coma mixedematoso.</p>
+      <div class="card-grid" id="tiroides-cards"></div>
+    </section>
+
+    <!-- SUB-HUB: TRASTORNOS SUPRARRENALES -->
+    <section class="view" id="view-suprarrenal" data-titulo="Trastornos Suprarrenales">
+      <h1 class="view-titulo">Trastornos Suprarrenales</h1>
+      <p class="view-intro">Crisis suprarrenal y apoplejía, Addison, Cushing, feocromocitoma e hiperaldosteronismo primario (Conn).</p>
+      <div class="card-grid" id="suprarrenal-cards"></div>
+    </section>
+
+    <!-- VISTA: TORMENTA TIROIDEA -->
+    <section class="view" id="view-tormenta" data-titulo="Tormenta tiroidea">
+      <h1 class="view-titulo">Tormenta tiroidea — Burch-Wartofsky</h1>
+      <p class="view-intro">Crisis tirotóxica. Calcula la escala de Burch-Wartofsky y obtén la secuencia de tratamiento. Verifica cada dosis.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Escala de Burch-Wartofsky</div>
+        <div class="fields">
+          <div class="field"><label for="tt-temp">Temperatura</label><div class="input-wrap"><input id="tt-temp" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">°C</span></div></div>
+          <div class="field"><label for="tt-fc">Frecuencia cardíaca</label><div class="input-wrap"><input id="tt-fc" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">lpm</span></div></div>
+          <div class="field"><label for="tt-snc">SNC</label><div class="input-wrap"><select id="tt-snc"><option value="ausente">Ausente</option><option value="leve">Leve (agitación)</option><option value="moderado">Moderado (delirio, psicosis, letargia)</option><option value="grave">Grave (convulsión, coma)</option></select></div></div>
+          <div class="field"><label for="tt-gi">Gastrointestinal/hepático</label><div class="input-wrap"><select id="tt-gi"><option value="ausente">Ausente</option><option value="moderado">Moderado (diarrea, náuseas, dolor)</option><option value="grave">Grave (ictericia)</option></select></div></div>
+          <div class="field"><label for="tt-ic">Insuficiencia cardíaca</label><div class="input-wrap"><select id="tt-ic"><option value="ausente">Ausente</option><option value="leve">Leve (edema)</option><option value="moderada">Moderada (crepitantes)</option><option value="grave">Grave (edema pulmonar)</option></select></div></div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Otros</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="tt-fa"><span class="dot"></span>Fibrilación auricular</label>
+          <label class="toggle"><input type="checkbox" id="tt-prec"><span class="dot"></span>Factor precipitante</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-tt-calcular" style="flex:1;min-width:200px;">Calcular Burch-Wartofsky</button>
+          <button class="btn btn-secundario" id="btn-tt-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="tt-resultado"></div>
+    </section>
+
+    <!-- VISTA: COMA MIXEDEMATOSO -->
+    <section class="view" id="view-mixedema" data-titulo="Coma mixedematoso">
+      <h1 class="view-titulo">Coma mixedematoso — manejo</h1>
+      <p class="view-intro">Hipotiroidismo grave descompensado. Hidrocortisona antes de la hormona tiroidea, levotiroxina IV y soporte.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Protocolo</div>
+        <p class="view-intro" style="margin:0;">Consulta el diagnóstico, el manejo y los síntomas (más abajo).</p>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-mx-calcular" style="flex:1;min-width:200px;">Ver diagnóstico y manejo</button>
+          <button class="btn btn-secundario" id="btn-mx-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="mx-resultado"></div>
+    </section>
+
+    <!-- VISTA: CRISIS SUPRARRENAL AGUDA -->
+    <section class="view" id="view-crisis-sr" data-titulo="Crisis suprarrenal aguda">
+      <h1 class="view-titulo">Crisis suprarrenal aguda — manejo</h1>
+      <p class="view-intro">Emergencia: hidrocortisona y fluidos sin esperar a las pruebas. Verifica cada dosis.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Protocolo</div>
+        <p class="view-intro" style="margin:0;">Consulta el diagnóstico, el manejo y los síntomas (más abajo).</p>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-cr-calcular" style="flex:1;min-width:200px;">Ver diagnóstico y manejo</button>
+          <button class="btn btn-secundario" id="btn-cr-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="cr-resultado"></div>
+    </section>
+
+    <!-- VISTA: APOPLEJÍA SUPRARRENAL -->
+    <section class="view" id="view-apoplejia" data-titulo="Apoplejía suprarrenal">
+      <h1 class="view-titulo">Apoplejía suprarrenal — manejo</h1>
+      <p class="view-intro">Hemorragia/infarto suprarrenal. Cursa como insuficiencia suprarrenal aguda; trátala como tal y trata la causa.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Protocolo</div>
+        <p class="view-intro" style="margin:0;">Consulta el diagnóstico, el manejo y los síntomas (más abajo).</p>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-ap-calcular" style="flex:1;min-width:200px;">Ver diagnóstico y manejo</button>
+          <button class="btn btn-secundario" id="btn-ap-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="ap-resultado"></div>
+    </section>
+
+    <!-- VISTA: SÍNDROME DE ADDISON -->
+    <section class="view" id="view-addison" data-titulo="Síndrome de Addison">
+      <h1 class="view-titulo">Síndrome de Addison</h1>
+      <p class="view-intro">Insuficiencia suprarrenal primaria crónica. Diagnóstico con cortisol/ACTH y cosintropina; sustitución con hidrocortisona y fludrocortisona.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Diagnóstico y manejo</div>
+        <p class="view-intro" style="margin:0;">Consulta el diagnóstico, el manejo y los síntomas (más abajo).</p>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-ad-calcular" style="flex:1;min-width:200px;">Ver diagnóstico y manejo</button>
+          <button class="btn btn-secundario" id="btn-ad-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="ad-resultado"></div>
+    </section>
+
+    <!-- VISTA: SÍNDROME DE CUSHING -->
+    <section class="view" id="view-cushing" data-titulo="Síndrome de Cushing">
+      <h1 class="view-titulo">Síndrome de Cushing</h1>
+      <p class="view-intro">Hipercortisolismo. Cribado con dexametasona, cortisol salival nocturno y cortisol libre urinario; luego ACTH y localización.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Diagnóstico y manejo</div>
+        <p class="view-intro" style="margin:0;">Consulta el diagnóstico, el manejo y los síntomas (más abajo).</p>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-cu-calcular" style="flex:1;min-width:200px;">Ver diagnóstico y manejo</button>
+          <button class="btn btn-secundario" id="btn-cu-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="cu-resultado"></div>
+    </section>
+
+    <!-- VISTA: FEOCROMOCITOMA -->
+    <section class="view" id="view-feocromocitoma" data-titulo="Feocromocitoma">
+      <h1 class="view-titulo">Feocromocitoma</h1>
+      <p class="view-intro">Tumor productor de catecolaminas. Diagnóstico con metanefrinas; bloqueo alfa antes que beta. Verifica cada fármaco.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Diagnóstico y manejo</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="fe-crisis"><span class="dot"></span>Crisis hipertensiva</label>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-fe-calcular" style="flex:1;min-width:200px;">Ver diagnóstico y manejo</button>
+          <button class="btn btn-secundario" id="btn-fe-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="fe-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPERALDOSTERONISMO (CONN) -->
+    <section class="view" id="view-conn" data-titulo="Hiperaldosteronismo (Conn)">
+      <h1 class="view-titulo">Hiperaldosteronismo primario (Conn)</h1>
+      <p class="view-intro">Cribado con el cociente aldosterona/renina; manejo con espironolactona o adrenalectomía según el subtipo.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Diagnóstico y manejo</div>
+        <p class="view-intro" style="margin:0;">Consulta el diagnóstico, el manejo y los síntomas (más abajo).</p>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-co-calcular" style="flex:1;min-width:200px;">Ver diagnóstico y manejo</button>
+          <button class="btn btn-secundario" id="btn-co-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="co-resultado"></div>
+    </section>
     </main>
   </div>
 
@@ -974,6 +1121,9 @@
   <script src="modulos/hidro/calcio.js"></script>
   <script src="modulos/hidro/fosforo.js"></script>
   <script src="modulos/hidro/magnesio.js"></script>
+  <script src="modulos/endo/protocolos.js"></script>
+  <script src="modulos/endo/tiroides.js"></script>
+  <script src="modulos/endo/suprarrenal.js"></script>
   <script src="modulos/sintomas.js"></script>
 </body>
 </html>
