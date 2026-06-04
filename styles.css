@@ -301,6 +301,29 @@ body, .topbar, .sidebar, .card, .view, .field, .result-card, .report-card,
 }
 .result-reco-ic { color: var(--brand); font-weight: 800; }
 
+/* Tarjeta plegable "Síntomas y signos" (recordatorio bajo el formulario) */
+.sintomas-card {
+  max-width: var(--tool-max); margin-top: 14px; overflow: hidden;
+  background: color-mix(in srgb, var(--amber) 7%, var(--bg-2));
+  border: 1px solid var(--border); border-left: 5px solid var(--amber);
+  border-radius: var(--radius-lg);
+}
+.sintomas-card > summary {
+  list-style: none; cursor: pointer; padding: 13px 18px;
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 0.92rem; color: var(--text-1);
+}
+.sintomas-card > summary::-webkit-details-marker { display: none; }
+.sintomas-card > summary::after { content: "▾"; margin-left: auto; color: var(--text-3); font-size: 0.78rem; transition: transform .2s ease; }
+.sintomas-card[open] > summary::after { transform: rotate(180deg); }
+.sintomas-card .sint-ic { font-size: 1.05rem; }
+.sintomas-card .sint-body { padding: 0 18px 14px; }
+.sintomas-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.sintomas-card li { font-size: 0.86rem; color: var(--text-2); padding-left: 16px; position: relative; line-height: 1.45; }
+.sintomas-card li::before { content: "•"; position: absolute; left: 3px; color: var(--amber); font-weight: 700; }
+.sintomas-card li b { color: var(--text-1); }
+.sint-fuente { font-size: 0.74rem; color: var(--text-3); margin-top: 10px; }
+
 /* ── Formularios (triaje) ──────────────────────────────── */
 .form-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 16px; }
 .form-card-titulo { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-2); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }

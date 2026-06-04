@@ -12,10 +12,19 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.12";
+const APP_VERSION = "2026.13";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.13",
+    fecha: "Junio 2026",
+    titulo: "Recordatorio de síntomas y signos",
+    cambios: [
+      "Cada módulo de tratamiento incluye una tarjeta plegable «Síntomas y signos» bajo el formulario, con los hallazgos más frecuentes (incluidos los del ECG) basados en la literatura.",
+      "Disponible en glucemia (CAD, EHH, hipoglucemia) y en los diez trastornos hidroelectrolíticos."
+    ]
+  },
   {
     version: "2026.12",
     fecha: "Junio 2026",
@@ -200,7 +209,21 @@ function pintarTarjetas(contId, lista) {
   cont.innerHTML = lista.map(tarjetaHTML).join("");
   cont.querySelectorAll(".card[data-hash]").forEach(b => b.addEventListener("click", () => App.navegar(b.dataset.hash)));
 }
-App.ui = { pintarTarjetas, tarjetaHTML };
+// Tarjeta plegable de "Síntomas y signos" bajo el formulario de una vista
+function insertarSintomas(viewId, items) {
+  const view = document.getElementById(viewId);
+  if (!view) return;
+  const form = view.querySelector(".form-card");
+  if (!form || view.querySelector(".sintomas-card")) return;
+  const det = document.createElement("details");
+  det.className = "sintomas-card";
+  det.innerHTML =
+    '<summary><span class="sint-ic">🩺</span><span>Síntomas y signos</span></summary>' +
+    '<div class="sint-body"><ul>' + items.map(i => "<li>" + i + "</li>").join("") + "</ul>" +
+    '<p class="sint-fuente">Recordatorio orientativo basado en la literatura; no sustituye la valoración clínica.</p></div>';
+  form.insertAdjacentElement("afterend", det);
+}
+App.ui = { pintarTarjetas, tarjetaHTML, insertarSintomas };
 
 // ── Portal: árbol de áreas y módulos (fuente única) ───────
 // Alimenta a la vez el sidebar, las tarjetas del portal y los sub-hubs.
