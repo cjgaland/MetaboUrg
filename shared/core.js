@@ -12,10 +12,19 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.11";
+const APP_VERSION = "2026.12";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.12",
+    fecha: "Junio 2026",
+    titulo: "Mejoras visuales del menú y los temas",
+    cambios: [
+      "El menú lateral muestra un icono junto a cada proceso y agrupa cada área en un bloque con fondo de color tenue (Glucemia y Trastornos Hidroelectrolíticos), preparado para futuras áreas.",
+      "Corregido un fallo por el que algunos títulos de las tarjetas se veían en negro en el modo oscuro."
+    ]
+  },
   {
     version: "2026.11",
     fecha: "Junio 2026",
@@ -216,7 +225,7 @@ const AREAS = [
     id: "hidro",
     titulo: "Trastornos Hidroelectrolíticos",
     desc: "Sodio, potasio, calcio, fósforo y magnesio.",
-    icono: "🧪", color: "var(--c-hipo)", hash: "#/hidro",
+    icono: "🧪", color: "var(--brand-2)", hash: "#/hidro",
     cardsId: "hidro-cards", diagnostico: "#/hidro/diagnostico",
     modulos: [
       { titulo: "Diagnóstico (Na)", desc: "Clasifica el trastorno del sodio y recomienda el manejo.", icono: "🔎", color: "var(--brand)", hash: "#/hidro/diagnostico", destacado: true },
@@ -255,9 +264,10 @@ function construirSidebar() {
     const mods = a.modulos.map(m => {
       const prox = m.proximamente;
       return '<button class="side-mod' + (prox ? " prox" : "") + '"' + (prox ? " disabled" : ' data-hash="' + m.hash + '"') + '>' +
+        '<span class="side-mod-ic">' + (m.icono || "•") + "</span>" +
         '<span class="side-mod-pt">' + escHtml(m.titulo) + "</span>" + (m.destacado ? '<span class="side-mod-star">★</span>' : "") + "</button>";
     }).join("");
-    return '<div class="side-area" data-area="' + a.id + '">' +
+    return '<div class="side-area" data-area="' + a.id + '" style="--area-color:' + a.color + '">' +
       '<div class="side-area-head">' +
         '<button class="side-area-link" data-hash="' + a.hash + '"><span class="side-area-ic">' + a.icono + '</span><span class="side-area-tt">' + escHtml(a.titulo) + "</span></button>" +
         '<button class="side-chevron-btn" data-area="' + a.id + '" aria-label="Desplegar">▾</button>' +
