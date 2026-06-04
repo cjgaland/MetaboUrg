@@ -12,10 +12,23 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.10";
+const APP_VERSION = "2026.11";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.11",
+    fecha: "Junio 2026",
+    titulo: "Potasio, calcio, fósforo y magnesio",
+    cambios: [
+      "Potasio: Diagnóstico (K), Hiperpotasemia (calcio, insulina-glucosa, salbutamol, quelantes/diálisis) e Hipopotasemia (reposición oral/IV y magnesio).",
+      "Calcio: Hipercalcemia (hidratación, calcitonina, bifosfonato/denosumab) e Hipocalcemia (calcio IV y magnesio), con calcio corregido por albúmina.",
+      "Fósforo: Hiperfosfatemia (quelantes) e Hipofosfatemia (reposición oral/IV; aviso de realimentación).",
+      "Magnesio: Hipermagnesemia (calcio antagonista, eliminación) e Hipomagnesemia (sulfato de magnesio).",
+      "Con esto, el área de Trastornos Hidroelectrolíticos cubre el sodio, el potasio, el calcio, el fósforo y el magnesio.",
+      "Fuentes: UK Kidney Association 2023, Endocrine Society 2023, consenso español y Nefrología al día (S.E.N.), entre otras."
+    ]
+  },
   {
     version: "2026.10",
     fecha: "Junio 2026",
@@ -209,10 +222,15 @@ const AREAS = [
       { titulo: "Diagnóstico (Na)", desc: "Clasifica el trastorno del sodio y recomienda el manejo.", icono: "🔎", color: "var(--brand)", hash: "#/hidro/diagnostico", destacado: true },
       { titulo: "Hiponatremia", desc: "Sodio bajo: gravedad, hipertónico y límites.", icono: "🧂", color: "var(--c-hipo)", hash: "#/hidro/hiponatremia", aviso: true },
       { titulo: "Hipernatremia", desc: "Sodio alto: déficit de agua libre.", icono: "🧂", color: "var(--c-ehh)", hash: "#/hidro/hipernatremia", aviso: true },
-      { titulo: "Hipopotasemia", desc: "Potasio bajo.", icono: "🍌", color: "var(--c-insulina)", proximamente: true },
-      { titulo: "Hiperpotasemia", desc: "Potasio alto.", icono: "🍌", color: "var(--c-cad)", proximamente: true },
-      { titulo: "Calcio", desc: "Hipo e hipercalcemia.", icono: "🦴", color: "var(--c-hiper)", proximamente: true },
-      { titulo: "Fósforo y Magnesio", desc: "Trastornos del P y del Mg.", icono: "⚗️", color: "var(--violet)", proximamente: true }
+      { titulo: "Diagnóstico (K)", desc: "Clasifica el trastorno del potasio y recomienda el manejo.", icono: "🔎", color: "var(--brand)", hash: "#/hidro/diagnostico-k", destacado: true },
+      { titulo: "Hiperpotasemia", desc: "Potasio alto: calcio, insulina y eliminación.", icono: "🍌", color: "var(--c-cad)", hash: "#/hidro/hiperpotasemia", aviso: true, diagnostico: "#/hidro/diagnostico-k" },
+      { titulo: "Hipopotasemia", desc: "Potasio bajo: reposición y magnesio.", icono: "🍌", color: "var(--c-insulina)", hash: "#/hidro/hipopotasemia", aviso: true, diagnostico: "#/hidro/diagnostico-k" },
+      { titulo: "Hipercalcemia", desc: "Calcio alto: hidratación y antirresortivos.", icono: "🦴", color: "var(--c-hiper)", hash: "#/hidro/hipercalcemia" },
+      { titulo: "Hipocalcemia", desc: "Calcio bajo: calcio IV y magnesio.", icono: "🦴", color: "var(--c-hipo)", hash: "#/hidro/hipocalcemia" },
+      { titulo: "Hiperfosfatemia", desc: "Fósforo alto: quelantes y dieta.", icono: "⚗️", color: "var(--c-ehh)", hash: "#/hidro/hiperfosfatemia" },
+      { titulo: "Hipofosfatemia", desc: "Fósforo bajo: reposición oral o IV.", icono: "⚗️", color: "var(--c-hipo)", hash: "#/hidro/hipofosfatemia" },
+      { titulo: "Hipermagnesemia", desc: "Magnesio alto: calcio y eliminación.", icono: "🧲", color: "var(--c-ehh)", hash: "#/hidro/hipermagnesemia" },
+      { titulo: "Hipomagnesemia", desc: "Magnesio bajo: sulfato de magnesio.", icono: "🧲", color: "var(--c-insulina)", hash: "#/hidro/hipomagnesemia" }
     ]
   }
 ];
@@ -276,18 +294,21 @@ function gestionarAvisoDiagnostico(vinoConDatos) {
   const h = location.hash;
   let area = null, mod = null;
   AREAS.forEach(a => a.modulos.forEach(m => { if (m.hash === h) { area = a; mod = m; } }));
-  if (!mod || !mod.aviso || vinoConDatos || !area.diagnostico) return;
+  const dxHash = mod && (mod.diagnostico || area.diagnostico);
+  if (!mod || !mod.aviso || vinoConDatos || !dxHash) return;
   if (sessionStorage.getItem("aviso-dx-off") === "1") return;
   const view = document.querySelector(".view.activa");
   if (!view) return;
+  let dxTitulo = "Diagnóstico";
+  area.modulos.forEach(m => { if (m.hash === dxHash) dxTitulo = m.titulo; });
   const div = document.createElement("div");
   div.className = "vista-aviso";
   div.innerHTML = '<span class="vista-aviso-ic">ℹ️</span>' +
-    '<span class="vista-aviso-tx">Para una valoración completa, empieza por <b>Diagnóstico y Antecedentes</b>.</span>' +
+    '<span class="vista-aviso-tx">Para una valoración completa, empieza por <b>' + escHtml(dxTitulo) + '</b>.</span>' +
     '<button class="vista-aviso-ir">Ir →</button><button class="vista-aviso-x" aria-label="Cerrar">✕</button>';
   const intro = view.querySelector(".view-intro");
   if (intro) intro.insertAdjacentElement("afterend", div); else view.insertBefore(div, view.firstChild);
-  div.querySelector(".vista-aviso-ir").addEventListener("click", () => App.navegar(area.diagnostico));
+  div.querySelector(".vista-aviso-ir").addEventListener("click", () => App.navegar(dxHash));
   div.querySelector(".vista-aviso-x").addEventListener("click", () => { sessionStorage.setItem("aviso-dx-off", "1"); div.remove(); });
 }
 

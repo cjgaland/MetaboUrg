@@ -659,6 +659,233 @@
       </div>
       <div id="he-resultado"></div>
     </section>
+
+    <!-- VISTA: DIAGNÓSTICO (K) -->
+    <section class="view" id="view-hidro-dk" data-titulo="Diagnóstico (K)">
+      <h1 class="view-titulo">Diagnóstico del potasio</h1>
+      <p class="view-intro">Introduce el potasio y si hay cambios en el ECG: clasifica hiper/hipopotasemia y su gravedad (cualquier cambio ECG = grave) y te recomienda el módulo de tratamiento.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field">
+            <label for="dk-k">Potasio (K⁺)</label>
+            <div class="input-wrap"><input id="dk-k" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mmol/l</span></div>
+          </div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="dk-ecg"><span class="dot"></span>Cambios en el ECG</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-dk-calcular" style="flex:1;min-width:200px;">Evaluar</button>
+          <button class="btn btn-secundario" id="btn-dk-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="dk-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPERPOTASEMIA -->
+    <section class="view" id="view-hiperpotasemia" data-titulo="Hiperpotasemia">
+      <h1 class="view-titulo">Hiperpotasemia — tratamiento</h1>
+      <p class="view-intro">Potasio &gt; 5 mmol/l. Tres ejes: proteger el corazón (calcio), meter el K en la célula (insulina-glucosa + salbutamol) y eliminarlo. Cualquier cambio ECG es una emergencia. Verifica cada dosis.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field">
+            <label for="hk-k">Potasio (K⁺)</label>
+            <div class="input-wrap"><input id="hk-k" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mmol/l</span></div>
+          </div>
+          <div class="field">
+            <label for="hk-glu">Glucemia</label>
+            <div class="input-wrap"><input id="hk-glu" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+            <span class="hint">para la glucosa de mantenimiento</span>
+          </div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="hk-ecg"><span class="dot"></span>Cambios en el ECG</label>
+          <label class="toggle"><input type="checkbox" id="hk-erc"><span class="dot"></span>ERC avanzada / en diálisis</label>
+          <label class="toggle"><input type="checkbox" id="hk-diuresis"><span class="dot"></span>Diuresis conservada</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-hk-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-hk-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="hk-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPOPOTASEMIA -->
+    <section class="view" id="view-hipopotasemia" data-titulo="Hipopotasemia">
+      <h1 class="view-titulo">Hipopotasemia — tratamiento</h1>
+      <p class="view-intro">Potasio &lt; 3,5 mmol/l. Repón el potasio (oral o IV según gravedad) y corrige siempre el magnesio. Verifica la vía y el ritmo.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field">
+            <label for="pk-k">Potasio (K⁺)</label>
+            <div class="input-wrap"><input id="pk-k" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mmol/l</span></div>
+          </div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="pk-ecg"><span class="dot"></span>Cambios en el ECG / arritmia</label>
+          <label class="toggle"><input type="checkbox" id="pk-oral" checked><span class="dot"></span>Tolera vía oral</label>
+          <label class="toggle"><input type="checkbox" id="pk-mg"><span class="dot"></span>Magnesio bajo</label>
+          <label class="toggle"><input type="checkbox" id="pk-cardio"><span class="dot"></span>Cardiopatía / isquemia / digital</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-pk-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-pk-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="pk-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPERCALCEMIA -->
+    <section class="view" id="view-hipercalcemia" data-titulo="Hipercalcemia">
+      <h1 class="view-titulo">Hipercalcemia — tratamiento</h1>
+      <p class="view-intro">Calcio corregido por albúmina. Pilares: hidratar (SSF), frenar la resorción ósea (calcitonina, bifosfonato/denosumab) y tratar la causa. Verifica cada dosis.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field"><label for="hc-ca">Calcio total</label><div class="input-wrap"><input id="hc-ca" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div></div>
+          <div class="field"><label for="hc-alb">Albúmina</label><div class="input-wrap"><input id="hc-alb" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">g/dl</span></div><span class="hint">para el calcio corregido</span></div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="hc-sintomas"><span class="dot"></span>Sintomática</label>
+          <label class="toggle"><input type="checkbox" id="hc-erc"><span class="dot"></span>Insuficiencia renal</label>
+          <label class="toggle"><input type="checkbox" id="hc-vitd"><span class="dot"></span>Mediada por vitamina D (granulomatosis/linfoma)</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-hc-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-hc-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="hc-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPOCALCEMIA -->
+    <section class="view" id="view-hipocalcemia" data-titulo="Hipocalcemia">
+      <h1 class="view-titulo">Hipocalcemia — tratamiento</h1>
+      <p class="view-intro">Calcio corregido por albúmina. Con síntomas: calcio IV; corrige siempre el magnesio. Verifica la vía y el ritmo.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field"><label for="lc-ca">Calcio total</label><div class="input-wrap"><input id="lc-ca" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div></div>
+          <div class="field"><label for="lc-alb">Albúmina</label><div class="input-wrap"><input id="lc-alb" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">g/dl</span></div><span class="hint">para el calcio corregido</span></div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="lc-sintomas"><span class="dot"></span>Síntomas (tetania, convulsiones, ECG)</label>
+          <label class="toggle"><input type="checkbox" id="lc-mg"><span class="dot"></span>Magnesio bajo</label>
+          <label class="toggle"><input type="checkbox" id="lc-oral" checked><span class="dot"></span>Tolera vía oral</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-lc-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-lc-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="lc-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPOFOSFATEMIA -->
+    <section class="view" id="view-hipofosfatemia" data-titulo="Hipofosfatemia">
+      <h1 class="view-titulo">Hipofosfatemia — tratamiento</h1>
+      <p class="view-intro">Repón el fósforo según la gravedad (oral o IV) y vigila el calcio. Atención al síndrome de realimentación. Verifica la dosis y el ritmo.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field"><label for="lf-p">Fósforo</label><div class="input-wrap"><input id="lf-p" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div></div>
+          <div class="field"><label for="lf-peso">Peso</label><div class="input-wrap"><input id="lf-peso" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">kg</span></div><span class="hint">para la dosis IV</span></div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="lf-sintomas"><span class="dot"></span>Sintomática / grave</label>
+          <label class="toggle"><input type="checkbox" id="lf-k"><span class="dot"></span>Hipopotasemia asociada</label>
+          <label class="toggle"><input type="checkbox" id="lf-oral" checked><span class="dot"></span>Tolera vía oral</label>
+          <label class="toggle"><input type="checkbox" id="lf-realim"><span class="dot"></span>Riesgo de realimentación</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-lf-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-lf-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="lf-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPERFOSFATEMIA -->
+    <section class="view" id="view-hiperfosfatemia" data-titulo="Hiperfosfatemia">
+      <h1 class="view-titulo">Hiperfosfatemia — tratamiento</h1>
+      <p class="view-intro">Casi siempre por enfermedad renal crónica. Quelantes con las comidas, restricción dietética y tratar la causa. Vigila el calcio.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field"><label for="hf-p">Fósforo</label><div class="input-wrap"><input id="hf-p" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div></div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="hf-erc"><span class="dot"></span>ERC / en diálisis</label>
+          <label class="toggle"><input type="checkbox" id="hf-agudo"><span class="dot"></span>Agudo (lisis tumoral / rabdomiólisis)</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-hf-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-hf-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="hf-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPOMAGNESEMIA -->
+    <section class="view" id="view-hipomagnesemia" data-titulo="Hipomagnesemia">
+      <h1 class="view-titulo">Hipomagnesemia — tratamiento</h1>
+      <p class="view-intro">Sulfato de magnesio (IV si grave/sintomática) y reposición simultánea de potasio y calcio. Verifica la dosis y el ritmo.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field"><label for="lm-mg">Magnesio</label><div class="input-wrap"><input id="lm-mg" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div></div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="lm-sintomas"><span class="dot"></span>Sintomática / arritmia</label>
+          <label class="toggle"><input type="checkbox" id="lm-torsades"><span class="dot"></span>Torsades / convulsiones</label>
+          <label class="toggle"><input type="checkbox" id="lm-oral" checked><span class="dot"></span>Tolera vía oral</label>
+          <label class="toggle"><input type="checkbox" id="lm-erc"><span class="dot"></span>Insuficiencia renal</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-lm-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-lm-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="lm-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPERMAGNESEMIA -->
+    <section class="view" id="view-hipermagnesemia" data-titulo="Hipermagnesemia">
+      <h1 class="view-titulo">Hipermagnesemia — tratamiento</h1>
+      <p class="view-intro">Casi siempre por insuficiencia renal con aporte de magnesio. Suspende el aporte, antagoniza con calcio si hay síntomas y elimina. Verifica cada dosis.</p>
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field"><label for="hm-mg">Magnesio</label><div class="input-wrap"><input id="hm-mg" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div></div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="hm-sintomas"><span class="dot"></span>Síntomas (hiporreflexia, cardíaco, respiratorio)</label>
+          <label class="toggle"><input type="checkbox" id="hm-erc"><span class="dot"></span>ERC / en diálisis</label>
+          <label class="toggle"><input type="checkbox" id="hm-diuresis"><span class="dot"></span>Diuresis conservada</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-hm-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-hm-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="hm-resultado"></div>
+    </section>
     </main>
   </div>
 
@@ -743,5 +970,9 @@
   <script src="modulos/glucemia/hipoglucemia.js"></script>
   <script src="modulos/hidro/protocolos.js"></script>
   <script src="modulos/hidro/sodio.js"></script>
+  <script src="modulos/hidro/potasio.js"></script>
+  <script src="modulos/hidro/calcio.js"></script>
+  <script src="modulos/hidro/fosforo.js"></script>
+  <script src="modulos/hidro/magnesio.js"></script>
 </body>
 </html>
