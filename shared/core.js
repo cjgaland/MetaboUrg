@@ -12,10 +12,22 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.09";
+const APP_VERSION = "2026.10";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.10",
+    fecha: "Junio 2026",
+    titulo: "Trastornos del sodio",
+    cambios: [
+      "Nueva área de Trastornos Hidroelectrolíticos, con el primer bloque: el sodio.",
+      "Diagnóstico (Na): clasifica hipo/hipernatremia y su gravedad, descarta la pseudohiponatremia por hiperglucemia, orienta la causa por la orina y la volemia, y recomienda el módulo de tratamiento.",
+      "Hiponatremia: salino hipertónico al 3% en los síntomas graves, con los límites de ascenso para evitar la mielinólisis, y manejo según la causa.",
+      "Hipernatremia: cálculo del déficit de agua libre, velocidad de corrección y fluidoterapia.",
+      "Basado en la guía europea 2014 (ESICM/ESE/ERA-EDTA) y la guía española SEN-SEEN-SEMI."
+    ]
+  },
   {
     version: "2026.09",
     fecha: "Junio 2026",
@@ -192,10 +204,11 @@ const AREAS = [
     titulo: "Trastornos Hidroelectrolíticos",
     desc: "Sodio, potasio, calcio, fósforo y magnesio.",
     icono: "🧪", color: "var(--c-hipo)", hash: "#/hidro",
-    cardsId: "hidro-cards",
+    cardsId: "hidro-cards", diagnostico: "#/hidro/diagnostico",
     modulos: [
-      { titulo: "Hiponatremia", desc: "Sodio bajo.", icono: "🧂", color: "var(--c-hipo)", proximamente: true },
-      { titulo: "Hipernatremia", desc: "Sodio alto.", icono: "🧂", color: "var(--c-ehh)", proximamente: true },
+      { titulo: "Diagnóstico (Na)", desc: "Clasifica el trastorno del sodio y recomienda el manejo.", icono: "🔎", color: "var(--brand)", hash: "#/hidro/diagnostico", destacado: true },
+      { titulo: "Hiponatremia", desc: "Sodio bajo: gravedad, hipertónico y límites.", icono: "🧂", color: "var(--c-hipo)", hash: "#/hidro/hiponatremia", aviso: true },
+      { titulo: "Hipernatremia", desc: "Sodio alto: déficit de agua libre.", icono: "🧂", color: "var(--c-ehh)", hash: "#/hidro/hipernatremia", aviso: true },
       { titulo: "Hipopotasemia", desc: "Potasio bajo.", icono: "🍌", color: "var(--c-insulina)", proximamente: true },
       { titulo: "Hiperpotasemia", desc: "Potasio alto.", icono: "🍌", color: "var(--c-cad)", proximamente: true },
       { titulo: "Calcio", desc: "Hipo e hipercalcemia.", icono: "🦴", color: "var(--c-hiper)", proximamente: true },

@@ -523,8 +523,141 @@
     <!-- VISTA: TRASTORNOS HIDROELECTROLÍTICOS (sub-hub) -->
     <section class="view" id="view-hidro" data-titulo="Trastornos Hidroelectrolíticos">
       <h1 class="view-titulo">Trastornos Hidroelectrolíticos</h1>
-      <p class="view-intro">Próximamente: diagnóstico y manejo de los trastornos del sodio, potasio, calcio, fósforo y magnesio. En desarrollo.</p>
+      <p class="view-intro">Empieza por <b>Diagnóstico (Na)</b>: clasifica el trastorno del sodio y te recomienda el manejo. Potasio, calcio, fósforo y magnesio, en desarrollo.</p>
       <div class="card-grid" id="hidro-cards"></div>
+    </section>
+
+    <!-- VISTA: DIAGNÓSTICO (Na) -->
+    <section class="view" id="view-hidro-dx" data-titulo="Diagnóstico (Na)">
+      <h1 class="view-titulo">Diagnóstico del sodio</h1>
+      <p class="view-intro">Introduce el sodio y los datos disponibles: clasifica hipo/hipernatremia, su gravedad y orienta la causa, y te recomienda el módulo de tratamiento.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field">
+            <label for="dn-na">Sodio (Na⁺)</label>
+            <div class="input-wrap"><input id="dn-na" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mmol/l</span></div>
+          </div>
+          <div class="field">
+            <label for="dn-peso">Peso</label>
+            <div class="input-wrap"><input id="dn-peso" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">kg</span></div>
+          </div>
+          <div class="field">
+            <label for="dn-glu">Glucemia</label>
+            <div class="input-wrap"><input id="dn-glu" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+            <span class="hint">descarta pseudohiponatremia</span>
+          </div>
+          <div class="field">
+            <label for="dn-osmu">Osmolalidad urinaria</label>
+            <div class="input-wrap"><input id="dn-osmu" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mOsm/kg</span></div>
+            <span class="hint">orienta la causa</span>
+          </div>
+          <div class="field">
+            <label for="dn-nau">Na urinario</label>
+            <div class="input-wrap"><input id="dn-nau" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mmol/l</span></div>
+          </div>
+          <div class="field">
+            <label for="dn-volemia">Estado de volumen</label>
+            <div class="input-wrap"><select id="dn-volemia">
+              <option value="">— Selecciona —</option>
+              <option value="hipovolemia">Hipovolemia (depleción)</option>
+              <option value="euvolemia">Euvolemia (normal)</option>
+              <option value="hipervolemia">Hipervolemia (edemas)</option>
+            </select></div>
+          </div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="dn-graves"><span class="dot"></span>Síntomas graves (vómitos, convulsiones, coma)</label>
+          <label class="toggle"><input type="checkbox" id="dn-agudo"><span class="dot"></span>Inicio agudo (&lt; 48 h)</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-dn-calcular" style="flex:1;min-width:200px;">Evaluar</button>
+          <button class="btn btn-secundario" id="btn-dn-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="dn-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPONATREMIA -->
+    <section class="view" id="view-hiponatremia" data-titulo="Hiponatremia">
+      <h1 class="view-titulo">Hiponatremia — tratamiento</h1>
+      <p class="view-intro">Sodio &lt; 135 mmol/l. Con síntomas graves prima el salino hipertónico; en todos los casos se respetan los límites de ascenso para evitar la mielinólisis. Verifica cada dosis y ritmo.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field">
+            <label for="ho-na">Sodio (Na⁺)</label>
+            <div class="input-wrap"><input id="ho-na" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mmol/l</span></div>
+          </div>
+          <div class="field">
+            <label for="ho-peso">Peso</label>
+            <div class="input-wrap"><input id="ho-peso" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">kg</span></div>
+          </div>
+          <div class="field">
+            <label for="ho-volemia">Estado de volumen</label>
+            <div class="input-wrap"><select id="ho-volemia">
+              <option value="">— Selecciona —</option>
+              <option value="hipovolemia">Hipovolemia (depleción)</option>
+              <option value="euvolemia">Euvolemia (SIADH)</option>
+              <option value="hipervolemia">Hipervolemia (edemas)</option>
+            </select></div>
+          </div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="ho-graves"><span class="dot"></span>Síntomas graves (vómitos, convulsiones, coma)</label>
+          <label class="toggle"><input type="checkbox" id="ho-riesgo"><span class="dot"></span>Alto riesgo de mielinólisis</label>
+          <label class="toggle"><input type="checkbox" id="ho-agudo"><span class="dot"></span>Inicio agudo (&lt; 48 h)</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-ho-calcular" style="flex:1;min-width:200px;">Calcular manejo</button>
+          <button class="btn btn-secundario" id="btn-ho-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="ho-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPERNATREMIA -->
+    <section class="view" id="view-hipernatremia" data-titulo="Hipernatremia">
+      <h1 class="view-titulo">Hipernatremia — tratamiento</h1>
+      <p class="view-intro">Sodio &gt; 145 mmol/l: casi siempre déficit de agua. Calcula el déficit de agua libre y repón de forma controlada. Verifica cada cálculo y ritmo.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field">
+            <label for="he-na">Sodio (Na⁺)</label>
+            <div class="input-wrap"><input id="he-na" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mmol/l</span></div>
+          </div>
+          <div class="field">
+            <label for="he-peso">Peso</label>
+            <div class="input-wrap"><input id="he-peso" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">kg</span></div>
+          </div>
+          <div class="field">
+            <label for="he-sexo">Sexo</label>
+            <div class="input-wrap"><select id="he-sexo">
+              <option value="varon">Varón</option>
+              <option value="mujer">Mujer</option>
+            </select></div>
+            <span class="hint">para el agua corporal total</span>
+          </div>
+        </div>
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="he-anciano"><span class="dot"></span>Anciano/a</label>
+          <label class="toggle"><input type="checkbox" id="he-agudo"><span class="dot"></span>Inicio agudo (&lt; 48 h)</label>
+          <label class="toggle"><input type="checkbox" id="he-oral" checked><span class="dot"></span>Tolera vía oral / SNG</label>
+          <label class="toggle"><input type="checkbox" id="he-shock"><span class="dot"></span>Inestable / hipovolemia</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-he-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-he-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="he-resultado"></div>
     </section>
     </main>
   </div>
@@ -608,5 +741,7 @@
   <script src="modulos/glucemia/insulina-iv.js"></script>
   <script src="modulos/glucemia/ehh.js"></script>
   <script src="modulos/glucemia/hipoglucemia.js"></script>
+  <script src="modulos/hidro/protocolos.js"></script>
+  <script src="modulos/hidro/sodio.js"></script>
 </body>
 </html>
