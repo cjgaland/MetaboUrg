@@ -12,10 +12,22 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.07";
+const APP_VERSION = "2026.08";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.08",
+    fecha: "Junio 2026",
+    titulo: "Insulinización, EHH e hipoglucemia",
+    cambios: [
+      "Nuevos módulos de insulinización: subcutánea (basal-bolo-corrección con pautas A/B/C) e intravenosa en perfusión (tabla de 4 pautas, objetivo 140-180 mg/dl) según SAEDYN 2017.",
+      "Nuevo módulo de estado hiperglucémico hiperosmolar (EHH): corrección lenta de la osmolalidad, insulina a dosis baja, potasio y profilaxis de trombosis.",
+      "Nuevo módulo de hipoglucemia: árbol de decisión según consciencia y vía venosa, con avisos de recaída por sulfonilurea/insulina lenta.",
+      "El triaje recoge ahora antecedentes (insuficiencia cardíaca, ERC) y el tratamiento previo (tipo de diabetes, antidiabéticos e insulina), que ajustan los fluidos, el potasio y la insulina basal en la CAD y se heredan entre módulos.",
+      "Accesos directos entre módulos con los datos ya rellenados (triaje → tratamiento, CAD/EHH → insulinización SC, IV → SC)."
+    ]
+  },
   {
     version: "2026.07",
     fecha: "Junio 2026",

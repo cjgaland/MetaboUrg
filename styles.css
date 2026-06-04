@@ -208,7 +208,8 @@ body, .app-header, .card, .view, .field, .result-card, .report-card,
 .input-wrap:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); }
 .input-wrap input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--text-1); font-size: 1rem; padding: 10px 12px; font-variant-numeric: tabular-nums; }
 .input-wrap .unit { padding: 0 11px; color: var(--text-3); font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
-.input-wrap select { background: none; border: none; outline: none; color: var(--text-2); padding: 0 8px; font-size: 0.82rem; }
+.input-wrap select { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--text-1); padding: 10px 10px; font-size: 0.95rem; }
+[hidden] { display: none !important; }
 
 /* Toggles tipo chip */
 .toggle-grid { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -284,6 +285,18 @@ body, .app-header, .card, .view, .field, .result-card, .report-card,
 .trat-list li { font-size: 0.88rem; color: var(--text-2); padding-left: 14px; position: relative; line-height: 1.45; }
 .trat-list li::before { content: "›"; position: absolute; left: 0; color: var(--trat-color, var(--c-cad)); font-weight: 700; }
 .trat-list li b { color: var(--text-1); font-weight: 700; }
+
+/* ── Tabla de pauta de corrección (insulina SC) ─────────── */
+.pauta-tabla { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: 0.84rem; }
+.pauta-tabla th, .pauta-tabla td { padding: 6px 8px; text-align: center; border-bottom: 1px solid var(--border); }
+.pauta-tabla thead th { color: var(--text-2); font-weight: 700; }
+.pauta-tabla thead .crit th { font-weight: 500; font-size: 0.7rem; color: var(--text-3); padding-top: 0; }
+.pauta-tabla tbody td:first-child, .pauta-tabla thead th:first-child { text-align: left; color: var(--text-2); white-space: nowrap; }
+.pauta-tabla tbody td { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--text-1); }
+.pauta-tabla .col-activa { background: var(--brand-dim); color: var(--text-1); font-weight: 700; }
+.pauta-tabla thead .col-activa { color: var(--brand); }
+.pauta-tabla tr.fila-activa td { background: color-mix(in srgb, var(--c-insulina) 14%, transparent); }
+.pauta-tabla tr.fila-activa td.col-activa { background: color-mix(in srgb, var(--brand) 26%, transparent); color: var(--text-1); }
 
 /* ── Panel "Datos calculados" ──────────────────────────── */
 .datos-card { background: color-mix(in srgb, var(--brand) 6%, var(--bg-2)); border: 1px solid var(--border); border-left: 5px solid var(--brand); border-radius: var(--radius-lg); padding: 16px 18px; margin-top: 14px; }

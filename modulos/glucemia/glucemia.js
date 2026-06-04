@@ -19,10 +19,10 @@ App.registrarRuta("/glucemia/triaje", {
 const GLUCEMIA_MODULOS = [
   { titulo: "Triaje diagnóstico", desc: "Introduce datos → identifica el cuadro.", icono: "🔎", color: "var(--brand)", hash: "#/glucemia/triaje" },
   { titulo: "Cetoacidosis (CAD)", desc: "Fluidos, insulina y potasio.", icono: "⚠️", color: "var(--c-cad)", hash: "#/glucemia/cad" },
-  { titulo: "Estado hiperosmolar", desc: "Corrección lenta de la osmolalidad.", icono: "💧", color: "var(--c-ehh)", proximamente: true },
-  { titulo: "Hipoglucemia", desc: "Tratamiento según consciencia.", icono: "🍬", color: "var(--c-hipo)", proximamente: true },
-  { titulo: "Insulinización IV", desc: "Perfusión y objetivos 140–180.", icono: "💉", color: "var(--c-insulina)", proximamente: true },
-  { titulo: "Insulinización SC", desc: "Basal-bolus-corrección.", icono: "🧪", color: "var(--c-insulina)", proximamente: true }
+  { titulo: "Estado hiperosmolar", desc: "Corrección lenta de la osmolalidad.", icono: "💧", color: "var(--c-ehh)", hash: "#/glucemia/ehh" },
+  { titulo: "Hipoglucemia", desc: "Tratamiento según consciencia.", icono: "🍬", color: "var(--c-hipo)", hash: "#/glucemia/hipoglucemia" },
+  { titulo: "Insulinización IV", desc: "Perfusión y objetivos 140–180.", icono: "💉", color: "var(--c-insulina)", hash: "#/glucemia/insulina-iv" },
+  { titulo: "Insulinización SC", desc: "Basal-bolus-corrección.", icono: "🧪", color: "var(--c-insulina)", hash: "#/glucemia/insulina-sc" }
 ];
 
 // ============================================================
@@ -79,6 +79,29 @@ function evaluarDiagnostico(d) {
     avisos.push({ nivel: "amber", txt: "Falta el potasio (K⁺): es imprescindible antes de iniciar insulina (si K < 3,3 mEq/l, reponer primero)." });
   }
 
+  // Avisos derivados de antecedentes y tratamiento previo
+  const a = d.ant || {};
+  const ados = a.ados || {};
+  const agudo = cuadroId === "cad" || cuadroId === "mixto" || cuadroId === "ehh";
+  if (a.tipoDM === "dm1") {
+    avisos.push({ nivel: "amber", txt: "DM tipo 1: no suspender NUNCA la insulina basal (riesgo de CAD), aunque el paciente esté en ayunas o normoglucémico." });
+  }
+  if (a.erc && agudo) {
+    avisos.push({ nivel: "amber", txt: "Enfermedad renal crónica: fluidoterapia más prudente y especial cautela con el potasio (mayor riesgo de hiperpotasemia); reponer K con umbrales conservadores." });
+  }
+  if (a.ic && agudo) {
+    avisos.push({ nivel: "amber", txt: "Insuficiencia cardíaca: ritmo de fluidos más prudente; vigilar sobrecarga de volumen / edema agudo de pulmón." });
+  }
+  if (ados.pioglitazona && a.ic) {
+    avisos.push({ nivel: "red", txt: "Pioglitazona en paciente con insuficiencia cardíaca: provoca retención hídrica; suspender." });
+  }
+  if (ados.metformina && (agudo || acidosis)) {
+    avisos.push({ nivel: "amber", txt: "Suspender metformina: riesgo de acidosis láctica en situación aguda / acidosis / deterioro de la función renal." });
+  }
+  if (ados.sulfonilurea && cuadroId === "hipoglucemia") {
+    avisos.push({ nivel: "red", txt: "Hipoglucemia por sulfonilurea: riesgo de recaída prolongada; vigilancia ≥ 24-48 h y considerar perfusión de glucosa." });
+  }
+
   return { cuadroId, gravedad, criterios, avisos, osm, naCorr };
 }
 
@@ -91,13 +114,43 @@ function gravedadCAD(d) {
 }
 
 // ── Lectura de datos del formulario ────────────────────────
+function chk(id) { const e = document.getElementById(id); return e ? e.checked : false; }
+function val(id) { const e = document.getElementById(id); return e ? e.value : ""; }
+
+function leerAntecedentes() {
+  return {
+    ic: chk("t-ic"),
+    erc: chk("t-erc"),
+    fge: parseNum("t-fge"),
+    ercEstadio: val("t-erc-estadio"),
+    tipoDM: val("t-tipodm"),
+    ados: {
+      metformina:   chk("t-ado-metformina"),
+      sulfonilurea: chk("t-ado-sulfonilurea"),
+      idpp4:        chk("t-ado-idpp4"),
+      arglp1:       chk("t-ado-arglp1"),
+      dual:         chk("t-ado-dual"),
+      isglt2:       chk("t-ado-isglt2"),
+      pioglitazona: chk("t-ado-pio"),
+      otros:        chk("t-ado-otros")
+    },
+    insulina: {
+      dtd:    parseNum("t-ins-dtd"),
+      rapida: parseNum("t-ins-rapida"),
+      lenta:  parseNum("t-ins-lenta"),
+      ultra:  parseNum("t-ins-ultra")
+    }
+  };
+}
+
 function leerDatosTriaje() {
   return {
     peso: parseNum("t-peso"), glu: parseNum("t-glucosa"), ph: parseNum("t-ph"),
     hco3: parseNum("t-hco3"), bhb: parseNum("t-bhb"), na: parseNum("t-na"), k: parseNum("t-k"),
-    cetonuria: document.getElementById("t-cetonuria").checked,
-    consciencia: document.getElementById("t-consciencia").checked,
-    isglt2: document.getElementById("t-isglt2").checked
+    cetonuria: chk("t-cetonuria"),
+    consciencia: chk("t-consciencia"),
+    isglt2: chk("t-ado-isglt2"),
+    ant: leerAntecedentes()
   };
 }
 function datosSuficientes(d) { return d.glu !== null || d.bhb !== null || d.cetonuria; }
@@ -159,14 +212,20 @@ function renderResultadoTriaje() {
       calc + avisos + trat + nota +
       '<div class="acciones-result">' +
         ((res.cuadroId === "cad" || res.cuadroId === "mixto") ? '<button class="btn btn-primario" id="btn-ir-cad">Ir al tratamiento de CAD →</button>' : "") +
+        (res.cuadroId === "ehh" ? '<button class="btn btn-primario" id="btn-ir-ehh">Ir al tratamiento de EHH →</button>' : "") +
+        (res.cuadroId === "hipoglucemia" ? '<button class="btn btn-primario" id="btn-ir-hipo">Ir al tratamiento de hipoglucemia →</button>' : "") +
+        (cuadro.modulo === "insulina-sc" ? '<button class="btn btn-primario" id="btn-ir-sc">Ir a insulinización SC →</button>' : "") +
         '<button class="btn btn-secundario" id="btn-recalcular">Recalcular</button>' +
       "</div>" +
     "</div>" +
     App.informe.bloque(construirInforme());
 
   document.getElementById("btn-recalcular").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-  const btnCad = document.getElementById("btn-ir-cad");
-  if (btnCad) btnCad.addEventListener("click", () => { App.estado.paciente = d; App.navegar("#/glucemia/cad"); });
+  const irA = (id, hash) => { const b = document.getElementById(id); if (b) b.addEventListener("click", () => { App.estado.paciente = d; App.navegar(hash); }); };
+  irA("btn-ir-cad", "#/glucemia/cad");
+  irA("btn-ir-ehh", "#/glucemia/ehh");
+  irA("btn-ir-hipo", "#/glucemia/hipoglucemia");
+  irA("btn-ir-sc", "#/glucemia/insulina-sc");
   App.informe.bind();
   cont.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -186,8 +245,30 @@ function construirInforme() {
   if (d.k !== null) t += "  - Potasio: " + fmt(d.k, 1) + " mEq/l\n";
   if (res.osm !== null) t += "  - Osmolalidad efectiva: " + fmt(res.osm, 0) + " mOsm/kg\n";
   if (res.naCorr !== null) t += "  - Sodio corregido: " + fmt(res.naCorr, 0) + " mEq/l\n";
-  if (d.isglt2) t += "  - En tratamiento con iSGLT2\n";
   if (d.consciencia) t += "  - Alteración del nivel de consciencia\n";
+
+  const a = d.ant || {};
+  const ados = a.ados || {};
+  const ins = a.insulina || {};
+  const adoMap = { metformina: "metformina", sulfonilurea: "sulfonilurea", idpp4: "iDPP-4", arglp1: "arGLP-1", dual: "dual GIP/GLP-1", isglt2: "iSGLT2", pioglitazona: "pioglitazona", otros: "otros" };
+  const adoList = Object.keys(adoMap).filter(k => ados[k]).map(k => adoMap[k]);
+  const insVals = [ins.dtd, ins.rapida, ins.lenta, ins.ultra];
+  const tieneAnt = a.ic || a.erc || a.tipoDM || adoList.length || insVals.some(v => v !== null && v !== undefined);
+  if (tieneAnt) {
+    const tipos = { no: "No diabético conocido", dm1: "DM tipo 1", dm2ins: "DM tipo 2 con insulina", dm2noins: "DM tipo 2 sin insulina" };
+    t += "\nANTECEDENTES Y TRATAMIENTO PREVIO\n";
+    if (a.tipoDM && tipos[a.tipoDM]) t += "  - " + tipos[a.tipoDM] + "\n";
+    if (a.ic) t += "  - Insuficiencia cardíaca\n";
+    if (a.erc) t += "  - Enfermedad renal crónica" + (a.fge !== null && a.fge !== undefined ? " (FGe " + fmt(a.fge, 0) + " ml/min)" : "") + (a.ercEstadio ? " — " + a.ercEstadio : "") + "\n";
+    if (adoList.length) t += "  - Tratamiento no insulínico: " + adoList.join(", ") + "\n";
+    if (ins.dtd !== null && ins.dtd !== undefined) t += "  - Insulina previa: " + fmt(ins.dtd, 0) + " UI/día (DTD)\n";
+    const desg = [];
+    if (ins.rapida !== null && ins.rapida !== undefined) desg.push("rápida " + fmt(ins.rapida, 0));
+    if (ins.lenta !== null && ins.lenta !== undefined) desg.push("lenta " + fmt(ins.lenta, 0));
+    if (ins.ultra !== null && ins.ultra !== undefined) desg.push("ultralenta " + fmt(ins.ultra, 0));
+    if (desg.length) t += "    · " + desg.join(" · ") + " UI/día\n";
+  }
+
   t += "\nDIAGNÓSTICO ORIENTATIVO\n  " + cuadro.nombre + (etiquetaGrav ? " — " + etiquetaGrav : "") + "\n  " + cuadro.explica + "\n";
   if (res.criterios.length) {
     t += "\nCRITERIOS\n";
@@ -203,12 +284,30 @@ function construirInforme() {
 }
 
 // ── Inicialización del módulo ──────────────────────────────
+const TRIAJE_INPUTS = ["t-peso", "t-glucosa", "t-ph", "t-hco3", "t-bhb", "t-na", "t-k", "t-fge", "t-ins-dtd", "t-ins-rapida", "t-ins-lenta", "t-ins-ultra"];
+const TRIAJE_CHECKS = ["t-cetonuria", "t-consciencia", "t-ic", "t-erc", "t-ado-metformina", "t-ado-sulfonilurea", "t-ado-idpp4", "t-ado-arglp1", "t-ado-dual", "t-ado-isglt2", "t-ado-pio", "t-ado-otros"];
+const TRIAJE_SELECTS = ["t-erc-estadio", "t-tipodm"];
+
 App.alIniciar(function () {
   App.ui.pintarTarjetas("glucemia-cards", GLUCEMIA_MODULOS);
   document.getElementById("btn-diagnosticar").addEventListener("click", renderResultadoTriaje);
+
+  // Campos condicionales: FGe/estadio al marcar ERC; desglose de insulina según tipo de DM
+  const ercToggle = document.getElementById("t-erc");
+  const ercExtra = document.getElementById("t-erc-extra");
+  ercToggle.addEventListener("change", () => { ercExtra.hidden = !ercToggle.checked; });
+  const tipoDM = document.getElementById("t-tipodm");
+  const insBloque = document.getElementById("t-ins-bloque");
+  tipoDM.addEventListener("change", () => {
+    insBloque.hidden = !(tipoDM.value === "dm1" || tipoDM.value === "dm2ins");
+  });
+
   document.getElementById("btn-limpiar-triaje").addEventListener("click", () => {
-    ["t-peso", "t-glucosa", "t-ph", "t-hco3", "t-bhb", "t-na", "t-k"].forEach(id => { document.getElementById(id).value = ""; });
-    ["t-cetonuria", "t-consciencia", "t-isglt2"].forEach(id => { document.getElementById(id).checked = false; });
+    TRIAJE_INPUTS.forEach(id => { document.getElementById(id).value = ""; });
+    TRIAJE_CHECKS.forEach(id => { document.getElementById(id).checked = false; });
+    TRIAJE_SELECTS.forEach(id => { document.getElementById(id).value = ""; });
+    ercExtra.hidden = true;
+    insBloque.hidden = true;
     document.getElementById("triaje-resultado").innerHTML = "";
     _ultimoDx = null;
   });

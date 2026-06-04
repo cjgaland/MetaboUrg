@@ -97,5 +97,5 @@ Fuentes en `Apoyo/`. NO modificar valores clínicos sin validación.
 
 ## 7. Estado actual (junio 2026)
 
-- **v2026.06** — primera versión. Portal MetaboUrg (chasis: temas, PWA, actualización, novedades, bienvenida, acerca) + módulo **Glucemia** con **triaje diagnóstico** funcional e informe copiable. Código ya modularizado en `shared/` + `modulos/glucemia/`.
-- **Pendiente**: calculadora completa de CAD (perfusión insulina ml/h, fluidos por horas, K en mEq, tabla horaria en el informe); EHH; hipoglucemia; insulinización IV (tabla 4 pautas SAEDYN); insulinización SC (basal-bolus-corrección A/B/C). Luego, módulos de electrolitos.
+- **v2026.08** — módulo **Glucemia** completo: triaje diagnóstico (con antecedentes IC/ERC y tratamiento previo: tipo de DM, ADO, insulina), calculadora de **CAD** (con cautela de fluidos/K por IC/ERC y basal según insulina previa), **EHH**, **hipoglucemia** (árbol de decisión), **insulinización SC** (basal-bolo-corrección A/B/C) e **insulinización IV** (4 pautas SAEDYN). Accesos directos entre módulos vía `App.estado.paciente`. Datos clínicos en `protocolos.js` (`UMBRAL`, `CUADROS`, `CAD_CFG`, `INSULINA_SC`, `INSULINA_IV`, `EHH_CFG`, `HIPO_CFG`). Módulos en `modulos/glucemia/`: `glucemia`, `cad`, `ehh`, `hipoglucemia`, `insulina-sc`, `insulina-iv`.
+- **Pendiente**: tabla horaria de la CAD en el informe; pulir el plan de insulinización al alta. Luego, **módulos de electrolitos** (Na, K, Ca, P, Mg).

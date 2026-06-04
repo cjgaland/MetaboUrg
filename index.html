@@ -112,7 +112,82 @@
         <div class="toggle-grid">
           <label class="toggle"><input type="checkbox" id="t-cetonuria"><span class="dot"></span>Cetonuria ≥ 2+</label>
           <label class="toggle"><input type="checkbox" id="t-consciencia"><span class="dot"></span>Alteración de la consciencia</label>
-          <label class="toggle"><input type="checkbox" id="t-isglt2"><span class="dot"></span>Toma iSGLT2 (-flozinas)</label>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Antecedentes <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);">— opcionales, condicionan fluidos e insulinización</span></div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="t-ic"><span class="dot"></span>Insuficiencia cardíaca</label>
+          <label class="toggle"><input type="checkbox" id="t-erc"><span class="dot"></span>Enfermedad renal crónica</label>
+        </div>
+        <div class="fields" id="t-erc-extra" hidden style="margin-top:12px;">
+          <div class="field">
+            <label for="t-fge">FGe</label>
+            <div class="input-wrap"><input id="t-fge" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">ml/min</span></div>
+          </div>
+          <div class="field">
+            <label for="t-erc-estadio">Estadio ERC</label>
+            <div class="input-wrap"><select id="t-erc-estadio">
+              <option value="">—</option>
+              <option value="G1">G1 (FGe ≥ 90)</option>
+              <option value="G2">G2 (60-89)</option>
+              <option value="G3a">G3a (45-59)</option>
+              <option value="G3b">G3b (30-44)</option>
+              <option value="G4">G4 (15-29)</option>
+              <option value="G5">G5 (&lt; 15)</option>
+            </select></div>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Diagnóstico diabético de partida</div>
+        <div class="fields">
+          <div class="field">
+            <label for="t-tipodm">Tipo de diabetes</label>
+            <div class="input-wrap"><select id="t-tipodm">
+              <option value="">— Selecciona —</option>
+              <option value="no">No diabético conocido</option>
+              <option value="dm1">DM tipo 1</option>
+              <option value="dm2ins">DM tipo 2 con insulina</option>
+              <option value="dm2noins">DM tipo 2 sin insulina</option>
+            </select></div>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Tratamiento no insulínico previo <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);">— ADO, arGLP-1, iSGLT2</span></div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="t-ado-metformina"><span class="dot"></span>Metformina</label>
+          <label class="toggle"><input type="checkbox" id="t-ado-sulfonilurea"><span class="dot"></span>Sulfonilurea</label>
+          <label class="toggle"><input type="checkbox" id="t-ado-idpp4"><span class="dot"></span>iDPP-4 (-gliptinas)</label>
+          <label class="toggle"><input type="checkbox" id="t-ado-arglp1"><span class="dot"></span>arGLP-1</label>
+          <label class="toggle"><input type="checkbox" id="t-ado-dual"><span class="dot"></span>Dual GIP/GLP-1 (tirzepatida)</label>
+          <label class="toggle"><input type="checkbox" id="t-ado-isglt2"><span class="dot"></span>iSGLT2 (-flozinas)</label>
+          <label class="toggle"><input type="checkbox" id="t-ado-pio"><span class="dot"></span>Pioglitazona</label>
+          <label class="toggle"><input type="checkbox" id="t-ado-otros"><span class="dot"></span>Otros</label>
+        </div>
+
+        <div id="t-ins-bloque" hidden>
+          <div class="form-card-titulo" style="margin-top:18px;">Insulina previa</div>
+          <div class="fields">
+            <div class="field">
+              <label for="t-ins-dtd">Dosis total diaria</label>
+              <div class="input-wrap"><input id="t-ins-dtd" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">UI/día</span></div>
+              <span class="hint">suma de todas las insulinas</span>
+            </div>
+            <div class="field">
+              <label for="t-ins-rapida">Rápida / prandial</label>
+              <div class="input-wrap"><input id="t-ins-rapida" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">UI/día</span></div>
+              <span class="hint">opcional</span>
+            </div>
+            <div class="field">
+              <label for="t-ins-lenta">Lenta / basal</label>
+              <div class="input-wrap"><input id="t-ins-lenta" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">UI/día</span></div>
+              <span class="hint">opcional</span>
+            </div>
+            <div class="field">
+              <label for="t-ins-ultra">Ultralenta</label>
+              <div class="input-wrap"><input id="t-ins-ultra" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">UI/día</span></div>
+              <span class="hint">opcional</span>
+            </div>
+          </div>
         </div>
 
         <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -190,8 +265,32 @@
         <div class="toggle-grid">
           <label class="toggle"><input type="checkbox" id="c-shock"><span class="dot"></span>TA sistólica &lt; 90 / shock</label>
           <label class="toggle"><input type="checkbox" id="c-debut"><span class="dot"></span>Début (sin insulina previa)</label>
-          <label class="toggle"><input type="checkbox" id="c-oliguria"><span class="dot"></span>Oligoanuria / I. renal</label>
+          <label class="toggle"><input type="checkbox" id="c-oliguria"><span class="dot"></span>Oligoanuria / I. renal aguda</label>
           <label class="toggle"><input type="checkbox" id="c-consciencia"><span class="dot"></span>Alteración de consciencia</label>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Antecedentes <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);">— ajustan fluidos, potasio e insulina basal</span></div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="c-ic"><span class="dot"></span>Insuficiencia cardíaca</label>
+          <label class="toggle"><input type="checkbox" id="c-erc"><span class="dot"></span>Enfermedad renal crónica</label>
+        </div>
+        <div class="fields" id="c-erc-extra" hidden style="margin-top:12px;">
+          <div class="field">
+            <label for="c-fge">FGe</label>
+            <div class="input-wrap"><input id="c-fge" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">ml/min</span></div>
+          </div>
+        </div>
+        <div class="fields" style="margin-top:12px;">
+          <div class="field">
+            <label for="c-ins-dtd">Insulina previa (DTD)</label>
+            <div class="input-wrap"><input id="c-ins-dtd" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">UI/día</span></div>
+            <span class="hint">dosis total diaria</span>
+          </div>
+          <div class="field">
+            <label for="c-ins-basal">Basal previa (lenta)</label>
+            <div class="input-wrap"><input id="c-ins-basal" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">UI/día</span></div>
+            <span class="hint">glargina/degludec</span>
+          </div>
         </div>
 
         <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -201,6 +300,210 @@
       </div>
 
       <div id="cad-resultado"></div>
+    </section>
+
+    <!-- VISTA: INSULINIZACIÓN SUBCUTÁNEA -->
+    <section class="view" id="view-insulina-sc" data-titulo="Insulinización SC">
+      <h1 class="view-titulo">Insulinización subcutánea — basal-bolo-corrección</h1>
+      <p class="view-intro">Pauta hospitalaria para el paciente <b>no crítico</b> (SAEDYN 2017). Calcula la dosis total diaria, la reparte en basal y bolos y selecciona la pauta de corrección. Verifica cada dosis según el paciente.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos del paciente</div>
+        <div class="fields">
+          <div class="field">
+            <label for="s-peso">Peso</label>
+            <div class="input-wrap"><input id="s-peso" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">kg</span></div>
+          </div>
+          <div class="field">
+            <label for="s-glu">Glucemia al ingreso</label>
+            <div class="input-wrap"><input id="s-glu" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+            <span class="hint">para la dosis por peso</span>
+          </div>
+          <div class="field">
+            <label for="s-hba1c">HbA1c</label>
+            <div class="input-wrap"><input id="s-hba1c" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">%</span></div>
+            <span class="hint">opcional, para el plan al alta</span>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Tratamiento previo</div>
+        <div class="fields">
+          <div class="field">
+            <label for="s-tto">Situación de partida</label>
+            <div class="input-wrap"><select id="s-tto">
+              <option value="noins">Terapias no insulínicas o sin tratamiento</option>
+              <option value="ins">Insulina (sola)</option>
+              <option value="insado">Insulina + terapias no insulínicas</option>
+            </select></div>
+          </div>
+          <div class="field" id="s-dtd-field" hidden>
+            <label for="s-dtd-domic">Insulina domiciliaria (DTD)</label>
+            <div class="input-wrap"><input id="s-dtd-domic" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">UI/día</span></div>
+            <span class="hint">suma de todas las insulinas</span>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Ingesta</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="s-come" checked><span class="dot"></span>El paciente come (ingesta oral)</label>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-calcular-sc" style="flex:1;min-width:200px;">Calcular pauta</button>
+          <button class="btn btn-secundario" id="btn-limpiar-sc">Limpiar</button>
+        </div>
+      </div>
+
+      <div id="sc-resultado"></div>
+    </section>
+
+    <!-- VISTA: INSULINIZACIÓN INTRAVENOSA -->
+    <section class="view" id="view-insulina-iv" data-titulo="Insulinización IV">
+      <h1 class="view-titulo">Insulinización intravenosa — perfusión</h1>
+      <p class="view-intro">Protocolo en perfusión para el paciente crítico/perioperatorio (SAEDYN 2017). Objetivo de glucemia <b>140-180 mg/dl</b>. Selecciona la pauta, introduce la glucemia actual y obtén el ritmo en UI/h. Verifica según el paciente.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos</div>
+        <div class="fields">
+          <div class="field">
+            <label for="iv-glu">Glucemia actual</label>
+            <div class="input-wrap"><input id="iv-glu" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+            <span class="hint">para el ritmo en UI/h</span>
+          </div>
+          <div class="field">
+            <label for="iv-pauta">Pauta en curso</label>
+            <div class="input-wrap"><select id="iv-pauta">
+              <option value="1">Pauta 1</option>
+              <option value="2">Pauta 2</option>
+              <option value="3">Pauta 3</option>
+              <option value="4">Pauta 4</option>
+            </select></div>
+            <span class="hint">se sugiere según los criterios</span>
+          </div>
+          <div class="field">
+            <label for="iv-ins6h">Insulina últimas 6 h</label>
+            <div class="input-wrap"><input id="iv-ins6h" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">UI</span></div>
+            <span class="hint">opcional, para la transición a SC</span>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Criterios para iniciar por Pauta 2</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="iv-nocontrol"><span class="dot"></span>No controlado con Pauta 1</label>
+          <label class="toggle"><input type="checkbox" id="iv-cardio"><span class="dot"></span>Cirugía cardiovascular</label>
+          <label class="toggle"><input type="checkbox" id="iv-trasplante"><span class="dot"></span>Trasplante órgano/islotes</label>
+          <label class="toggle"><input type="checkbox" id="iv-corticoides"><span class="dot"></span>Altas dosis de corticoides</label>
+          <label class="toggle"><input type="checkbox" id="iv-altorreq"><span class="dot"></span>Requerimientos &gt; 80 UI/día</label>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-calcular-iv" style="flex:1;min-width:200px;">Calcular pauta</button>
+          <button class="btn btn-secundario" id="btn-limpiar-iv">Limpiar</button>
+        </div>
+      </div>
+
+      <div id="iv-resultado"></div>
+    </section>
+
+    <!-- VISTA: ESTADO HIPERGLUCÉMICO HIPEROSMOLAR (EHH) -->
+    <section class="view" id="view-ehh" data-titulo="Estado hiperosmolar">
+      <h1 class="view-titulo">Estado hiperglucémico hiperosmolar (EHH)</h1>
+      <p class="view-intro">Corrección <b>LENTA</b> de la osmolalidad, reposición de volumen, insulina a dosis baja (solo si cetonemia o si la glucemia deja de bajar) y profilaxis de trombosis. Por defecto SEEN/ADA 2024. Verifica cada dosis y ritmo.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Datos del paciente</div>
+        <div class="fields">
+          <div class="field">
+            <label for="e-peso">Peso</label>
+            <div class="input-wrap"><input id="e-peso" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">kg</span></div>
+          </div>
+          <div class="field">
+            <label for="e-glucosa">Glucemia</label>
+            <div class="input-wrap"><input id="e-glucosa" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+          </div>
+          <div class="field">
+            <label for="e-na">Sodio (Na⁺)</label>
+            <div class="input-wrap"><input id="e-na" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mEq/l</span></div>
+          </div>
+          <div class="field">
+            <label for="e-k">Potasio (K⁺)</label>
+            <div class="input-wrap"><input id="e-k" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mEq/l</span></div>
+          </div>
+          <div class="field">
+            <label for="e-urea">Urea</label>
+            <div class="input-wrap"><input id="e-urea" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+            <span class="hint">para osmolaridad total</span>
+          </div>
+          <div class="field">
+            <label for="e-bhb">β-hidroxibutirato</label>
+            <div class="input-wrap"><input id="e-bhb" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mmol/l</span></div>
+            <span class="hint">cetonemia: ¿precisa insulina?</span>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="e-shock"><span class="dot"></span>TA sistólica &lt; 90 / shock</label>
+          <label class="toggle"><input type="checkbox" id="e-consciencia"><span class="dot"></span>Alteración de consciencia</label>
+          <label class="toggle"><input type="checkbox" id="e-oliguria"><span class="dot"></span>Oligoanuria / I. renal aguda</label>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Antecedentes <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);">— ajustan fluidos y potasio</span></div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="e-ic"><span class="dot"></span>Insuficiencia cardíaca</label>
+          <label class="toggle"><input type="checkbox" id="e-erc"><span class="dot"></span>Enfermedad renal crónica</label>
+        </div>
+        <div class="fields" id="e-erc-extra" hidden style="margin-top:12px;">
+          <div class="field">
+            <label for="e-fge">FGe</label>
+            <div class="input-wrap"><input id="e-fge" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">ml/min</span></div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-calcular-ehh" style="flex:1;min-width:200px;">Calcular tratamiento</button>
+          <button class="btn btn-secundario" id="btn-limpiar-ehh">Limpiar</button>
+        </div>
+      </div>
+
+      <div id="ehh-resultado"></div>
+    </section>
+
+    <!-- VISTA: HIPOGLUCEMIA -->
+    <section class="view" id="view-hipoglucemia" data-titulo="Hipoglucemia">
+      <h1 class="view-titulo">Hipoglucemia — tratamiento</h1>
+      <p class="view-intro">Glucemia &lt; 70 mg/dl o síntomas. La vía de tratamiento depende del nivel de consciencia y de la disponibilidad de vía venosa. Marca la situación para ver la pauta.</p>
+
+      <div class="form-card">
+        <div class="form-card-titulo">Glucemia</div>
+        <div class="fields">
+          <div class="field">
+            <label for="h-glucosa">Glucemia capilar</label>
+            <div class="input-wrap"><input id="h-glucosa" type="text" inputmode="decimal" placeholder="—" autocomplete="off"/><span class="unit">mg/dl</span></div>
+            <span class="hint">opcional</span>
+          </div>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Situación</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="h-consciente" checked><span class="dot"></span>Consciente y tolera vía oral</label>
+          <label class="toggle"><input type="checkbox" id="h-viavenosa" checked><span class="dot"></span>Dispone de vía venosa</label>
+        </div>
+
+        <div class="form-card-titulo" style="margin-top:18px;">Causa (condiciona la vigilancia)</div>
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="h-sulfonilurea"><span class="dot"></span>Sulfonilurea</label>
+          <label class="toggle"><input type="checkbox" id="h-insulinalenta"><span class="dot"></span>Insulina de acción prolongada</label>
+          <label class="toggle"><input type="checkbox" id="h-ayuno"><span class="dot"></span>Ayuno prolongado / alcohol</label>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primario" id="btn-calcular-hipo" style="flex:1;min-width:200px;">Ver pauta</button>
+          <button class="btn btn-secundario" id="btn-limpiar-hipo">Limpiar</button>
+        </div>
+      </div>
+
+      <div id="hipo-resultado"></div>
     </section>
   </main>
 
@@ -279,5 +582,9 @@
   <script src="modulos/glucemia/protocolos.js"></script>
   <script src="modulos/glucemia/glucemia.js"></script>
   <script src="modulos/glucemia/cad.js"></script>
+  <script src="modulos/glucemia/insulina-sc.js"></script>
+  <script src="modulos/glucemia/insulina-iv.js"></script>
+  <script src="modulos/glucemia/ehh.js"></script>
+  <script src="modulos/glucemia/hipoglucemia.js"></script>
 </body>
 </html>
