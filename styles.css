@@ -508,6 +508,33 @@ body, .topbar, .sidebar, .card, .view, .field, .result-card, .report-card,
 .historial-tag { font-size: 0.7rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
 .historial-item ul { margin: 6px 0 0 17px; font-size: 0.83rem; color: var(--text-2); }
 
+.historial-mas {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .32s ease;
+  overflow: hidden;
+}
+.historial-mas > * { min-height: 0; }
+.historial-mas--abierto { grid-template-rows: 1fr; }
+
+.btn-ver-historial {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--brand);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-ver-historial:hover { opacity: .75; }
+.btn-ver-historial svg { transition: transform .28s ease; flex: none; }
+
 /* ── Pie de la aplicación (autor + versión) ────────────── */
 .app-footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border); text-align: center; }
 .app-autor { font-size: 0.82rem; color: var(--text-2); }

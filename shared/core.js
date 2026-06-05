@@ -524,11 +524,30 @@ function cerrarNovedades() {
 function renderHistorial() {
   const cont = document.getElementById("historial-versiones");
   if (!cont) return;
-  cont.innerHTML = NOVEDADES.map(n =>
-    '<div class="historial-item"><div class="historial-cab"><b>' + escHtml(n.titulo) + "</b>" +
-    '<span class="historial-tag">v' + escHtml(n.version) + " · " + escHtml(n.fecha) + "</span></div>" +
-    "<ul>" + n.cambios.map(c => "<li>" + escHtml(c) + "</li>").join("") + "</ul></div>"
-  ).join("");
+  function itemHtml(n) {
+    return '<div class="historial-item"><div class="historial-cab"><b>' + escHtml(n.titulo) + "</b>" +
+      '<span class="historial-tag">v' + escHtml(n.version) + " · " + escHtml(n.fecha) + "</span></div>" +
+      "<ul>" + n.cambios.map(c => "<li>" + escHtml(c) + "</li>").join("") + "</ul></div>";
+  }
+  const ultima = NOVEDADES[0] ? itemHtml(NOVEDADES[0]) : "";
+  const resto  = NOVEDADES.slice(1).map(itemHtml).join("");
+  cont.innerHTML =
+    ultima +
+    (resto ? '<div class="historial-mas" id="historial-mas">' + resto + "</div>" +
+      '<button class="btn-ver-historial" id="btn-ver-historial" type="button">' +
+      '<span id="btn-ver-historial-txt">Ver todas las actualizaciones</span>' +
+      '<svg id="btn-ver-historial-ic" width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      "</button>" : "");
+
+  const btnH = document.getElementById("btn-ver-historial");
+  if (btnH) btnH.addEventListener("click", function () {
+    const mas  = document.getElementById("historial-mas");
+    const txt  = document.getElementById("btn-ver-historial-txt");
+    const ic   = document.getElementById("btn-ver-historial-ic");
+    const open = mas.classList.toggle("historial-mas--abierto");
+    txt.textContent = open ? "Ocultar versiones anteriores" : "Ver todas las actualizaciones";
+    ic.style.transform = open ? "rotate(180deg)" : "";
+  });
 }
 
 // ── Service Worker + banner de actualización ──────────────
