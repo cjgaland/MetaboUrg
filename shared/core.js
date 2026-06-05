@@ -15,6 +15,11 @@ const KEY_VERSION = "metabourg-version-vista";
 const APP_VERSION = "2026.17";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
+// Clave de acceso de Web3Forms para el buzón de sugerencias.
+// Obtenida en web3forms.com con el correo del autor (el correo NO aparece aquí).
+// Para obtener/reutilizar la clave: https://web3forms.com
+const WEB3FORMS_KEY = "f57ce774-9fbd-471e-b52d-7c3aa180094e";
+
 const NOVEDADES = [
   {
     version: "2026.17",
@@ -552,6 +557,78 @@ function mostrarBanner(reg) {
 }
 
 // ============================================================
+//  BUZÓN DE SUGERENCIAS
+// ============================================================
+function abrirModalSugerencias() {
+  const estado = document.getElementById("sug-estado");
+  if (estado) { estado.textContent = ""; estado.className = "sug-estado"; }
+  document.getElementById("modal-sugerencias").classList.add("abierto");
+}
+function cerrarModalSugerencias() {
+  document.getElementById("modal-sugerencias").classList.remove("abierto");
+}
+function enviarSugerencia(e) {
+  e.preventDefault();
+  const estado = document.getElementById("sug-estado");
+  const btn    = document.getElementById("btn-enviar-sugerencia");
+  const mensaje  = document.getElementById("sug-mensaje").value.trim();
+  const tipo     = document.getElementById("sug-tipo").value;
+  const nombre   = document.getElementById("sug-nombre").value.trim();
+  const email    = document.getElementById("sug-email").value.trim();
+  const botcheck = document.getElementById("sug-botcheck").checked;
+
+  if (botcheck) return; // honeypot
+  if (!mensaje) {
+    estado.textContent = "Por favor, escribe tu mensaje.";
+    estado.className = "sug-estado sug-estado--error";
+    return;
+  }
+  if (!WEB3FORMS_KEY || WEB3FORMS_KEY === "TU_ACCESS_KEY_AQUI") {
+    estado.textContent = "El buzón aún no está configurado. Inténtalo más tarde.";
+    estado.className = "sug-estado sug-estado--error";
+    return;
+  }
+
+  estado.textContent = "Enviando…";
+  estado.className = "sug-estado sug-estado--enviando";
+  btn.disabled = true;
+
+  const payload = {
+    access_key: WEB3FORMS_KEY,
+    subject: "MetaboUrg · " + tipo,
+    from_name: nombre || "Usuario de MetaboUrg",
+    Tipo: tipo,
+    Mensaje: mensaje,
+    Nombre: nombre || "(no indicado)",
+    Email_de_contacto: email || "(no facilitado)",
+    Version_app: APP_VERSION
+  };
+  if (email) payload.email = email;
+
+  fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(payload)
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data && data.success) {
+        estado.textContent = "¡Gracias! Tu mensaje se ha enviado correctamente.";
+        estado.className = "sug-estado sug-estado--ok";
+        document.getElementById("form-sugerencias").reset();
+        setTimeout(cerrarModalSugerencias, 1800);
+      } else {
+        throw new Error("respuesta no exitosa");
+      }
+    })
+    .catch(function() {
+      estado.textContent = "No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.";
+      estado.className = "sug-estado sug-estado--error";
+    })
+    .finally(function() { btn.disabled = false; });
+}
+
+// ============================================================
 //  ARRANQUE DEL PORTAL
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -589,6 +666,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-cerrar-novedades").addEventListener("click", cerrarNovedades);
   document.getElementById("btn-novedades-ok").addEventListener("click", cerrarNovedades);
   document.getElementById("modal-novedades").addEventListener("click", e => { if (e.target.id === "modal-novedades") cerrarNovedades(); });
+
+  // Buzón de sugerencias
+  document.getElementById("btn-abrir-sugerencias").addEventListener("click", () => {
+    document.getElementById("modal-info").classList.remove("abierto");
+    abrirModalSugerencias();
+  });
+  document.getElementById("btn-cerrar-sugerencias").addEventListener("click", cerrarModalSugerencias);
+  document.getElementById("modal-sugerencias").addEventListener("click", e => { if (e.target.id === "modal-sugerencias") cerrarModalSugerencias(); });
+  document.getElementById("form-sugerencias").addEventListener("submit", enviarSugerencia);
 
   // Bienvenida
   let bienvenidaVisible = false;

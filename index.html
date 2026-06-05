@@ -1096,12 +1096,67 @@
           <li><a href="https://academic.oup.com/jcem/article/110/9/2453/8196671" target="_blank" rel="noopener">Endocrine Society — hiperaldosteronismo primario (2025)</a></li>
           <li><a href="https://www.merckmanuals.com/professional/endocrine-and-metabolic-disorders" target="_blank" rel="noopener">Merck/MSD</a> (feocromocitoma, Cushing, Addison) y <a href="https://emcrit.org/ibcc/" target="_blank" rel="noopener">EMCrit</a></li>
         </ul>
+        <div class="modal-bloque--buzon">
+          <div class="modal-bloque-titulo">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m22 7-10 6L2 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Buzón de sugerencias</span>
+          </div>
+          <p>¿Has detectado un error, echas en falta un protocolo o quieres dejar un comentario? Tu opinión ayuda a mejorar MetaboUrg. Escríbeme — puedes hacerlo de forma anónima o dejar tu email si quieres respuesta.</p>
+          <button class="btn-buzon" id="btn-abrir-sugerencias" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Escribir una sugerencia
+          </button>
+        </div>
+
         <h4>Aviso legal</h4>
         <div class="disclaimer">Herramienta de apoyo clínico. No sustituye el juicio del profesional ni los protocolos del centro. Los autores no se responsabilizan del uso de los cálculos. Verifique siempre dosis y pautas.</div>
         <h4>Historial de versiones</h4>
         <div id="historial-versiones"></div>
         <div class="modal-autor">Diseñada y desarrollada por <b>Carlos J. Galán Doval</b></div>
         <div class="modal-version" id="info-version"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL BUZÓN DE SUGERENCIAS -->
+  <div class="modal modal--sugerencias" id="modal-sugerencias">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div>
+          <div class="modal-titulo">Buzón de sugerencias</div>
+          <div class="modal-subtitulo">Tu opinión mejora MetaboUrg</div>
+        </div>
+        <button class="modal-cerrar" id="btn-cerrar-sugerencias" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-sugerencias" autocomplete="off">
+          <label class="sug-label" for="sug-tipo">Tipo de mensaje</label>
+          <select id="sug-tipo" class="sug-input" name="tipo">
+            <option value="Sugerencia">Sugerencia o mejora</option>
+            <option value="Error en protocolo">Posible error en un protocolo</option>
+            <option value="Protocolo a añadir">Proponer un protocolo o módulo</option>
+            <option value="Agradecimiento">Agradecimiento / comentario</option>
+            <option value="Problema técnico">Problema técnico</option>
+          </select>
+
+          <label class="sug-label" for="sug-mensaje">Tu mensaje <span class="sug-req">*</span></label>
+          <textarea id="sug-mensaje" class="sug-input" name="mensaje" rows="5" required placeholder="Escribe aquí tu sugerencia, el protocolo que quieras revisar o cualquier otro comentario…"></textarea>
+
+          <label class="sug-label" for="sug-nombre">Tu nombre <span class="sug-opc">(opcional)</span></label>
+          <input type="text" id="sug-nombre" class="sug-input" name="nombre" placeholder="Cómo quieres que te llame" />
+
+          <label class="sug-label" for="sug-email">Tu email <span class="sug-opc">(opcional, solo si quieres respuesta)</span></label>
+          <input type="email" id="sug-email" class="sug-input" name="email" placeholder="tucorreo@ejemplo.com" />
+
+          <!-- Honeypot anti-spam (oculto) -->
+          <input type="checkbox" name="botcheck" id="sug-botcheck" tabindex="-1" autocomplete="off" style="display:none;" />
+
+          <div class="sug-aviso">No se recogen datos clínicos ni de pacientes. Este formulario es solo para comentarios sobre la aplicación.</div>
+
+          <div class="sug-estado" id="sug-estado"></div>
+
+          <button type="submit" class="btn btn-primario" id="btn-enviar-sugerencia">Enviar</button>
+        </form>
       </div>
     </div>
   </div>
