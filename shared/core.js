@@ -12,10 +12,23 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.16";
+const APP_VERSION = "2026.17";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 const NOVEDADES = [
+  {
+    version: "2026.17",
+    fecha: "Junio 2026",
+    titulo: "Tratamientos hidroelectrolíticos con vehículo, volumen y ritmo concretos",
+    cambios: [
+      "Las pautas IV del área hidroelectrolítica ya no se limitan al principio activo: ahora muestran el vehículo (SSF 0,9%, SG 5%), el volumen total y el ritmo de bomba en ml/h listos para programar.",
+      "Hiponatremia grave: se añade la preparación «casera» del salino hipertónico al 3% (SSF 400 ml + 5 amp de ClNa 20% → 450 ml ≈ 231 mEq) y, si hay peso, el déficit de Na en mEq y los ml/h de perfusión lenta repartidos en 12 + 24 h.",
+      "Hipernatremia: el volumen diario incluye explícitamente mantenimiento y pérdidas insensibles (~1500 ml/día cada uno) y se muestra el ritmo en ml/h para reposición en 48 h o 72 h.",
+      "Hipopotasemia IV: pauta concreta periférica (20 mEq KCl en 500 ml SSF a 250 ml/h = 10 mEq/h) y central (20 mEq KCl en 100 ml SSF a 100 ml/h = 20 mEq/h, con monitor ECG).",
+      "Hipofosfatemia: dilución en 250-500 ml de SSF a pasar en 6 h con ritmo de bomba en ml/h y aviso de incompatibilidades (Ca, bicarbonato, Ringer).",
+      "Hipomagnesemia: vehículo en cada paso (carga 1-2 g en 100 ml SG 5% en 15 min; torsades 2 g en 10 ml SG 5% en bolo) y perfusión 4-8 g en 500 ml SG 5% con ritmo en ml/h. Hiperfosfatemia/hipermagnesemia agudas: SSF 0,9% 200-300 ml/h + furosemida 20-40 mg IV."
+    ]
+  },
   {
     version: "2026.16",
     fecha: "Junio 2026",

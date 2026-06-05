@@ -196,10 +196,12 @@ function renderPK() {
   _ultimoPK = { d, o };
   const cont = document.getElementById("pk-resultado");
 
-  // Reposición
+  // Reposición — vehículo + volumen + ritmo concreto
   const repoLineas = [];
   if (o.iv) {
-    repoLineas.push("<b>Vía IV</b> (grave, cambios ECG o sin tolerancia oral): KCl <b>" + cfg.kcl_iv_perif + " mEq/h</b> por vía periférica (concentración ≤ " + cfg.kcl_conc_perif + " mmol/l); hasta <b>" + cfg.kcl_iv_central + " mEq/h por vía central</b> con monitorización ECG.");
+    repoLineas.push("<b>Vía IV</b> (grave, cambios ECG o sin tolerancia oral):");
+    repoLineas.push("<b>Periférica:</b> <b>" + cfg.kcl_perif_meq + " mEq KCl en " + cfg.kcl_perif_vol_ml + " ml de SSF 0,9% a pasar en " + cfg.kcl_perif_h + " h</b> (= " + cfg.kcl_iv_perif + " mEq/h, concentración " + cfg.kcl_conc_perif + " mEq/l). Ritmo de bomba: <b>" + Math.round(cfg.kcl_perif_vol_ml / cfg.kcl_perif_h) + " ml/h</b>.");
+    repoLineas.push("<b>Vía central</b> (con monitor ECG, si grave o se necesita más velocidad): <b>" + cfg.kcl_central_meq + " mEq KCl en " + cfg.kcl_central_vol_ml + " ml de SSF 0,9% a pasar en " + cfg.kcl_central_h + " h</b> (= " + cfg.kcl_iv_central + " mEq/h). Ritmo de bomba: <b>" + Math.round(cfg.kcl_central_vol_ml / cfg.kcl_central_h) + " ml/h</b>.");
     repoLineas.push("<b>" + escHtml(K_TXT.hipo_via) + "</b>");
   } else {
     repoLineas.push("<b>Vía oral</b> (leve-moderada y tolera): KCl <b>" + cfg.kcl_oral_min + "-" + cfg.kcl_oral_max + " mEq por toma</b> (máx. ~60 por irritación gástrica), repartido en el día.");
@@ -234,7 +236,8 @@ function informePK() {
   t += "\nMAGNESIO\n  - " + K_TXT.hipo_mg + "\n";
   t += "\nREPOSICIÓN\n";
   if (o.iv) {
-    t += "  - IV: KCl " + cfg.kcl_iv_perif + " mEq/h periférica (≤" + cfg.kcl_conc_perif + " mmol/l); hasta " + cfg.kcl_iv_central + " mEq/h central con monitor ECG.\n";
+    t += "  - Periférica: " + cfg.kcl_perif_meq + " mEq KCl en " + cfg.kcl_perif_vol_ml + " ml SSF en " + cfg.kcl_perif_h + " h (" + Math.round(cfg.kcl_perif_vol_ml / cfg.kcl_perif_h) + " ml/h = " + cfg.kcl_iv_perif + " mEq/h).\n";
+    t += "  - Central (monitor ECG): " + cfg.kcl_central_meq + " mEq KCl en " + cfg.kcl_central_vol_ml + " ml SSF en " + cfg.kcl_central_h + " h (" + Math.round(cfg.kcl_central_vol_ml / cfg.kcl_central_h) + " ml/h = " + cfg.kcl_iv_central + " mEq/h).\n";
     t += "  - " + K_TXT.hipo_via + "\n";
   } else {
     t += "  - Oral: KCl " + cfg.kcl_oral_min + "-" + cfg.kcl_oral_max + " mEq/toma (máx ~60), repartido.\n";

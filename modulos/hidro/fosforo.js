@@ -19,15 +19,19 @@ function renderLF() {
   const iv = p < cfg.hipo_grave || sintomas || !oral;
   const mmolMin = peso !== null ? Math.round(cfg.fosfato_mmolkg_min * peso) : null;
   const mmolMax = peso !== null ? Math.round(cfg.fosfato_mmolkg_max * peso) : null;
-  _ultimoLF = { p, peso, sintomas, hipok, oral, realim, grav, iv, mmolMin, mmolMax };
+  // Ritmo de bomba en ml/h (volumen orientativo / horas de infusión)
+  const mlhMin = Math.round(cfg.fosfato_vehiculo_ml_min / cfg.fosfato_h);
+  const mlhMax = Math.round(cfg.fosfato_vehiculo_ml_max / cfg.fosfato_h);
+  _ultimoLF = { p, peso, sintomas, hipok, oral, realim, grav, iv, mmolMin, mmolMax, mlhMin, mlhMax };
   const cont = document.getElementById("lf-resultado");
 
   let repo;
   if (iv) {
     repo = cardTrat("Reposición IV (grave / sintomática)", null, null, [
-      "<b>" + (hipok ? "Fosfato potásico" : "Fosfato sódico") + " " + fmt(cfg.fosfato_mmolkg_min, 2) + "-" + fmt(cfg.fosfato_mmolkg_max, 2) + " mmol/kg" + (mmolMin ? " (≈ " + mmolMin + "-" + mmolMax + " mmol)" : "") + " en " + cfg.fosfato_h + " h</b> (no más de ~" + cfg.fosfato_mgkg_max + " mg/kg/6 h).",
-      "Ritmo seguro <b>" + fmt(cfg.ritmo_mmolh_min, 0) + "-" + fmt(cfg.ritmo_mmolh_max, 1) + " mmol/h</b>. " + (hipok ? "Se usa fosfato potásico por la hipopotasemia asociada." : "Fosfato potásico si hay hipopotasemia; fosfato sódico si K > 4 o ERC."),
-      "Vigilar calcio, potasio y función renal (riesgo de hipocalcemia y precipitación)."
+      "<b>" + (hipok ? "Fosfato potásico" : "Fosfato sódico") + " " + fmt(cfg.fosfato_mmolkg_min, 2) + "-" + fmt(cfg.fosfato_mmolkg_max, 2) + " mmol/kg" + (mmolMin ? " (≈ " + mmolMin + "-" + mmolMax + " mmol)" : "") + "</b>, diluido en <b>" + cfg.fosfato_vehiculo_ml_min + "-" + cfg.fosfato_vehiculo_ml_max + " ml de SSF 0,9%</b>, a pasar en <b>" + cfg.fosfato_h + " h</b>.",
+      "Ritmo de bomba: <b>" + mlhMin + "-" + mlhMax + " ml/h</b> (= ritmo seguro " + fmt(cfg.ritmo_mmolh_min, 0) + "-" + fmt(cfg.ritmo_mmolh_max, 1) + " mmol/h; máx. ~" + cfg.fosfato_mgkg_max + " mg/kg/6 h).",
+      hipok ? "Se usa <b>fosfato potásico</b> por la hipopotasemia asociada." : "<b>Fosfato potásico</b> si hay hipopotasemia; <b>fosfato sódico</b> si K > 4 o ERC.",
+      "<b>NO mezclar con calcio, bicarbonato ni Ringer lactato</b> (precipita). Vigilar Ca, K y función renal."
     ], "var(--c-cad)");
   } else {
     repo = cardTrat("Reposición oral (leve-moderada)", null, null, [
@@ -60,7 +64,7 @@ function informeLF() {
   const o = _ultimoLF, cfg = P_CFG;
   let t = App.informe.cabecera("HIPOFOSFATEMIA — TRATAMIENTO") + "\n";
   t += "PACIENTE\n  - Fósforo: " + fmt(o.p, 1) + " mg/dl · " + o.grav + (o.sintomas ? " · sintomática" : "") + (o.peso !== null ? " · " + fmt(o.peso, 0) + " kg" : "") + "\n";
-  if (o.iv) t += "\nREPOSICIÓN IV\n  - " + (o.hipok ? "Fosfato potásico" : "Fosfato sódico") + " " + fmt(cfg.fosfato_mmolkg_min, 2) + "-" + fmt(cfg.fosfato_mmolkg_max, 2) + " mmol/kg" + (o.mmolMin ? " (~" + o.mmolMin + "-" + o.mmolMax + " mmol)" : "") + " en " + cfg.fosfato_h + " h; ritmo " + fmt(cfg.ritmo_mmolh_min, 0) + "-" + fmt(cfg.ritmo_mmolh_max, 1) + " mmol/h. Vigilar Ca/K/renal.\n";
+  if (o.iv) t += "\nREPOSICIÓN IV\n  - " + (o.hipok ? "Fosfato potásico" : "Fosfato sódico") + " " + fmt(cfg.fosfato_mmolkg_min, 2) + "-" + fmt(cfg.fosfato_mmolkg_max, 2) + " mmol/kg" + (o.mmolMin ? " (~" + o.mmolMin + "-" + o.mmolMax + " mmol)" : "") + " en " + cfg.fosfato_vehiculo_ml_min + "-" + cfg.fosfato_vehiculo_ml_max + " ml SSF a pasar en " + cfg.fosfato_h + " h (bomba " + o.mlhMin + "-" + o.mlhMax + " ml/h). Vigilar Ca/K/renal. No mezclar con Ca/HCO3/Ringer.\n";
   else t += "\nREPOSICIÓN ORAL\n  - Fosfato oral o lácteos; pasar a IV si <1 mg/dl, síntomas o intolerancia.\n";
   t += "\nREALIMENTACIÓN/CAUSA\n  - " + P_TXT.hipo_realim + "\n  - " + P_TXT.hipo_causas + "\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (Merck / EMCrit). Verificar por el facultativo.\n";
@@ -76,9 +80,10 @@ function renderHF() {
   _ultimoHF = { p, erc, agudo };
   const cont = document.getElementById("hf-resultado");
 
+  const cfg = P_CFG;
   const manejo = P_TXT.hiper_manejo.slice();
   const lineas = manejo.map(escHtml);
-  if (agudo) lineas[1] = "<b>" + escHtml(P_TXT.hiper_manejo[1]) + "</b>";
+  if (agudo) lineas[1] = "<b>" + escHtml(P_TXT.hiper_manejo[1]) + "</b> Pauta concreta: <b>SSF 0,9% 200-300 ml/h</b> según función cardíaca y renal, con <b>furosemida " + cfg.furosemida_mg_min + "-" + cfg.furosemida_mg_max + " mg IV</b> si hay diuresis conservada.";
   if (erc) lineas[2] = "<b>" + escHtml(P_TXT.hiper_manejo[2]) + "</b>";
 
   cont.innerHTML =

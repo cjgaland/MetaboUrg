@@ -32,6 +32,11 @@ const NA_CFG = {
   limite_48h: 8,        // ascenso máximo en cada 24 h siguientes
   control_na_h: 4,      // controlar Na cada 4 h
   riesgo_odso: "Na ≤ 105 mmol/l, hipopotasemia, alcoholismo, desnutrición o hepatopatía avanzada",
+  // Preparación "casera" de SSH 3% (cuando no hay comercial)
+  // SSF 0,9% 400 ml + 5 amp ClNa 20% (10 ml/amp) ≈ 450 ml · ~231 mEq · ≈ 3,0%
+  ssh3_ssf_ml: 400, ssh3_clna_amp: 5, ssh3_clna_ml: 10, ssh3_total_ml: 450, ssh3_total_meq: 231,
+  // Hiponatremia hipovolémica: ritmo orientativo SSF 0,9%
+  ssf_hipo_mlkgh_min: 0.5, ssf_hipo_mlkgh_max: 1,
 
   // ── Hipernatremia ──
   na_deseado: 140,
@@ -39,7 +44,8 @@ const NA_CFG = {
   hiper_limite_dia: 10, // descenso máximo de Na (mmol/l/día) si crónica
   hiper_limite_h: 0.5,  // mmol/l/h
   hiper_h_min: 48, hiper_h_max: 72, // reponer el déficit en 48-72 h
-  mantenimiento_ml_dia: 1500,
+  mantenimiento_ml_dia: 1500,         // necesidades basales
+  perdidas_insensibles_ml_dia: 1500,  // pérdidas en curso estimadas (fiebre, sudor, diarrea, poliuria)
 
   // Sodio de los fluidos (para Adrogué-Madias)
   na_glucosado5: 0, na_salino045: 77, na_ssf: 154
@@ -117,7 +123,10 @@ const K_CFG = {
   hipo_mod: 2.5,     // 2,5-2,9 moderada · < 2,5 grave
   objetivo: 3.5, objetivo_cardio: 4.5,
   kcl_oral_min: 40, kcl_oral_max: 60,
-  kcl_iv_perif: 10, kcl_iv_central: 20, kcl_conc_perif: 40
+  kcl_iv_perif: 10, kcl_iv_central: 20, kcl_conc_perif: 40,
+  // Preparaciones IV concretas (vehículo + volumen + ritmo)
+  kcl_perif_meq: 20, kcl_perif_vol_ml: 500, kcl_perif_h: 2,     // 20 mEq KCl en 500 ml SSF a pasar en 2 h (= 10 mEq/h, 40 mEq/l)
+  kcl_central_meq: 20, kcl_central_vol_ml: 100, kcl_central_h: 1 // 20 mEq KCl en 100 ml SSF a pasar en 1 h (= 20 mEq/h, vía central + monitor ECG)
 };
 
 const K_TXT = {
@@ -172,7 +181,9 @@ const P_CFG = {
   hipo_leve: 2.0, hipo_grave: 1.0,         // <1,0 grave
   fosfato_mmolkg_min: 0.08, fosfato_mmolkg_max: 0.16, fosfato_h: 6,
   fosfato_mgkg_max: 7, ritmo_mmolh_min: 1, ritmo_mmolh_max: 7.5,
-  hiper: 4.5
+  fosfato_vehiculo_ml_min: 250, fosfato_vehiculo_ml_max: 500,   // diluir en 250-500 ml SSF
+  hiper: 4.5,
+  furosemida_mg_min: 20, furosemida_mg_max: 40                  // diurético de asa IV adyuvante
 };
 const P_TXT = {
   hipo_causas: "Realimentación, alcoholismo, cetoacidosis en tratamiento, sepsis, hiperparatiroidismo, diuréticos, antiácidos quelantes.",
@@ -193,7 +204,11 @@ const MG_CFG = {
   normal_min: 1.7, normal_max: 2.2,
   hipo_grave: 1.25,                        // <1,25 mg/dl (< 0,5 mmol/l) o sintomática
   mgso4_g_min: 1, mgso4_g_max: 2, mgso4_torsades_g: 2,
+  mgso4_carga_vehiculo_ml: 100, mgso4_carga_min: 15,            // 1-2 g en 100 ml SG 5% en 15 min
+  mgso4_torsades_vehiculo_ml: 10,                                // torsades: 2 g en 10 ml SG 5% bolo 5-10 min
   perfusion_g_min: 4, perfusion_g_max: 8, perfusion_h: "12-24",
+  perfusion_vehiculo_ml: 500,                                   // perfusión 4-8 g en 500 ml SG 5% a pasar en 12-24 h
+  furosemida_mg_min: 20, furosemida_mg_max: 40,
   hiper: 2.2, hiper_sintomas: 4.8,         // ~4 mEq/l: hiporreflexia
   gluconato_ml_min: 10, gluconato_ml_max: 20
 };

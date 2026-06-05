@@ -153,6 +153,22 @@ function calcularHO(d) {
   o.techo48 = has(d.na) ? d.na + o.lim24 + cfg.limite_48h : null;
   o.htsMlkg = has(d.peso) ? redNa(cfg.hts_mlkg * d.peso, 0) : null;
   o.causa = NA_TXT.causas_hipo[d.volemia] || null;
+  // Ritmo SSF 0,9% si hipovolémica (ml/h) y déficit de Na (mEq) repartido a 12/24 h
+  if (has(d.peso)) {
+    o.ssfMlhMin = redNa(cfg.ssf_hipo_mlkgh_min * d.peso, 0);
+    o.ssfMlhMax = redNa(cfg.ssf_hipo_mlkgh_max * d.peso, 0);
+    // ACT (varón adulto 0,6 por defecto; orientativo)
+    const act = App.formulas.aguaCorporalTotal(d.peso, cfg.act_varon);
+    // Déficit de Na hasta el techo seguro (no hasta 140; nunca subir > lim24 en 24h)
+    const naObj = Math.min(cfg.hipo_leve_min, d.na + o.lim24);
+    o.defNa = Math.round((naObj - d.na) * act);
+    o.defNaMitad = Math.round(o.defNa / 2);
+    o.naObj = naObj;
+    o.act = act;
+    // SSH 3% (preparado casero) lleva ~514 mEq/l → ml/h para mitad en 12 h
+    o.ssh3_mlh_12h = Math.round((o.defNaMitad / 514) * 1000 / 12);
+    o.ssh3_mlh_24h = Math.round((o.defNaMitad / 514) * 1000 / 24);
+  }
   return o;
 }
 function renderHO() {
@@ -165,11 +181,18 @@ function renderHO() {
 
   // Tarjeta de urgencia (síntomas graves): salino hipertónico 3%
   let urgencia = "";
+  let preparacion = "";
   if (d.graves) {
     urgencia = cardTrat("⚠️ Síntomas graves — salino hipertónico 3%", fmt(cfg.hts_ml, 0) + " ml", "en " + cfg.hts_min + " min" + (o.htsMlkg ? " (≈ " + fmt(o.htsMlkg, 0) + " ml = 2 ml/kg)" : ""), [
-      "<b>Bolo de " + cfg.hts_ml + " ml de SSF 3% IV en " + cfg.hts_min + " min</b> (alternativa: 2 ml/kg). Puede repetirse hasta <b>2-3 veces</b>.",
+      "<b>Bolo de " + cfg.hts_ml + " ml de SSH 3% IV en " + cfg.hts_min + " min</b> (alternativa: 2 ml/kg). Puede repetirse hasta <b>2-3 veces</b>.",
       "<b>Objetivo:</b> subir el Na <b>+" + cfg.hts_objetivo_1h + " mmol/l</b> en la 1.ª hora o hasta que mejoren los síntomas; después, frenar.",
       "Control de Na <b>cada " + cfg.control_na_h + " h</b> mientras se administra."
+    ], "var(--c-cad)");
+    // Preparación casera del SSH 3% si no se dispone del comercial
+    preparacion = cardTrat("Preparar SSH 3% (si no hay comercial)", null, null, [
+      "<b>SSF 0,9% " + cfg.ssh3_ssf_ml + " ml + " + cfg.ssh3_clna_amp + " amp de ClNa 20% (" + cfg.ssh3_clna_ml + " ml/amp)</b> → <b>" + cfg.ssh3_total_ml + " ml ≈ " + cfg.ssh3_total_meq + " mEq de Na (≈ 3%)</b>.",
+      "De ahí se extraen los " + cfg.hts_ml + " ml del bolo. La bolsa preparada cubre 2-3 bolos.",
+      "Si se opta por perfusión lenta en lugar de bolos: ajustar el ritmo al ascenso objetivo de Na (no superar los límites de 24 h)."
     ], "var(--c-cad)");
   }
 
@@ -184,12 +207,28 @@ function renderHO() {
   // Manejo por causa / volumen (mismo nivel que el tratamiento)
   let causa = "";
   if (o.causa) {
-    causa = cardTrat("Manejo según la causa — " + o.causa.titulo, null, null, o.causa.manejo.map(escHtml), "var(--c-hipo)");
+    const lineas = o.causa.manejo.map(escHtml);
+    // Si es hipovolémica y hay peso: añadir ritmo SSF concreto en ml/h
+    if (d.volemia === "hipovolemia" && o.ssfMlhMin) {
+      lineas.unshift("<b>Ritmo orientativo de SSF 0,9%: " + o.ssfMlhMin + "-" + o.ssfMlhMax + " ml/h</b> (0,5-1 ml/kg/h, " + fmt(d.peso, 0) + " kg). Reevaluar el Na cada 4-6 h y bajar el ritmo en cuanto suba.");
+    }
+    causa = cardTrat("Manejo según la causa — " + o.causa.titulo, null, null, lineas, "var(--c-hipo)");
   } else {
     causa = cardTrat("Manejo según la causa", null, null, [
       "Selecciona el <b>estado de volumen</b> para ver el manejo dirigido.",
       "Orientación: osmolalidad y Na en orina + volemia clínica (ver módulo de Diagnóstico)."
     ], "var(--c-hipo)");
+  }
+
+  // Déficit de Na y ritmo de SSH 3% para perfusión lenta (si hay peso)
+  let deficit = "";
+  if (o.defNa) {
+    deficit = cardTrat("Déficit de Na y ritmo de perfusión lenta", fmt(o.defNa, 0) + " mEq", "déficit hasta Na " + fmt(o.naObj, 0) + " (techo seguro 24 h)", [
+      "Déficit de Na = (Na objetivo − Na actual) × ACT = (" + fmt(o.naObj, 0) + " − " + fmt(d.na, 0) + ") × " + fmt(o.act, 1) + " l = <b>" + fmt(o.defNa, 0) + " mEq</b>.",
+      "Estrategia clásica: reponer la <b>mitad (" + fmt(o.defNaMitad, 0) + " mEq) en 12 h</b>, el resto en las siguientes 24 h.",
+      "Con <b>SSH 3% casero</b> (≈ 514 mEq/l): ritmo ≈ <b>" + o.ssh3_mlh_12h + " ml/h en las primeras 12 h</b>, después ≈ <b>" + o.ssh3_mlh_24h + " ml/h</b> durante 24 h.",
+      "Es una guía: el ritmo real se ajusta a los controles seriados de Na (cada " + cfg.control_na_h + " h) y a los límites de seguridad."
+    ], "var(--brand)");
   }
 
   const etiqueta = { leve: "leve (130-134)", moderada: "moderada (125-129)", profunda: "profunda (< 125)" }[o.gravBioq];
@@ -200,7 +239,7 @@ function renderHO() {
       '<div class="result-dx" style="font-size:1.2rem">Na ' + fmt(d.na, 0) + " mmol/l — " + etiqueta + "</div>" +
       '<p class="result-explica">' + (d.graves ? "Con síntomas graves prima el tratamiento urgente con salino hipertónico, respetando los límites de ascenso." : "Sin síntomas graves: corrección lenta y dirigida a la causa, respetando los límites de ascenso.") + "</p>" +
     "</div>" +
-    urgencia + limites + causa +
+    urgencia + preparacion + deficit + limites + causa +
     '<div class="acciones-result"><button class="btn btn-secundario" id="btn-ho-recal">Recalcular</button></div>' +
     App.informe.bloque(informeHO());
 
@@ -217,8 +256,16 @@ function informeHO() {
   t += "  - " + (d.graves ? "Síntomas graves" : "Sin síntomas graves") + (d.riesgo ? " · alto riesgo de mielinólisis" : "") + (d.agudo ? " · aguda (<48h)" : " · crónica/desconocida") + "\n";
   if (d.graves) {
     t += "\nURGENCIA — SALINO HIPERTÓNICO 3%\n";
-    t += "  - Bolo de " + cfg.hts_ml + " ml SSF 3% IV en " + cfg.hts_min + " min" + (o.htsMlkg ? " (≈" + fmt(o.htsMlkg, 0) + " ml = 2 ml/kg)" : "") + ", repetible 2-3 veces.\n";
+    t += "  - Bolo de " + cfg.hts_ml + " ml SSH 3% IV en " + cfg.hts_min + " min" + (o.htsMlkg ? " (≈" + fmt(o.htsMlkg, 0) + " ml = 2 ml/kg)" : "") + ", repetible 2-3 veces.\n";
     t += "  - Objetivo: subir Na +" + cfg.hts_objetivo_1h + " mmol/l en la 1.ª hora o hasta mejorar. Control de Na cada " + cfg.control_na_h + " h.\n";
+    t += "  - Preparación SSH 3% (si no hay comercial): SSF 0,9% " + cfg.ssh3_ssf_ml + " ml + " + cfg.ssh3_clna_amp + " amp ClNa 20% (" + cfg.ssh3_clna_ml + " ml) → " + cfg.ssh3_total_ml + " ml ≈ " + cfg.ssh3_total_meq + " mEq Na.\n";
+  }
+  if (o.defNa) {
+    t += "\nDÉFICIT DE NA Y RITMO\n";
+    t += "  - Déficit ≈ " + fmt(o.defNa, 0) + " mEq hasta Na " + fmt(o.naObj, 0) + " (techo seguro 24 h).\n";
+    t += "  - Reponer la mitad (" + fmt(o.defNaMitad, 0) + " mEq) en 12 h y el resto en 24 h.\n";
+    t += "  - Con SSH 3% (≈514 mEq/l): ~" + o.ssh3_mlh_12h + " ml/h x 12 h, luego ~" + o.ssh3_mlh_24h + " ml/h x 24 h.\n";
+    if (d.volemia === "hipovolemia") t += "  - SSF 0,9% en hipovolémica: " + o.ssfMlhMin + "-" + o.ssfMlhMax + " ml/h (0,5-1 ml/kg/h).\n";
   }
   t += "\nLÍMITES DE SEGURIDAD\n";
   t += "  - Máximo +" + o.lim24 + " mmol/l/24 h" + (o.techo24 !== null ? " (no pasar de Na " + fmt(o.techo24, 0) + ")" : "") + " y +" + cfg.limite_48h + " mmol/l en cada 24 h siguientes.\n";
@@ -257,10 +304,15 @@ function calcularHE(d) {
   o.diasReposicion = (has(d.na)) ? Math.max(1, Math.ceil((d.na - cfg.na_deseado) / cfg.hiper_limite_dia)) : null;
   // Adrogué-Madias: cambio de Na con 1 L de glucosado 5%
   o.deltaNaPorLitro = (o.act !== null && has(d.na)) ? (cfg.na_glucosado5 - d.na) / (o.act + 1) : null;
-  // Volumen de agua/día orientativo: déficit repartido en 48-72 h + mantenimiento
+  // Volumen de agua/día orientativo: déficit repartido en 48-72 h + mantenimiento + pérdidas insensibles
   if (o.defAgua !== null && o.defAgua > 0) {
-    o.aguaDiaMin = redNa((o.defAgua * 1000) / (cfg.hiper_h_max / 24) + cfg.mantenimiento_ml_dia, 0); // 72 h
-    o.aguaDiaMax = redNa((o.defAgua * 1000) / (cfg.hiper_h_min / 24) + cfg.mantenimiento_ml_dia, 0); // 48 h
+    const extra = cfg.mantenimiento_ml_dia + cfg.perdidas_insensibles_ml_dia;
+    o.aguaDiaMin = redNa((o.defAgua * 1000) / (cfg.hiper_h_max / 24) + extra, 0); // 72 h
+    o.aguaDiaMax = redNa((o.defAgua * 1000) / (cfg.hiper_h_min / 24) + extra, 0); // 48 h
+    // Ritmos ml/h redondeados (estrategia mitad/mitad)
+    o.mlh48 = redNa(o.aguaDiaMax / 24, 0);
+    o.mlh72 = redNa(o.aguaDiaMin / 24, 0);
+    o.mantTotal = extra;
   }
   return o;
 }
@@ -291,7 +343,12 @@ function renderHE() {
   const fluidoLineas = [];
   if (d.shock) fluidoLineas.push("⚠️ <b>Inestabilidad / hipovolemia:</b> corrige primero con <b>SSF 0,9%</b> hasta estabilizar; después pasa a reponer agua libre.");
   fluidoLineas.push(d.oral ? "<b>Vía oral / SNG con agua</b> es de elección si el paciente tolera (la más fisiológica)." : "Sin vía oral disponible: reponer por vía IV.");
-  fluidoLineas.push("IV: <b>suero glucosado 5%</b> (aporta agua libre)" + (o.aguaDiaMin ? " — orientativo <b>" + fmt(o.aguaDiaMin, 0) + "-" + fmt(o.aguaDiaMax, 0) + " ml/día</b> (déficit en 48-72 h + mantenimiento)" : "") + ".");
+  if (o.aguaDiaMin) {
+    fluidoLineas.push("IV: <b>suero glucosado 5%</b> (aporta agua libre). Volumen total/día = déficit + mantenimiento (" + fmt(cfg.mantenimiento_ml_dia, 0) + " ml) + pérdidas insensibles (" + fmt(cfg.perdidas_insensibles_ml_dia, 0) + " ml) ≈ <b>" + fmt(o.aguaDiaMin, 0) + "-" + fmt(o.aguaDiaMax, 0) + " ml/día</b>.");
+    fluidoLineas.push("<b>Ritmo concreto:</b> ≈ <b>" + o.mlh72 + " ml/h</b> (reposición en 72 h, crónica) ó ≈ <b>" + o.mlh48 + " ml/h</b> (reposición en 48 h, aguda). Reevaluar Na cada 4-6 h.");
+  } else {
+    fluidoLineas.push("IV: <b>suero glucosado 5%</b> (aporta agua libre).");
+  }
   fluidoLineas.push("Si hay también pérdida de volumen, usar <b>salino 0,45%</b> (aporta agua y algo de Na).");
   fluidoLineas.push(NA_TXT.hiper_di);
   const fluidos = cardTrat("Fluidoterapia", null, null, fluidoLineas, "var(--c-hipo)");
@@ -325,7 +382,8 @@ function informeHE() {
   t += "  - " + (d.agudo ? "Aguda: hasta ~1 mmol/l/h." : "Crónica: máx " + cfg.hiper_limite_dia + " mmol/l/día (~" + fmt(cfg.hiper_limite_h, 1) + "/h).") + " Reponer en " + cfg.hiper_h_min + "-" + cfg.hiper_h_max + " h. Control de Na cada 4-6 h.\n";
   t += "\nFLUIDOTERAPIA\n";
   if (d.shock) t += "  - Inestabilidad: SSF 0,9% primero hasta estabilizar.\n";
-  t += "  - Agua oral/SNG de elección; IV glucosado 5%" + (o.aguaDiaMin ? " (~" + fmt(o.aguaDiaMin, 0) + "-" + fmt(o.aguaDiaMax, 0) + " ml/día)" : "") + "; salino 0,45% si además hipovolemia.\n";
+  t += "  - Agua oral/SNG de elección; IV glucosado 5%" + (o.aguaDiaMin ? " (~" + fmt(o.aguaDiaMin, 0) + "-" + fmt(o.aguaDiaMax, 0) + " ml/día = déficit + mantenimiento + pérdidas insensibles ~" + fmt(o.mantTotal, 0) + " ml)" : "") + "; salino 0,45% si además hipovolemia.\n";
+  if (o.mlh48) t += "  - Ritmo: ~" + o.mlh72 + " ml/h (72 h, crónica) ó ~" + o.mlh48 + " ml/h (48 h, aguda).\n";
   t += "  - " + NA_TXT.hiper_di + "\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (StatPearls / EMCrit / guías). Verificar por el facultativo.\n";
   return t;

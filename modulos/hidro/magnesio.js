@@ -23,10 +23,13 @@ function renderLM() {
   let repo;
   if (iv) {
     const lineas = [];
-    if (torsades) lineas.push("<b>Torsades / convulsiones: sulfato de magnesio " + cfg.mgso4_torsades_g + " g IV en 5-10 min</b>, repetible.");
-    lineas.push("<b>Sulfato de magnesio " + cfg.mgso4_g_min + "-" + cfg.mgso4_g_max + " g IV en 15 min</b> (grave/sintomática estable, 1 g en ~1 h si menos urgente).");
-    lineas.push("Seguir con <b>perfusión " + cfg.perfusion_g_min + "-" + cfg.perfusion_g_max + " g en " + cfg.perfusion_h + " h</b> (el Mg se elimina rápido; la reposición ha de ser mantenida).");
-    if (erc) lineas.push("<b>Insuficiencia renal: reducir la dosis un 25-50%</b> y vigilar estrechamente (riesgo de hipermagnesemia).");
+    if (torsades) lineas.push("<b>Torsades / convulsiones:</b> <b>sulfato de Mg " + cfg.mgso4_torsades_g + " g en " + cfg.mgso4_torsades_vehiculo_ml + " ml de SG 5% IV en bolo de 5-10 min</b>, repetible.");
+    lineas.push("<b>Carga (grave / sintomática estable):</b> <b>sulfato de Mg " + cfg.mgso4_g_min + "-" + cfg.mgso4_g_max + " g en " + cfg.mgso4_carga_vehiculo_ml + " ml de SG 5% IV en " + cfg.mgso4_carga_min + " min</b> (bomba ≈ " + Math.round(cfg.mgso4_carga_vehiculo_ml * 60 / cfg.mgso4_carga_min) + " ml/h).");
+    // Ritmo de la perfusión de mantenimiento (vol total / horas) — usamos 12 h y 24 h como extremos
+    const mlhMax = Math.round(cfg.perfusion_vehiculo_ml / 12); // más rápido (12 h)
+    const mlhMin = Math.round(cfg.perfusion_vehiculo_ml / 24); // más lento (24 h)
+    lineas.push("<b>Perfusión de mantenimiento:</b> <b>" + cfg.perfusion_g_min + "-" + cfg.perfusion_g_max + " g en " + cfg.perfusion_vehiculo_ml + " ml de SG 5% a pasar en " + cfg.perfusion_h + " h</b> (bomba <b>" + mlhMin + "-" + mlhMax + " ml/h</b>). El Mg se elimina rápido por la orina, por eso conviene mantener la perfusión.");
+    if (erc) lineas.push("<b>Insuficiencia renal: reducir la dosis un 25-50%</b> y vigilar reflejos y ECG (riesgo de hipermagnesemia).");
     repo = cardTrat("Sulfato de magnesio IV", null, null, lineas, "var(--c-cad)");
   } else {
     repo = cardTrat("Magnesio oral (leve)", null, null, [
@@ -61,8 +64,9 @@ function informeLM() {
   t += "PACIENTE\n  - Magnesio: " + fmt(o.mg, 1) + " mg/dl" + (o.grav ? " · grave/sintomática" : "") + (o.torsades ? " · torsades/convulsiones" : "") + (o.erc ? " · ERC" : "") + "\n";
   if (o.iv) {
     t += "\nSULFATO DE MAGNESIO IV\n";
-    if (o.torsades) t += "  - Torsades/convulsiones: " + cfg.mgso4_torsades_g + " g IV en 5-10 min, repetible.\n";
-    t += "  - " + cfg.mgso4_g_min + "-" + cfg.mgso4_g_max + " g IV en 15 min; después perfusión " + cfg.perfusion_g_min + "-" + cfg.perfusion_g_max + " g en " + cfg.perfusion_h + " h.\n";
+    if (o.torsades) t += "  - Torsades/convulsiones: " + cfg.mgso4_torsades_g + " g en " + cfg.mgso4_torsades_vehiculo_ml + " ml SG 5% IV en bolo 5-10 min, repetible.\n";
+    t += "  - Carga: " + cfg.mgso4_g_min + "-" + cfg.mgso4_g_max + " g en " + cfg.mgso4_carga_vehiculo_ml + " ml SG 5% en " + cfg.mgso4_carga_min + " min.\n";
+    t += "  - Perfusión: " + cfg.perfusion_g_min + "-" + cfg.perfusion_g_max + " g en " + cfg.perfusion_vehiculo_ml + " ml SG 5% a pasar en " + cfg.perfusion_h + " h (~" + Math.round(cfg.perfusion_vehiculo_ml / 24) + "-" + Math.round(cfg.perfusion_vehiculo_ml / 12) + " ml/h).\n";
     if (o.erc) t += "  - ERC: reducir dosis 25-50% y vigilar.\n";
   } else t += "\nORAL\n  - Sales de magnesio orales; pasar a IV si síntomas/arritmia.\n";
   t += "\nASOCIADOS/CAUSA\n  - Reponer K y Ca. " + MG_TXT.hipo_causas + "\n";
@@ -91,7 +95,7 @@ function renderHM() {
   ], "var(--c-cad)") : "";
 
   const eliminar = cardTrat("Eliminar el magnesio", null, null, [
-    (diuresis ? "<b>Suero salino 0,9% + diurético de asa</b>" : "Suero salino 0,9% + diurético de asa") + " si la función renal y la diuresis lo permiten.",
+    (diuresis ? "<b>SSF 0,9% 200-300 ml/h + furosemida " + cfg.furosemida_mg_min + "-" + cfg.furosemida_mg_max + " mg IV</b>" : "SSF 0,9% 200-300 ml/h + furosemida " + cfg.furosemida_mg_min + "-" + cfg.furosemida_mg_max + " mg IV") + ", si la función renal y la diuresis lo permiten. Repetir furosemida según respuesta.",
     (erc ? "<b>Hemodiálisis</b>" : "Hemodiálisis") + " si hay insuficiencia renal, es grave o no responde.",
     "Monitorizar reflejos osteotendinosos, ECG y respiración. " + escHtml(MG_TXT.hiper_clinica)
   ], "var(--violet)");
@@ -116,7 +120,7 @@ function informeHM() {
   t += "PACIENTE\n  - Magnesio: " + fmt(o.mg, 1) + " mg/dl" + (o.sintomas ? " · sintomática" : "") + (o.erc ? " · ERC" : "") + "\n";
   t += "\nSUSPENDER\n  - Retirar todo aporte de Mg (laxantes/antiácidos). " + MG_TXT.hiper_causas + "\n";
   if (o.sintomas) t += "\nCALCIO IV\n  - Gluconato cálcico 10% " + cfg.gluconato_ml_min + "-" + cfg.gluconato_ml_max + " ml (1-2 g) IV en 3-10 min (antagonista), repetible.\n";
-  t += "\nELIMINAR\n  - SSF + diurético de asa si diuresis conservada; hemodiálisis si ERC/grave. Monitor reflejos/ECG/respiración.\n";
+  t += "\nELIMINAR\n  - SSF 0,9% 200-300 ml/h + furosemida " + cfg.furosemida_mg_min + "-" + cfg.furosemida_mg_max + " mg IV si diuresis conservada; hemodiálisis si ERC/grave. Monitor reflejos/ECG/respiración.\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (Merck / EMCrit). Verificar por el facultativo.\n";
   return t;
 }
