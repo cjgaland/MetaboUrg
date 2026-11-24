@@ -12,7 +12,7 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.21";
+const APP_VERSION = "2026.22";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 // Clave de acceso de Web3Forms para el buzón de sugerencias.
@@ -21,6 +21,16 @@ const APP_ANIO = APP_VERSION.split(".")[0];
 const WEB3FORMS_KEY = "f57ce774-9fbd-471e-b52d-7c3aa180094e";
 
 const NOVEDADES = [
+  {
+    version: "2026.22",
+    fecha: "Noviembre 2026",
+    titulo: "Mejora interna: los textos leen sus cifras de los datos de protocolo",
+    cambios: [
+      "Las cifras que aparecen en tarjetas, informes y resúmenes del Diagnóstico (dosis, umbrales, ritmos) ya no están escritas a mano en cada texto: se leen de los datos de protocolo, de modo que una futura actualización de un valor se refleja en todos los sitios a la vez.",
+      "No cambia ninguna pauta ni ningún cálculo: los resultados son idénticos a los de la versión anterior.",
+      "Corregido un decimal con punto en la CAD («ACT 0,6 × peso»)."
+    ]
+  },
   {
     version: "2026.21",
     fecha: "Noviembre 2026",
@@ -211,6 +221,16 @@ function fmt(n, dec) {
   const f = (dec === undefined) ? (Math.abs(n) < 10 && n % 1 !== 0 ? 1 : 0) : dec;
   return n.toLocaleString("es-ES", { minimumFractionDigits: f, maximumFractionDigits: f });
 }
+// Formatea un valor de los DATOS de protocolo para ponerlo dentro de un texto: como mínimo
+// `minDec` decimales y, si el dato tiene más, todos los que tenga. A diferencia de fmt(), nunca
+// redondea: si alguien cambia 0,1 por 0,14 en los datos, el texto dice «0,14» y no «0,1».
+// Los datos que ya son texto (p. ej. "2-3", "12-24") se devuelven tal cual.
+function fmtDato(n, minDec) {
+  if (n === null || n === undefined) return "—";
+  if (typeof n !== "number") return String(n);
+  if (isNaN(n)) return "—";
+  return n.toLocaleString("es-ES", { minimumFractionDigits: minDec || 0, maximumFractionDigits: 6 });
+}
 function escHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
@@ -233,7 +253,7 @@ const App = {
   registrarRuta(hash, def) { this.rutas[hash] = def; },
   alIniciar(fn) { this.inits.push(fn); },
   navegar(hash) { location.hash = hash; },
-  util: { fmt, parseNum, escHtml, toast }
+  util: { fmt, fmtDato, parseNum, escHtml, toast }
 };
 window.App = App;
 

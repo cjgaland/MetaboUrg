@@ -80,9 +80,9 @@ function calcularEHH(d) {
   const kLitMax = o.cautelaK ? cfg.kcl_por_litro_erc_max : cfg.kcl_por_litro_max;
   const cautelaTxt = o.cautelaK ? " ERC/I. renal: reponer en el rango bajo, con diuresis confirmada y control de K cada 1-2 h (riesgo de hiperpotasemia)." : "";
   if (!has(d.k)) o.k = { nivel: "falta", txt: "Solicita el potasio antes de iniciar insulina." + cautelaTxt };
-  else if (d.k < cfg.k_bajo) o.k = { nivel: "bajo", txt: "K < 3,3 mEq/l: RETRASAR la insulina. Reponer KCl " + cfg.kcl_reposicion_h_min + "-" + cfg.kcl_reposicion_h_max + " mEq/h IV (monitorizado) hasta K > 3,3 mEq/l." + cautelaTxt };
-  else if (d.k <= cfg.k_alto) o.k = { nivel: "normal", txt: "K " + fmt(d.k, 1) + " mEq/l: añadir KCl " + kLitMin + "-" + kLitMax + " mEq por cada litro de suero. Objetivo K " + cfg.k_obj_min + "-" + cfg.k_obj_max + " mEq/l." + cautelaTxt };
-  else o.k = { nivel: "alto", txt: "K > 5,3 mEq/l: NO reponer potasio. Revisar K en 2 h." + (o.cautelaK ? " ERC/I. renal: vigilancia estrecha de la hiperpotasemia." : "") };
+  else if (d.k < cfg.k_bajo) o.k = { nivel: "bajo", txt: "K < " + fmtDato(cfg.k_bajo, 1) + " mEq/l: RETRASAR la insulina. Reponer KCl " + fmtDato(cfg.kcl_reposicion_h_min) + "-" + fmtDato(cfg.kcl_reposicion_h_max) + " mEq/h IV (monitorizado) hasta K > " + fmtDato(cfg.k_bajo, 1) + " mEq/l." + cautelaTxt };
+  else if (d.k <= cfg.k_alto) o.k = { nivel: "normal", txt: "K " + fmt(d.k, 1) + " mEq/l: añadir KCl " + fmtDato(kLitMin) + "-" + fmtDato(kLitMax) + " mEq por cada litro de suero. Objetivo K " + fmtDato(cfg.k_obj_min) + "-" + fmtDato(cfg.k_obj_max) + " mEq/l." + cautelaTxt };
+  else o.k = { nivel: "alto", txt: "K > " + fmtDato(cfg.k_alto, 1) + " mEq/l: NO reponer potasio. Revisar K en 2 h." + (o.cautelaK ? " ERC/I. renal: vigilancia estrecha de la hiperpotasemia." : "") };
 
   return o;
 }
@@ -112,26 +112,26 @@ function renderResultadoEHH() {
     add("Sodio corregido", o.naCorr !== null ? fmt(o.naCorr, 0) : null, "mEq/l");
     add("Agua corporal total", o.act !== null ? fmt(o.act, 1) : null, "litros");
     add("Déficit de agua", o.defAgua !== null ? fmt(o.defAgua, 1) : null, "litros");
-    add("Pérdidas estimadas (25 ml/kg)", o.perdidas !== null ? fmt(o.perdidas, 1) : null, "litros");
+    add("Pérdidas estimadas (" + fmtDato(CAD_CFG.perdidas_mlkg) + " ml/kg)", o.perdidas !== null ? fmt(o.perdidas, 1) : null, "litros");
     add("Déficit total de agua", o.defTotal !== null ? fmt(o.defTotal, 1) : null, "litros");
     const filas = items.map(it => '<div class="dato-item"><span class="dato-lab">' + escHtml(it[0]) + '</span><span class="dato-val">' + it[1] + " <small>" + escHtml(it[2]) + "</small></span></div>").join("");
     return '<div class="datos-card"><h3>Datos calculados</h3><div class="datos-grid">' + filas + "</div>" +
-      '<p class="datos-pie">Corrección LENTA: descenso de la osmolalidad ' + ecfg.osm_descenso_min + "-" + ecfg.osm_descenso_max + " mOsm/kg/h. Resolución cuando osmolalidad ≤ " + ecfg.osm_resolucion + " mOsm/kg y el paciente esté alerta.</p></div>";
+      '<p class="datos-pie">Corrección LENTA: descenso de la osmolalidad ' + fmtDato(ecfg.osm_descenso_min) + "-" + fmtDato(ecfg.osm_descenso_max) + " mOsm/kg/h. Resolución cuando osmolalidad ≤ " + fmtDato(ecfg.osm_resolucion) + " mOsm/kg y el paciente esté alerta.</p></div>";
   }
 
   // Fluidos
   const fluidoLineas = [];
   if (o.cautelaFluidos) fluidoLineas.push("⚠️ <b>" + escHtml(o.motivoCautela.join(" / ")) + ":</b> fluidoterapia más prudente — ritmos reducidos y reevaluación frecuente (vigilar sobrecarga / edema agudo de pulmón).");
-  if (d.shock) fluidoLineas.push("<b>Shock / TA &lt; 90:</b> bolo de <b>" + CAD_CFG.bolo_shock_ml + " ml</b> de SSF 0,9% en 10-15 min; repetir hasta TA sistólica &gt; 90 mmHg (valorar expansores).");
-  fluidoLineas.push("<b>1.ª hora:</b> SSF 0,9% <b>" + fmt(o.fluido1hMin, 0) + "-" + fmt(o.fluido1hMax, 0) + " ml</b> (≈" + fmt(o.fluido1hMlkgMin, 0) + "-" + fmt(o.fluido1hMlkgMax, 0) + " ml/kg).");
-  fluidoLineas.push("<b>Mantenimiento:</b> " + (o.usar045 ? "salino 0,45%" : "SSF 0,9%") + " a <b>" + o.ritmoMin + "-" + o.ritmoMax + " ml/h</b>" + (o.naCorr !== null ? " (Na corregido " + fmt(o.naCorr, 0) + " mEq/l" + (o.usar045 ? ", ≥135 → hiposalino" : "") + ")" : "") + ". Objetivo: descenso LENTO de la osmolalidad (" + ecfg.osm_descenso_min + "-" + ecfg.osm_descenso_max + " mOsm/kg/h) y del sodio.");
-  fluidoLineas.push("<b>Al bajar la glucemia a ≤ " + ecfg.glu_anadir_glucosa + " mg/dl:</b> añadir suero glucosado 5-10%, manteniendo la glucemia en " + ecfg.glu_objetivo_min + "-" + ecfg.glu_objetivo_max + " mg/dl hasta normalizar la osmolalidad.");
+  if (d.shock) fluidoLineas.push("<b>Shock / TA &lt; 90:</b> bolo de <b>" + fmtDato(CAD_CFG.bolo_shock_ml) + " ml</b> de SSF 0,9% en 10-15 min; repetir hasta TA sistólica &gt; 90 mmHg (valorar expansores).");
+  fluidoLineas.push("<b>1.ª hora:</b> SSF 0,9% <b>" + fmt(o.fluido1hMin, 0) + "-" + fmt(o.fluido1hMax, 0) + " ml</b> (≈" + fmtDato(o.fluido1hMlkgMin, 0) + "-" + fmtDato(o.fluido1hMlkgMax, 0) + " ml/kg).");
+  fluidoLineas.push("<b>Mantenimiento:</b> " + (o.usar045 ? "salino 0,45%" : "SSF 0,9%") + " a <b>" + fmtDato(o.ritmoMin) + "-" + fmtDato(o.ritmoMax) + " ml/h</b>" + (o.naCorr !== null ? " (Na corregido " + fmt(o.naCorr, 0) + " mEq/l" + (o.usar045 ? ", ≥" + fmtDato(CAD_CFG.na_corr_umbral_045) + " → hiposalino" : "") + ")" : "") + ". Objetivo: descenso LENTO de la osmolalidad (" + fmtDato(ecfg.osm_descenso_min) + "-" + fmtDato(ecfg.osm_descenso_max) + " mOsm/kg/h) y del sodio.");
+  fluidoLineas.push("<b>Al bajar la glucemia a ≤ " + fmtDato(ecfg.glu_anadir_glucosa) + " mg/dl:</b> añadir suero glucosado 5-10%, manteniendo la glucemia en " + fmtDato(ecfg.glu_objetivo_min) + "-" + fmtDato(ecfg.glu_objetivo_max) + " mg/dl hasta normalizar la osmolalidad.");
 
   // Insulina (dosis baja, condicional)
   const insLineas = [
     "Indicada <b>si hay cetonemia significativa</b>" + (o.cetonemia ? " (β-OHB " + fmt(d.bhb, 1) + " mmol/l → SÍ indicada)" : (d.bhb !== null ? " (β-OHB " + fmt(d.bhb, 1) + " mmol/l)" : "") + "") + " <b>o cuando la glucemia deja de bajar solo con fluidos</b>.",
-    "Perfusión de insulina rápida <b>" + fmt(o.insMin, 1) + "-" + fmt(o.insMax, 1) + " UI/h</b> (0,05-0,1 UI/kg/h). Preparación: 50 UI en 50 ml de SSF (1 UI/ml).",
-    "<b>Objetivo:</b> glucemia " + ecfg.glu_objetivo_min + "-" + ecfg.glu_objetivo_max + " mg/dl hasta que se normalicen la osmolalidad y el nivel de consciencia. No descender la glucemia bruscamente."
+    "Perfusión de insulina rápida <b>" + fmt(o.insMin, 1) + "-" + fmt(o.insMax, 1) + " UI/h</b> (" + fmtDato(ecfg.insulina_uikgh_min, 2) + "-" + fmtDato(ecfg.insulina_uikgh_max, 1) + " UI/kg/h). Preparación: " + fmtDato(CAD_CFG.prep_ui) + " UI en " + fmtDato(CAD_CFG.prep_ml) + " ml de SSF (1 UI/ml).",
+    "<b>Objetivo:</b> glucemia " + fmtDato(ecfg.glu_objetivo_min) + "-" + fmtDato(ecfg.glu_objetivo_max) + " mg/dl hasta que se normalicen la osmolalidad y el nivel de consciencia. No descender la glucemia bruscamente."
   ];
 
   cont.innerHTML =
@@ -142,12 +142,12 @@ function renderResultadoEHH() {
     "</div>" +
     datosCalculados() +
     card("1 · Fluidoterapia (lenta)", null, null, fluidoLineas, "var(--c-hipo)") +
-    card("2 · Insulina (dosis baja)", fmt(o.insMin, 1) + "-" + fmt(o.insMax, 1) + " UI/h", "0,05-0,1 UI/kg/h", insLineas, "var(--c-insulina)") +
+    card("2 · Insulina (dosis baja)", fmt(o.insMin, 1) + "-" + fmt(o.insMax, 1) + " UI/h", fmtDato(ecfg.insulina_uikgh_min, 2) + "-" + fmtDato(ecfg.insulina_uikgh_max, 1) + " UI/kg/h", insLineas, "var(--c-insulina)") +
     card("3 · Potasio (K⁺)", null, null, [escHtml(o.k.txt) + (o.k.nivel === "normal" || o.k.nivel === "bajo" ? " Requiere diuresis adecuada (~50 ml/h)." : "")], "var(--violet)") +
     card("4 · Profilaxis de trombosis", null, null, ["Riesgo trombótico ALTO: HBPM a dosis profiláctica salvo contraindicación.", "Considerar dosis ajustada al peso y la función renal."], "var(--c-cad)") +
     card("Monitorización y resolución", null, null, [
       "Glucemia horaria; osmolalidad, iones (sobre todo K⁺) y función renal cada 2-4 h.",
-      "Resolución: osmolalidad ≤ " + ecfg.osm_resolucion + " mOsm/kg y paciente alerta (suele tardar &gt; 24 h).",
+      "Resolución: osmolalidad ≤ " + fmtDato(ecfg.osm_resolucion) + " mOsm/kg y paciente alerta (suele tardar &gt; 24 h).",
       "Buscar y tratar el precipitante (infección frecuente). Después, transición a insulina SC."
     ], "var(--brand)") +
     '<div class="acciones-result">' +
@@ -188,16 +188,16 @@ function construirInformeEHH() {
   if (o.defTotal !== null) t += "  - Déficit total de agua: " + fmt(o.defTotal, 1) + " l\n";
   t += "\n1) FLUIDOTERAPIA (LENTA)\n";
   if (o.cautelaFluidos) t += "  - " + o.motivoCautela.join(" / ") + ": ritmos reducidos, vigilar sobrecarga.\n";
-  if (d.shock) t += "  - Shock/TA<90: bolo " + CAD_CFG.bolo_shock_ml + " ml SSF 0,9%, repetir hasta TA>90 (valorar expansores).\n";
-  t += "  - 1.ª hora: SSF 0,9% " + fmt(o.fluido1hMin, 0) + "-" + fmt(o.fluido1hMax, 0) + " ml (" + fmt(o.fluido1hMlkgMin, 0) + "-" + fmt(o.fluido1hMlkgMax, 0) + " ml/kg).\n";
-  t += "  - Mantenimiento: " + (o.usar045 ? "salino 0,45%" : "SSF 0,9%") + " " + o.ritmoMin + "-" + o.ritmoMax + " ml/h. Descenso LENTO de osmolalidad " + ecfg.osm_descenso_min + "-" + ecfg.osm_descenso_max + " mOsm/kg/h.\n";
-  t += "  - Glucemia <= " + ecfg.glu_anadir_glucosa + " mg/dl: añadir glucosado (objetivo " + ecfg.glu_objetivo_min + "-" + ecfg.glu_objetivo_max + ").\n";
+  if (d.shock) t += "  - Shock/TA<90: bolo " + fmtDato(CAD_CFG.bolo_shock_ml) + " ml SSF 0,9%, repetir hasta TA>90 (valorar expansores).\n";
+  t += "  - 1.ª hora: SSF 0,9% " + fmt(o.fluido1hMin, 0) + "-" + fmt(o.fluido1hMax, 0) + " ml (" + fmtDato(o.fluido1hMlkgMin, 0) + "-" + fmtDato(o.fluido1hMlkgMax, 0) + " ml/kg).\n";
+  t += "  - Mantenimiento: " + (o.usar045 ? "salino 0,45%" : "SSF 0,9%") + " " + fmtDato(o.ritmoMin) + "-" + fmtDato(o.ritmoMax) + " ml/h. Descenso LENTO de osmolalidad " + fmtDato(ecfg.osm_descenso_min) + "-" + fmtDato(ecfg.osm_descenso_max) + " mOsm/kg/h.\n";
+  t += "  - Glucemia <= " + fmtDato(ecfg.glu_anadir_glucosa) + " mg/dl: añadir glucosado (objetivo " + fmtDato(ecfg.glu_objetivo_min) + "-" + fmtDato(ecfg.glu_objetivo_max) + ").\n";
   t += "\n2) INSULINA (DOSIS BAJA)\n";
-  t += "  - Solo si cetonemia significativa o si la glucemia deja de bajar con fluidos: " + fmt(o.insMin, 1) + "-" + fmt(o.insMax, 1) + " UI/h (0,05-0,1 UI/kg/h).\n";
-  t += "  - Objetivo glucemia " + ecfg.glu_objetivo_min + "-" + ecfg.glu_objetivo_max + " mg/dl.\n";
+  t += "  - Solo si cetonemia significativa o si la glucemia deja de bajar con fluidos: " + fmt(o.insMin, 1) + "-" + fmt(o.insMax, 1) + " UI/h (" + fmtDato(ecfg.insulina_uikgh_min, 2) + "-" + fmtDato(ecfg.insulina_uikgh_max, 1) + " UI/kg/h).\n";
+  t += "  - Objetivo glucemia " + fmtDato(ecfg.glu_objetivo_min) + "-" + fmtDato(ecfg.glu_objetivo_max) + " mg/dl.\n";
   t += "\n3) POTASIO\n  - " + o.k.txt + "\n";
   t += "\n4) PROFILAXIS DE TROMBOSIS\n  - Riesgo alto: HBPM profiláctica salvo contraindicación.\n";
-  t += "\nMONITORIZACIÓN Y RESOLUCIÓN\n  - Glucemia horaria; osmolalidad/iones/función renal cada 2-4 h. Resolución: osmolalidad <= " + ecfg.osm_resolucion + " y paciente alerta. Buscar precipitante.\n";
+  t += "\nMONITORIZACIÓN Y RESOLUCIÓN\n  - Glucemia horaria; osmolalidad/iones/función renal cada 2-4 h. Resolución: osmolalidad <= " + fmtDato(ecfg.osm_resolucion) + " y paciente alerta. Buscar precipitante.\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (SEEN / ADA-EASD 2024 / SAEDYN). Verificar por el facultativo.\n";
   return t;
 }

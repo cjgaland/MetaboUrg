@@ -33,133 +33,6 @@ const GRAVEDAD_CAD = [
   { nivel: "leve",     ph_max: 7.30, hco3_max: 18, etiqueta: "CAD leve" }
 ];
 
-// ── Definición de cada cuadro (para resultado e informe) ──
-const CUADROS = {
-  hiperglucemia: {
-    id: "hiperglucemia",
-    nombre: "Hiperglucemia simple",
-    color: "var(--c-hiper)",
-    explica: "Hiperglucemia sin cetosis significativa ni acidosis ni hiperosmolalidad. Requiere control y ajuste de tratamiento, pero no es una emergencia metabólica.",
-    tratamiento: [
-      { titulo: "Manejo", puntos: [
-        "Ajustar el tratamiento: pauta basal-bolus-corrección (ver módulo de insulinización SC).",
-        "Asegurar hidratación adecuada.",
-        "Buscar y tratar el desencadenante: infección, corticoides, omisión de tratamiento, estrés." ] }
-    ],
-    modulo: "insulina-sc"
-  },
-  cetosis: {
-    id: "cetosis",
-    nombre: "Cetosis simple",
-    color: "var(--c-cad)",
-    explica: "Cetonemia/cetonuria con bicarbonato conservado (≥ 18) y pH normal: aún no cumple criterios de cetoacidosis. Vigilar estrechamente — puede progresar a CAD. Asegurar hidratación e insulina; no omitir nunca la insulina.",
-    tratamiento: [
-      { titulo: "Manejo", puntos: [
-        "Asegurar hidratación e insulina; NO omitir nunca la insulina.",
-        "Repetir β-hidroxibutirato y gasometría: vigilar progresión a cetoacidosis.",
-        "Buscar y tratar el desencadenante." ] }
-    ],
-    modulo: "cad"
-  },
-  cad: {
-    id: "cad",
-    nombre: "Cetoacidosis diabética (CAD)",
-    color: "var(--c-cad)",
-    explica: "Tríada: hiperglucemia (o glucemia variable), cetonemia y acidosis metabólica. Emergencia. Manejo en 3 ejes: fluidos, insulina y potasio.",
-    tratamiento: [
-      { titulo: "1 · Fluidos", puntos: [
-        "SSF 0,9% 15-20 ml/kg en la 1ª hora (máx. 1500 ml; 5-10 ml/kg si IC, ERC u oligoanuria). Bolos de 500 ml en 10-15 min si TA sistólica < 90 mmHg.",
-        "Continuar 0,9% según volemia y sodio corregido; cambiar a salino 0,45% si el sodio corregido es normal o alto.",
-        "Cuando la glucemia baje a ~200-250 mg/dl, añadir suero glucosado 5-10% manteniendo glucemia 200-250 mg/dl." ] },
-      { titulo: "2 · Insulina", puntos: [
-        "Perfusión de insulina rápida 0,1 UI/kg/h SIN bolo inicial; mantener la insulina basal habitual (o iniciar 0,25 UI/kg si début).",
-        "Objetivo: descenso de glucemia 50-75 mg/dl/h y de β-OHB ≥ 0,5 mmol/l/h.",
-        "CAD leve-moderada no complicada: posible insulina rápida SC cada 1-2 h fuera de UCI (ADA 2024)." ] },
-      { titulo: "3 · Potasio", puntos: [
-        "Comprobar diuresis y función renal antes de reponer.",
-        "K > 5,3: no reponer, revisar en 2 h. K 3,3-5,3: añadir 20-40 mEq/l. K < 3,3: RETRASAR la insulina y reponer primero.",
-        "Objetivo K 4-5 mEq/l." ] },
-      { titulo: "Monitorización y resolución", puntos: [
-        "Glucemia horaria; β-OHB, pH/HCO₃, iones y función renal cada 2-4 h.",
-        "Resolución: β-OHB < 0,6 mmol/l y pH > 7,3. Después, transición a insulina SC (basal-bolus-corrección), solapando la rápida SC 1-2 h antes de retirar la perfusión." ] }
-    ],
-    notas: ["insulina_cad", "bicarbonato_cad", "resolucion_cad"],
-    modulo: "cad"
-  },
-  ehh: {
-    id: "ehh",
-    nombre: "Estado hiperglucémico hiperosmolar (EHH)",
-    color: "var(--c-ehh)",
-    explica: "Hiperglucemia extrema con hiperosmolalidad y deshidratación grave, sin cetoacidosis relevante. Corrección LENTA de la osmolalidad. Profilaxis de trombosis.",
-    tratamiento: [
-      { titulo: "1 · Fluidos (lento)", puntos: [
-        "SSF 0,9% 15-20 ml/kg en la 1ª hora (máx. 1500 ml; 5-10 ml/kg si IC, ERC u oligoanuria). Bolos de 500 ml si TA sistólica < 90 mmHg.",
-        "Objetivo: descenso LENTO de la osmolalidad 3-8 mOsm/kg/h y del sodio. Valorar salino 0,45% si el sodio es alto y el balance es correcto.",
-        "Añadir glucosado cuando la glucemia baje a 250-300 mg/dl." ] },
-      { titulo: "2 · Insulina", puntos: [
-        "Solo si hay cetonemia significativa, o cuando la glucemia deja de bajar solo con fluidos: 0,05-0,1 UI/kg/h.",
-        "Objetivo: glucemia 250-300 mg/dl hasta que se normalicen la osmolalidad y el nivel de consciencia." ] },
-      { titulo: "3 · Potasio", puntos: [
-        "Igual que en la CAD: vigilar K y función renal; K < 3,3 retrasar insulina y reponer primero; objetivo K 4-5 mEq/l." ] },
-      { titulo: "Otros", puntos: [
-        "Profilaxis de trombosis con HBPM salvo contraindicación (riesgo trombótico alto).",
-        "Buscar y tratar el precipitante (infección frecuente). Resolución habitual en > 24 h." ] }
-    ],
-    modulo: "ehh"
-  },
-  mixto: {
-    id: "mixto",
-    nombre: "Presentación mixta CAD + EHH",
-    color: "var(--c-ehh)",
-    explica: "Solapamiento de cetoacidosis y estado hiperosmolar (≈1/3 de los casos). Mayor morbimortalidad. Tratar la CAD pero corrigiendo la osmolalidad de forma lenta y vigilando el sodio.",
-    tratamiento: [
-      { titulo: "Estrategia", puntos: [
-        "Aplicar el protocolo de CAD (fluidos + insulina 0,1 UI/kg/h + potasio), pero corrigiendo la osmolalidad y el sodio de forma LENTA (3-8 mOsm/kg/h).",
-        "Insulina rápida en perfusión 0,1 UI/kg/h; objetivo de resolución de la cetosis (β-OHB < 0,6) sin descenso brusco de la osmolalidad.",
-        "Potasio: K < 3,3 retrasar insulina y reponer primero; objetivo 4-5 mEq/l.",
-        "Profilaxis de trombosis con HBPM. Vigilancia estrecha (mayor morbimortalidad). Buscar el precipitante." ] }
-    ],
-    notas: ["insulina_cad", "bicarbonato_cad", "resolucion_cad"],
-    modulo: "cad"
-  },
-  hipoglucemia: {
-    id: "hipoglucemia",
-    nombre: "Hipoglucemia",
-    color: "var(--c-hipo)",
-    explica: "Glucemia < 70 mg/dl. Tratamiento inmediato según nivel de consciencia y disponibilidad de vía venosa.",
-    tratamiento: [
-      { titulo: "Consciente y tolera vía oral", puntos: [
-        "15 g de glucosa de absorción rápida: geles de glucosa, 2-3 sobres de azúcar, 175 ml de zumo o 300 ml de leche.",
-        "Reevaluar a los 15 min y repetir si la glucemia sigue < 70 mg/dl." ] },
-      { titulo: "Inconsciente o no puede ingerir", puntos: [
-        "SIN vía venosa: glucagón 1 mg IM o SC.",
-        "CON vía venosa: 30 ml de glucosa al 33% (o 20 ml al 50%) IV, seguir con suero glucosado 5%. Reevaluar a los 15 min." ] },
-      { titulo: "Tras la recuperación", puntos: [
-        "Tomar hidratos de absorción lenta y buscar la causa (insulina/sulfonilureas, ayuno, insuficiencia renal, alcohol).",
-        "Vigilancia prolongada si la causa es una sulfonilurea o insulina de acción prolongada (riesgo de recaída)." ] }
-    ],
-    modulo: "hipoglucemia"
-  }
-};
-
-// ── Discrepancias SAEDYN 2017 ↔ SEEN/ADA 2024 (modo híbrido) ──
-// Texto que se muestra como "nota de fuente" en cada protocolo.
-const NOTAS_FUENTE = {
-  insulina_cad:
-    "Por defecto (SEEN/ADA 2024): perfusión de insulina rápida a dosis fija " +
-    "0,1 UI/kg/h SIN bolo inicial, manteniendo la insulina basal habitual " +
-    "(o iniciar 0,25 UI/kg si début). Variante SAEDYN 2017: bolo IV 0,1 UI/kg " +
-    "seguido de perfusión 0,1 UI/kg/h.",
-  bicarbonato_cad:
-    "Por defecto (ADA 2024/SEEN): NO se recomienda bicarbonato de rutina, " +
-    "incluso con pH < 7,0 (sin beneficio demostrado y posibles riesgos). " +
-    "Variante SAEDYN 2017: valorar bicarbonato 1 M si pH ≤ 7,0 (reponer la " +
-    "mitad del déficit en 12 h, con ClK asociado, controlando el potasio).",
-  resolucion_cad:
-    "Resolución (SEEN/ADA 2024): β-OHB < 0,6 mmol/l y pH > 7,3 (o HCO3 ≥ 18 " +
-    "y anión gap normalizado) — no basta con normalizar la glucemia."
-};
-
 // ── Parámetros de tratamiento de la CAD (auditables) ──────
 // Por defecto SEEN/ADA 2024. La variante SAEDYN 2017 se muestra como nota.
 const CAD_CFG = {
@@ -194,6 +67,189 @@ const CAD_CFG = {
   perdidas_mlkg: 25              // pérdidas diarias estimadas en CAD (ml/kg)
 };
 
+// ── Estado hiperglucémico hiperosmolar (EHH) ──────────────
+// Por defecto SEEN/ADA 2024 (corrección LENTA; insulina a dosis baja
+// y solo si cetonemia o la glucemia deja de bajar con fluidos).
+const EHH_CFG = {
+  osm_descenso_min: 3, osm_descenso_max: 8,   // mOsm/kg/h — descenso LENTO
+  osm_resolucion: 315,                         // osmolalidad objetivo / paciente alerta
+  glu_objetivo_min: 250, glu_objetivo_max: 300,
+  glu_anadir_glucosa: 300,                     // mg/dl: añadir glucosa al bajar a este nivel
+  insulina_uikgh_min: 0.05, insulina_uikgh_max: 0.1
+};
+
+// ── Hipoglucemia: árbol de decisión y tratamiento ─────────
+const HIPO_CFG = {
+  umbral: 70,
+  consciente: {
+    titulo: "Consciente y tolera la vía oral",
+    // getter: el umbral se lee de HIPO_CFG.umbral para que el texto siga al dato
+    get pasos() { return [
+      "Administrar 15 g de hidratos de absorción rápida: geles de glucosa, 2-3 sobres de azúcar, 175 ml de zumo o 300 ml de leche.",
+      "Reevaluar la glucemia a los 15 min y repetir la toma si sigue < " + fmtDato(HIPO_CFG.umbral) + " mg/dl.",
+      "Al recuperar, tomar hidratos de absorción lenta."
+    ]; }
+  },
+  inconsciente_sinvia: {
+    titulo: "Inconsciente o no tolera vía oral — SIN vía venosa",
+    pasos: [
+      "Glucagón 1 mg IM o SC.",
+      "Conseguir una vía venosa cuanto antes y administrar glucosa IV.",
+      "Reevaluar la glucemia a los 15 min."
+    ]
+  },
+  inconsciente_convia: {
+    titulo: "Inconsciente o no tolera vía oral — CON vía venosa",
+    get pasos() { return [
+      "30 ml de glucosa al 33% (o 20 ml al 50%) IV en bolo.",
+      "Continuar con suero glucosado al 5%.",
+      "Reevaluar a los 15 min y repetir el bolo si sigue < " + fmtDato(HIPO_CFG.umbral) + " mg/dl."
+    ]; }
+  },
+  tras: [
+    "Tomar hidratos de absorción lenta tras la recuperación.",
+    "Buscar y tratar la causa: insulina o sulfonilureas, ayuno, insuficiencia renal, alcohol, sepsis."
+  ],
+  vigilancia_prolongada: "Causa por SULFONILUREA o INSULINA de acción prolongada: riesgo de recaída. Vigilancia prolongada ≥ 24-48 h y considerar perfusión de suero glucosado al 10%.",
+  glucagon_inutil: "El glucagón puede ser ineficaz en ayuno prolongado, hepatopatía o alcoholismo (depósitos de glucógeno agotados): prioriza la glucosa IV."
+};
+
+// ── Definición de cada cuadro (para resultado e informe) ──
+// Los textos leen sus cifras de los objetos de datos (CAD_CFG, EHH_CFG, HIPO_CFG, UMBRAL) para que sigan al dato.
+const CUADROS = (function () {
+const c = CAD_CFG, e = EHH_CFG, h = HIPO_CFG, u = UMBRAL;
+const n1 = x => fmtDato(x, 1), n2 = x => fmtDato(x, 2);
+return {
+  hiperglucemia: {
+    id: "hiperglucemia",
+    nombre: "Hiperglucemia simple",
+    color: "var(--c-hiper)",
+    explica: "Hiperglucemia sin cetosis significativa ni acidosis ni hiperosmolalidad. Requiere control y ajuste de tratamiento, pero no es una emergencia metabólica.",
+    tratamiento: [
+      { titulo: "Manejo", puntos: [
+        "Ajustar el tratamiento: pauta basal-bolus-corrección (ver módulo de insulinización SC).",
+        "Asegurar hidratación adecuada.",
+        "Buscar y tratar el desencadenante: infección, corticoides, omisión de tratamiento, estrés." ] }
+    ],
+    modulo: "insulina-sc"
+  },
+  cetosis: {
+    id: "cetosis",
+    nombre: "Cetosis simple",
+    color: "var(--c-cad)",
+    explica: "Cetonemia/cetonuria con bicarbonato conservado (≥ " + fmtDato(u.hco3_cad) + ") y pH normal: aún no cumple criterios de cetoacidosis. Vigilar estrechamente — puede progresar a CAD. Asegurar hidratación e insulina; no omitir nunca la insulina.",
+    tratamiento: [
+      { titulo: "Manejo", puntos: [
+        "Asegurar hidratación e insulina; NO omitir nunca la insulina.",
+        "Repetir β-hidroxibutirato y gasometría: vigilar progresión a cetoacidosis.",
+        "Buscar y tratar el desencadenante." ] }
+    ],
+    modulo: "cad"
+  },
+  cad: {
+    id: "cad",
+    nombre: "Cetoacidosis diabética (CAD)",
+    color: "var(--c-cad)",
+    explica: "Tríada: hiperglucemia (o glucemia variable), cetonemia y acidosis metabólica. Emergencia. Manejo en 3 ejes: fluidos, insulina y potasio.",
+    tratamiento: [
+      { titulo: "1 · Fluidos", puntos: [
+        "SSF 0,9% " + fmtDato(c.fluido_1h_mlkg_min) + "-" + fmtDato(c.fluido_1h_mlkg_max) + " ml/kg en la 1ª hora (máx. " + fmtDato(c.fluido_1h_max_ml) + " ml; " + fmtDato(c.fluido_1h_mlkg_cauto_min) + "-" + fmtDato(c.fluido_1h_mlkg_cauto_max) + " ml/kg si IC, ERC u oligoanuria). Bolos de " + fmtDato(c.bolo_shock_ml) + " ml en 10-15 min si TA sistólica < 90 mmHg.",
+        "Continuar 0,9% según volemia y sodio corregido; cambiar a salino 0,45% si el sodio corregido es normal o alto.",
+        "Cuando la glucemia baje a ~200-250 mg/dl, añadir suero glucosado 5-10% manteniendo glucemia " + fmtDato(c.glu_objetivo_min) + "-" + fmtDato(c.glu_objetivo_max) + " mg/dl." ] },
+      { titulo: "2 · Insulina", puntos: [
+        "Perfusión de insulina rápida " + n1(c.insulina_uikgh) + " UI/kg/h SIN bolo inicial; mantener la insulina basal habitual (o iniciar " + n2(c.basal_uikg_debut) + " UI/kg si début).",
+        "Objetivo: descenso de glucemia " + fmtDato(c.descenso_glu_min) + "-" + fmtDato(c.descenso_glu_max) + " mg/dl/h y de β-OHB ≥ 0,5 mmol/l/h.",
+        "CAD leve-moderada no complicada: posible insulina rápida SC cada 1-2 h fuera de UCI (ADA 2024)." ] },
+      { titulo: "3 · Potasio", puntos: [
+        "Comprobar diuresis y función renal antes de reponer.",
+        "K > " + n1(c.k_alto) + ": no reponer, revisar en 2 h. K " + n1(c.k_bajo) + "-" + n1(c.k_alto) + ": añadir " + fmtDato(c.kcl_por_litro_min) + "-" + fmtDato(c.kcl_por_litro_max) + " mEq/l. K < " + n1(c.k_bajo) + ": RETRASAR la insulina y reponer primero.",
+        "Objetivo K " + fmtDato(c.k_obj_min) + "-" + fmtDato(c.k_obj_max) + " mEq/l." ] },
+      { titulo: "Monitorización y resolución", puntos: [
+        "Glucemia horaria; β-OHB, pH/HCO₃, iones y función renal cada 2-4 h.",
+        "Resolución: β-OHB < " + n1(u.bhb_cetosis) + " mmol/l y pH > " + n1(u.ph_cad) + ". Después, transición a insulina SC (basal-bolus-corrección), solapando la rápida SC 1-2 h antes de retirar la perfusión." ] }
+    ],
+    notas: ["insulina_cad", "bicarbonato_cad", "resolucion_cad"],
+    modulo: "cad"
+  },
+  ehh: {
+    id: "ehh",
+    nombre: "Estado hiperglucémico hiperosmolar (EHH)",
+    color: "var(--c-ehh)",
+    explica: "Hiperglucemia extrema con hiperosmolalidad y deshidratación grave, sin cetoacidosis relevante. Corrección LENTA de la osmolalidad. Profilaxis de trombosis.",
+    tratamiento: [
+      { titulo: "1 · Fluidos (lento)", puntos: [
+        "SSF 0,9% " + fmtDato(c.fluido_1h_mlkg_min) + "-" + fmtDato(c.fluido_1h_mlkg_max) + " ml/kg en la 1ª hora (máx. " + fmtDato(c.fluido_1h_max_ml) + " ml; " + fmtDato(c.fluido_1h_mlkg_cauto_min) + "-" + fmtDato(c.fluido_1h_mlkg_cauto_max) + " ml/kg si IC, ERC u oligoanuria). Bolos de " + fmtDato(c.bolo_shock_ml) + " ml si TA sistólica < 90 mmHg.",
+        "Objetivo: descenso LENTO de la osmolalidad " + fmtDato(e.osm_descenso_min) + "-" + fmtDato(e.osm_descenso_max) + " mOsm/kg/h y del sodio. Valorar salino 0,45% si el sodio es alto y el balance es correcto.",
+        "Añadir glucosado cuando la glucemia baje a 250-300 mg/dl." ] },
+      { titulo: "2 · Insulina", puntos: [
+        "Solo si hay cetonemia significativa, o cuando la glucemia deja de bajar solo con fluidos: " + n2(e.insulina_uikgh_min) + "-" + n1(e.insulina_uikgh_max) + " UI/kg/h.",
+        "Objetivo: glucemia " + fmtDato(e.glu_objetivo_min) + "-" + fmtDato(e.glu_objetivo_max) + " mg/dl hasta que se normalicen la osmolalidad y el nivel de consciencia." ] },
+      { titulo: "3 · Potasio", puntos: [
+        "Igual que en la CAD: vigilar K y función renal; K < " + n1(c.k_bajo) + " retrasar insulina y reponer primero; objetivo K " + fmtDato(c.k_obj_min) + "-" + fmtDato(c.k_obj_max) + " mEq/l." ] },
+      { titulo: "Otros", puntos: [
+        "Profilaxis de trombosis con HBPM salvo contraindicación (riesgo trombótico alto).",
+        "Buscar y tratar el precipitante (infección frecuente). Resolución habitual en > 24 h." ] }
+    ],
+    modulo: "ehh"
+  },
+  mixto: {
+    id: "mixto",
+    nombre: "Presentación mixta CAD + EHH",
+    color: "var(--c-ehh)",
+    explica: "Solapamiento de cetoacidosis y estado hiperosmolar (≈1/3 de los casos). Mayor morbimortalidad. Tratar la CAD pero corrigiendo la osmolalidad de forma lenta y vigilando el sodio.",
+    tratamiento: [
+      { titulo: "Estrategia", puntos: [
+        "Aplicar el protocolo de CAD (fluidos + insulina " + n1(c.insulina_uikgh) + " UI/kg/h + potasio), pero corrigiendo la osmolalidad y el sodio de forma LENTA (" + fmtDato(e.osm_descenso_min) + "-" + fmtDato(e.osm_descenso_max) + " mOsm/kg/h).",
+        "Insulina rápida en perfusión " + n1(c.insulina_uikgh) + " UI/kg/h; objetivo de resolución de la cetosis (β-OHB < " + n1(u.bhb_cetosis) + ") sin descenso brusco de la osmolalidad.",
+        "Potasio: K < " + n1(c.k_bajo) + " retrasar insulina y reponer primero; objetivo " + fmtDato(c.k_obj_min) + "-" + fmtDato(c.k_obj_max) + " mEq/l.",
+        "Profilaxis de trombosis con HBPM. Vigilancia estrecha (mayor morbimortalidad). Buscar el precipitante." ] }
+    ],
+    notas: ["insulina_cad", "bicarbonato_cad", "resolucion_cad"],
+    modulo: "cad"
+  },
+  hipoglucemia: {
+    id: "hipoglucemia",
+    nombre: "Hipoglucemia",
+    color: "var(--c-hipo)",
+    explica: "Glucemia < " + fmtDato(u.glucosa_hipo) + " mg/dl. Tratamiento inmediato según nivel de consciencia y disponibilidad de vía venosa.",
+    tratamiento: [
+      { titulo: "Consciente y tolera vía oral", puntos: [
+        "15 g de glucosa de absorción rápida: geles de glucosa, 2-3 sobres de azúcar, 175 ml de zumo o 300 ml de leche.",
+        "Reevaluar a los 15 min y repetir si la glucemia sigue < " + fmtDato(h.umbral) + " mg/dl." ] },
+      { titulo: "Inconsciente o no puede ingerir", puntos: [
+        "SIN vía venosa: glucagón 1 mg IM o SC.",
+        "CON vía venosa: 30 ml de glucosa al 33% (o 20 ml al 50%) IV, seguir con suero glucosado 5%. Reevaluar a los 15 min." ] },
+      { titulo: "Tras la recuperación", puntos: [
+        "Tomar hidratos de absorción lenta y buscar la causa (insulina/sulfonilureas, ayuno, insuficiencia renal, alcohol).",
+        "Vigilancia prolongada si la causa es una sulfonilurea o insulina de acción prolongada (riesgo de recaída)." ] }
+    ],
+    modulo: "hipoglucemia"
+  }
+};
+})();
+
+// ── Discrepancias SAEDYN 2017 ↔ SEEN/ADA 2024 (modo híbrido) ──
+// Texto que se muestra como "nota de fuente" en cada protocolo.
+const NOTAS_FUENTE = (function () {
+const c = CAD_CFG, u = UMBRAL;
+const n1 = x => fmtDato(x, 1), n2 = x => fmtDato(x, 2);
+return {
+  insulina_cad:
+    "Por defecto (SEEN/ADA 2024): perfusión de insulina rápida a dosis fija " +
+    n1(c.insulina_uikgh) + " UI/kg/h SIN bolo inicial, manteniendo la insulina basal habitual " +
+    "(o iniciar " + n2(c.basal_uikg_debut) + " UI/kg si début). Variante SAEDYN 2017: bolo IV " + n1(c.bolo_uikg_saedyn) + " UI/kg " +
+    "seguido de perfusión " + n1(c.insulina_uikgh) + " UI/kg/h.",
+  bicarbonato_cad:
+    "Por defecto (ADA 2024/SEEN): NO se recomienda bicarbonato de rutina, " +
+    "incluso con pH < 7,0 (sin beneficio demostrado y posibles riesgos). " +
+    "Variante SAEDYN 2017: valorar bicarbonato 1 M si pH ≤ " + n1(c.bicarbonato_ph_umbral) + " (reponer la " +
+    "mitad del déficit en 12 h, con ClK asociado, controlando el potasio).",
+  resolucion_cad:
+    "Resolución (SEEN/ADA 2024): β-OHB < " + n1(u.bhb_cetosis) + " mmol/l y pH > " + n1(u.ph_cad) + " (o HCO3 ≥ " + fmtDato(u.hco3_cad) + " " +
+    "y anión gap normalizado) — no basta con normalizar la glucemia."
+};
+})();
+
 // ── Insulinización SC: pauta basal-bolo-corrección (SAEDYN 2017) ──
 // Cartel "Insulinización hospitalaria subcutánea para el paciente NO crítico".
 const INSULINA_SC = {
@@ -212,10 +268,11 @@ const INSULINA_SC = {
   // 3 · Pauta de corrección A/B/C (UI a sumar/restar según glucemia capilar)
   pauta_dtd_AB: 40, pauta_dtd_BC: 80,   // por DTD (U/día)
   pauta_kg_AB: 60, pauta_kg_BC: 90,     // por peso (kg)
+  // Etiquetas de cada pauta: getters que leen los cortes de arriba (pauta_dtd_*, pauta_kg_*)
   pautas_corr: {
-    A: "< 40 U/día o < 60 kg",
-    B: "40-80 U/día o 60-90 kg",
-    C: "> 80 U/día o > 90 kg"
+    get A() { return "< " + fmtDato(INSULINA_SC.pauta_dtd_AB) + " U/día o < " + fmtDato(INSULINA_SC.pauta_kg_AB) + " kg"; },
+    get B() { return fmtDato(INSULINA_SC.pauta_dtd_AB) + "-" + fmtDato(INSULINA_SC.pauta_dtd_BC) + " U/día o " + fmtDato(INSULINA_SC.pauta_kg_AB) + "-" + fmtDato(INSULINA_SC.pauta_kg_BC) + " kg"; },
+    get C() { return "> " + fmtDato(INSULINA_SC.pauta_dtd_BC) + " U/día o > " + fmtDato(INSULINA_SC.pauta_kg_BC) + " kg"; }
   },
   corr_filas: [
     { rango: "< 80",    A: -1, B: -1, C: -2 },
@@ -242,9 +299,10 @@ const INSULINA_SC = {
     "Post-cena o al acostarse: reducir 10-20% la prandial de la cena."
   ],
   alta: [
-    { hba1c_max: 8,        txt: "HbA1c < 8%: mantener el tratamiento previo del paciente." },
-    { hba1c_max: 10,       txt: "HbA1c 8-10%: si venía con terapias no insulínicas, mantenerlas y añadir insulina basal; si venía con insulina, mantener la pauta basal-bolo hospitalaria." },
-    { hba1c_max: Infinity, txt: "HbA1c > 10%: sospechar DM tipo 1/LADA, corticoides, insuficiencia pancreática o paciente semiestabilizado; mantener la pauta basal-bolo hospitalaria." }
+    // txt: getters que leen los cortes de HbA1c (hba1c_max) de esta lista
+    { hba1c_max: 8,        get txt() { return "HbA1c < " + fmtDato(INSULINA_SC.alta[0].hba1c_max) + "%: mantener el tratamiento previo del paciente."; } },
+    { hba1c_max: 10,       get txt() { return "HbA1c " + fmtDato(INSULINA_SC.alta[0].hba1c_max) + "-" + fmtDato(INSULINA_SC.alta[1].hba1c_max) + "%: si venía con terapias no insulínicas, mantenerlas y añadir insulina basal; si venía con insulina, mantener la pauta basal-bolo hospitalaria."; } },
+    { hba1c_max: Infinity, get txt() { return "HbA1c > " + fmtDato(INSULINA_SC.alta[1].hba1c_max) + "%: sospechar DM tipo 1/LADA, corticoides, insuficiencia pancreática o paciente semiestabilizado; mantener la pauta basal-bolo hospitalaria."; } }
   ]
 };
 
@@ -261,17 +319,17 @@ const INSULINA_IV = {
   prep_insulina: "100 UI de insulina regular (Actrapid®/Humulina Regular®) en 100 ml de SSF 0,9% → 1 UI/ml (ml/h = UI/h).",
   prep_liquidos: "Línea de líquidos en Y: suero glucosado 5% a 100 ml/h (o glucosado 10% a 50 ml/h), ajustando a otros aportes (nutrición, etc.).",
 
-  // Tabla de pautas (UI/hora) por tramo de glucemia
+  // Tabla de pautas (UI/hora) por tramo de glucemia (`rango` se añade al final del objeto, desde min/max)
   pautas_filas: [
-    { rango: "70-139",  min: 70,  max: 139, p: [0, 0, 0, 0] },
-    { rango: "140-179", min: 140, max: 179, p: [1, 1, 2, 2] },
-    { rango: "180-209", min: 180, max: 209, p: [1, 2, 3, 4] },
-    { rango: "210-239", min: 210, max: 239, p: [2, 4, 6, 8] },
-    { rango: "240-269", min: 240, max: 269, p: [3, 5, 7, 10] },
-    { rango: "270-299", min: 270, max: 299, p: [3, 6, 8, 14] },
-    { rango: "300-329", min: 300, max: 329, p: [4, 7, 10, 18] },
-    { rango: "330-359", min: 330, max: 359, p: [4, 8, 12, 20] },
-    { rango: "> 360",   min: 360, max: Infinity, p: [6, 10, 14, 24] }
+    { min: 70,  max: 139, p: [0, 0, 0, 0] },
+    { min: 140, max: 179, p: [1, 1, 2, 2] },
+    { min: 180, max: 209, p: [1, 2, 3, 4] },
+    { min: 210, max: 239, p: [2, 4, 6, 8] },
+    { min: 240, max: 269, p: [3, 5, 7, 10] },
+    { min: 270, max: 299, p: [3, 6, 8, 14] },
+    { min: 300, max: 329, p: [4, 7, 10, 18] },
+    { min: 330, max: 359, p: [4, 8, 12, 20] },
+    { min: 360, max: Infinity, p: [6, 10, 14, 24] }
   ],
 
   // Criterios para INICIAR por pauta 2 (si ninguno → pauta 1)
@@ -280,7 +338,7 @@ const INSULINA_IV = {
     cardio:      "Cirugía cardiovascular",
     trasplante:  "Trasplante de órgano sólido o de islotes",
     corticoides: "Altas dosis de corticoides",
-    altorreq:    "Requerimientos previos > 80 UI/día"
+    get altorreq() { return "Requerimientos previos > " + fmtDato(INSULINA_IV.req_alto_uidia) + " UI/día"; }
   },
 
   monitor: [
@@ -293,13 +351,13 @@ const INSULINA_IV = {
     "A pauta INFERIOR: glucemias < 140 mg/dl durante > 2 h.",
     "Si el paciente realiza ingesta oral: subir a la pauta superior durante las 4 h posteriores a la ingesta."
   ],
-  hipo: [
+  get hipo() { return [
     "PARAR la infusión de insulina y administrar glucosa IV.",
     "Consciente: 10 g de glucosa (30 ml de glucosa al 33% o 20 ml al 50%).",
     "Inconsciente: 20 g de glucosa (60 ml al 33% o 40 ml al 50%).",
-    "Medir glucemia capilar cada 15 min; repetir 30 ml de glucosa al 33% si sigue < 70 mg/dl.",
+    "Medir glucemia capilar cada 15 min; repetir 30 ml de glucosa al 33% si sigue < " + fmtDato(INSULINA_IV.hipo_umbral) + " mg/dl.",
     "Reinstaurar la perfusión cuando la glucemia sea ≥ 140 mg/dl en dos determinaciones, empezando por la Pauta 1."
-  ],
+  ]; },
   avisar: [
     "Cambio (↑ o ↓) de la glucemia > 100 mg/dl en una hora.",
     "Glucemia > 360 mg/dl.",
@@ -318,51 +376,8 @@ const INSULINA_IV = {
   ]
 };
 
-// ── Estado hiperglucémico hiperosmolar (EHH) ──────────────
-// Por defecto SEEN/ADA 2024 (corrección LENTA; insulina a dosis baja
-// y solo si cetonemia o la glucemia deja de bajar con fluidos).
-const EHH_CFG = {
-  osm_descenso_min: 3, osm_descenso_max: 8,   // mOsm/kg/h — descenso LENTO
-  osm_resolucion: 315,                         // osmolalidad objetivo / paciente alerta
-  glu_objetivo_min: 250, glu_objetivo_max: 300,
-  glu_anadir_glucosa: 300,                     // mg/dl: añadir glucosa al bajar a este nivel
-  insulina_uikgh_min: 0.05, insulina_uikgh_max: 0.1
-};
-
-// ── Hipoglucemia: árbol de decisión y tratamiento ─────────
-const HIPO_CFG = {
-  umbral: 70,
-  consciente: {
-    titulo: "Consciente y tolera la vía oral",
-    pasos: [
-      "Administrar 15 g de hidratos de absorción rápida: geles de glucosa, 2-3 sobres de azúcar, 175 ml de zumo o 300 ml de leche.",
-      "Reevaluar la glucemia a los 15 min y repetir la toma si sigue < 70 mg/dl.",
-      "Al recuperar, tomar hidratos de absorción lenta."
-    ]
-  },
-  inconsciente_sinvia: {
-    titulo: "Inconsciente o no tolera vía oral — SIN vía venosa",
-    pasos: [
-      "Glucagón 1 mg IM o SC.",
-      "Conseguir una vía venosa cuanto antes y administrar glucosa IV.",
-      "Reevaluar la glucemia a los 15 min."
-    ]
-  },
-  inconsciente_convia: {
-    titulo: "Inconsciente o no tolera vía oral — CON vía venosa",
-    pasos: [
-      "30 ml de glucosa al 33% (o 20 ml al 50%) IV en bolo.",
-      "Continuar con suero glucosado al 5%.",
-      "Reevaluar a los 15 min y repetir el bolo si sigue < 70 mg/dl."
-    ]
-  },
-  tras: [
-    "Tomar hidratos de absorción lenta tras la recuperación.",
-    "Buscar y tratar la causa: insulina o sulfonilureas, ayuno, insuficiencia renal, alcohol, sepsis."
-  ],
-  vigilancia_prolongada: "Causa por SULFONILUREA o INSULINA de acción prolongada: riesgo de recaída. Vigilancia prolongada ≥ 24-48 h y considerar perfusión de suero glucosado al 10%.",
-  glucagon_inutil: "El glucagón puede ser ineficaz en ayuno prolongado, hepatopatía o alcoholismo (depósitos de glucógeno agotados): prioriza la glucosa IV."
-};
+// Etiqueta de cada tramo de glucemia, derivada de su min/max (">" en el último, sin tope)
+INSULINA_IV.pautas_filas.forEach(f => { f.rango = f.max === Infinity ? "> " + f.min : f.min + "-" + f.max; });
 
 // Exponer como globales (sin módulos ES, igual que DosisPed)
 window.INSULINA_SC = INSULINA_SC;

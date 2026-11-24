@@ -58,12 +58,12 @@ function renderResultadoHipo() {
 
   // Cabecera: ¿es hipoglucemia?
   let kicker = "Pauta de tratamiento";
-  if (has(d.glu)) kicker = d.glu < cfg.umbral ? ("Glucemia " + fmt(d.glu, 0) + " mg/dl — hipoglucemia") : ("Glucemia " + fmt(d.glu, 0) + " mg/dl — ≥ 70 mg/dl");
+  if (has(d.glu)) kicker = d.glu < cfg.umbral ? ("Glucemia " + fmt(d.glu, 0) + " mg/dl — hipoglucemia") : ("Glucemia " + fmt(d.glu, 0) + " mg/dl — ≥ " + fmtDato(cfg.umbral) + " mg/dl");
 
   const avisos = [];
   if (glucagonInutil) avisos.push({ nivel: "red", txt: cfg.glucagon_inutil });
   if (recaida) avisos.push({ nivel: "red", txt: cfg.vigilancia_prolongada });
-  if (has(d.glu) && d.glu >= cfg.umbral) avisos.push({ nivel: "amber", txt: "La glucemia es ≥ 70 mg/dl: si hay síntomas neuroglucopénicos, trata igualmente y reevalúa; si no, busca otras causas." });
+  if (has(d.glu) && d.glu >= cfg.umbral) avisos.push({ nivel: "amber", txt: "La glucemia es ≥ " + fmtDato(cfg.umbral) + " mg/dl: si hay síntomas neuroglucopénicos, trata igualmente y reevalúa; si no, busca otras causas." });
   const avisosHtml = avisos.map(a => '<div class="alert alert-' + a.nivel + '"><span>' + (a.nivel === "red" ? "⚠️" : "ℹ️") + "</span><span>" + escHtml(a.txt) + "</span></div>").join("");
 
   cont.innerHTML =
@@ -99,8 +99,8 @@ function construirInformeHipo() {
   via.pasos.forEach(p => { t += "  - " + p + "\n"; });
   t += "\nTRAS LA RECUPERACIÓN\n";
   cfg.tras.forEach(p => { t += "  - " + p + "\n"; });
-  if (glucagonInutil) t += "\nAVISO\n  ! " + cfg.glucagon_inutil + "\n";
-  if (recaida) t += "\nAVISO\n  ! " + cfg.vigilancia_prolongada + "\n";
+  if (glucagonInutil) t += "\nAVISO\n  ! " + fmtDato(cfg.glucagon_inutil) + "\n";
+  if (recaida) t += "\nAVISO\n  ! " + fmtDato(cfg.vigilancia_prolongada) + "\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (SEEN / SAEDYN). Verificar por el facultativo.\n";
   return t;
 }

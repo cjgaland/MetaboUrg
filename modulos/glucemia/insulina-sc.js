@@ -47,6 +47,8 @@ function leerDatosSC() {
 
 // ── Cálculo ────────────────────────────────────────────────
 function redondeaSC(n) { return Math.round(n); }
+// Fracción (0,3) → porcentaje entero (30) para los textos
+function pctSC(f) { return Math.round(f * 100); }
 
 function calcularSC(d) {
   const cfg = INSULINA_SC;
@@ -57,7 +59,7 @@ function calcularSC(d) {
   if ((d.tto === "ins" || d.tto === "insado") && has(d.dtdDomic)) {
     if (d.tto === "insado") {
       o.dtd = redondeaSC(d.dtdDomic * (1 + cfg.recargo_ins_ado));
-      o.metodo = "Insulina domiciliaria (" + fmt(d.dtdDomic, 0) + " UI) + 20% por terapias no insulínicas asociadas";
+      o.metodo = "Insulina domiciliaria (" + fmt(d.dtdDomic, 0) + " UI) + " + Math.round(cfg.recargo_ins_ado * 100) + "% por terapias no insulínicas asociadas";
     } else {
       o.dtd = redondeaSC(d.dtdDomic);
       o.metodo = "Suma de la insulina domiciliaria del paciente";
@@ -148,14 +150,14 @@ function renderResultadoSC() {
 
   // Basal
   const basalLineas = [
-    "<b>50%</b> de la dosis total diaria.",
+    "<b>" + pctSC(cfg.basal_frac) + "%</b> de la dosis total diaria.",
     cfg.insulinas_basal
   ];
   // Bolo
   let boloCard = "";
   if (d.come) {
-    boloCard = card("Bolo prandial (50%)", fmt(o.boloTotal, 0) + " UI/día", null, [
-      "<b>Desayuno (30%): " + fmt(o.boloDes, 0) + " UI</b> · <b>Comida (40%): " + fmt(o.boloCom, 0) + " UI</b> · <b>Cena (30%): " + fmt(o.boloCen, 0) + " UI</b>.",
+    boloCard = card("Bolo prandial (" + pctSC(cfg.bolo_frac) + "%)", fmt(o.boloTotal, 0) + " UI/día", null, [
+      "<b>Desayuno (" + pctSC(cfg.bolo_desayuno) + "%): " + fmt(o.boloDes, 0) + " UI</b> · <b>Comida (" + pctSC(cfg.bolo_comida) + "%): " + fmt(o.boloCom, 0) + " UI</b> · <b>Cena (" + pctSC(cfg.bolo_cena) + "%): " + fmt(o.boloCen, 0) + " UI</b>.",
       cfg.insulinas_bolo
     ], "var(--c-insulina)");
   } else {
@@ -186,7 +188,7 @@ function renderResultadoSC() {
       '<div class="result-dx" style="font-size:1.2rem">Insulinización SC basal-bolo-corrección</div>' +
       '<p class="result-explica">Pauta para paciente no crítico. ' + (d.come ? "Con ingesta oral: basal + bolos + corrección." : "Sin ingesta: solo basal + corrección.") + " Verifica cada dosis según el paciente.</p>" +
     "</div>" +
-    card("Dosis total diaria (DTD)", fmt(o.dtd, 0) + " UI/día", null, ["Método: " + escHtml(o.metodo) + ".", "Reparto: <b>basal 50%</b>" + (d.come ? " + <b>bolo 50%</b>" : " (sin bolo, no come)") + "."], "var(--brand)") +
+    card("Dosis total diaria (DTD)", fmt(o.dtd, 0) + " UI/día", null, ["Método: " + escHtml(o.metodo) + ".", "Reparto: <b>basal " + pctSC(cfg.basal_frac) + "%</b>" + (d.come ? " + <b>bolo " + pctSC(cfg.bolo_frac) + "%</b>" : " (sin bolo, no come)") + "."], "var(--brand)") +
     card("Insulina basal", fmt(o.basal, 0) + " UI/día", null, basalLineas, "var(--c-insulina)") +
     boloCard +
     '<div class="trat-card" style="--trat-color:var(--violet)"><h3>Pauta de corrección (A/B/C)</h3>' +
@@ -215,10 +217,10 @@ function construirInformeSC() {
 
   t += "\nDOSIS TOTAL DIARIA (DTD): " + fmt(o.dtd, 0) + " UI/día\n";
   t += "  - Método: " + o.metodo + ".\n";
-  t += "\nBASAL: " + fmt(o.basal, 0) + " UI/día (50%) — glargina 1 dosis / detemir 1-2 / NPH 2-3.\n";
+  t += "\nBASAL: " + fmt(o.basal, 0) + " UI/día (" + pctSC(cfg.basal_frac) + "%) — glargina 1 dosis / detemir 1-2 / NPH 2-3.\n";
   if (d.come) {
-    t += "BOLO PRANDIAL: " + fmt(o.boloTotal, 0) + " UI/día (50%)\n";
-    t += "  - Desayuno (30%): " + fmt(o.boloDes, 0) + " UI · Comida (40%): " + fmt(o.boloCom, 0) + " UI · Cena (30%): " + fmt(o.boloCen, 0) + " UI.\n";
+    t += "BOLO PRANDIAL: " + fmt(o.boloTotal, 0) + " UI/día (" + pctSC(cfg.bolo_frac) + "%)\n";
+    t += "  - Desayuno (" + pctSC(cfg.bolo_desayuno) + "%): " + fmt(o.boloDes, 0) + " UI · Comida (" + pctSC(cfg.bolo_comida) + "%): " + fmt(o.boloCom, 0) + " UI · Cena (" + pctSC(cfg.bolo_cena) + "%): " + fmt(o.boloCen, 0) + " UI.\n";
     t += "  - Análogo rápido (lispro/aspart/glulisina).\n";
   } else {
     t += "BOLO PRANDIAL: no (paciente que no come). Solo basal + corrección cada 4-6 h.\n";
@@ -231,7 +233,7 @@ function construirInformeSC() {
   });
   t += "  - " + (d.come ? "Se suma al bolo de la comida correspondiente." : "Se administra cada 4-6 h.") + "\n";
 
-  t += "\nOBJETIVOS\n  - " + cfg.objetivos + "\n";
+  t += "\nOBJETIVOS\n  - " + fmtDato(cfg.objetivos) + "\n";
   t += "\nAJUSTES\n";
   cfg.ajustes_hiper.forEach(x => { t += "  + " + x + "\n"; });
   cfg.ajustes_hipo.forEach(x => { t += "  - " + x + "\n"; });

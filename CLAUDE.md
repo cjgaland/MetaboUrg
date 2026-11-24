@@ -17,6 +17,7 @@ Es **apoyo clínico, no decisión clínica**: modal de bienvenida con aviso lega
 - **Seguridad clínica antes que estética**: los números (mg/dl, ml/h, mEq) y los avisos de seguridad son lo prioritario.
 - **Separación de capas**: chasis común en `shared/`, datos clínicos y vistas por módulo en `modulos/<area>/`.
 - **Decimal con coma (es-ES)**: `fmt()` formatea; `parseNum()` admite coma.
+- **Las cifras de los textos se leen de los datos**: una cifra que exista en un objeto de datos (`CAD_CFG`, `K_CFG`…) no se escribe a mano en un texto; se inserta con `fmtDato(dato)` (o `fmtDato(dato, decimalesMínimos)`), que pone coma decimal y nunca redondea. `fmt(x, n)` queda para valores CALCULADOS (dosis, ritmos), que sí se redondean.
 
 ## 3. Arquitectura
 
@@ -47,10 +48,11 @@ Apoyo/                  Material de referencia (PDFs SAEDYN de insulinización S
                         tríptico de diabetes gestacional, dietas 1800/2000/2200 kcal, Excel
                         «Tratamiento Trastornos Metabólicos», HTML antiguo de CAD) — NO se versiona
 Backup/                 Copias de seguridad locales — NO se versiona (ver §8)
-.claude/                launch.json + serve.js (vista previa local) y permisos — NO se versiona
+.claude/                launch.json + serve.js (vista previa local), bateria.js (batería de regresión,
+                        ver §9) y permisos — NO se versiona
 ```
 
-**Service worker (`sw.js`)**: estrategia network-first con respaldo en caché (offline); `ASSETS` lista todos los ficheros de la app y hay que mantenerla al día; el SW nuevo NO hace `skipWaiting()` al instalarse: espera a que el usuario pulse «Actualizar» en el banner (mensaje `SKIP_WAITING`). Versión de caché actual: `CACHE_NAME = "metabourg-v17"`.
+**Service worker (`sw.js`)**: estrategia network-first con respaldo en caché (offline); `ASSETS` lista todos los ficheros de la app y hay que mantenerla al día; el SW nuevo NO hace `skipWaiting()` al instalarse: espera a que el usuario pulse «Actualizar» en el banner (mensaje `SKIP_WAITING`). Versión de caché actual: `CACHE_NAME = "metabourg-v18"`.
 
 **Orden de carga de scripts** (en index.html, antes del cierre de `<body>`): `shared/core.js` → `formulas.js` → `informe.js` → `modulos/glucemia/` (`protocolos.js`, `glucemia.js`, `cad.js`, `insulina-sc.js`, `insulina-iv.js`, `ehh.js`, `hipoglucemia.js`) → `modulos/hidro/` (`protocolos.js`, `sodio.js`, `potasio.js`, `calcio.js`, `fosforo.js`, `magnesio.js`) → `modulos/endo/` (`protocolos.js`, `tiroides.js`, `suprarrenal.js`) → `modulos/sintomas.js`. Los módulos se registran en `App` antes de que `core.js` dispare su `DOMContentLoaded`.
 
@@ -59,7 +61,7 @@ Son scripts clásicos (no módulos ES): todo lo declarado con `function`/`const`
 ### El objeto App (core.js)
 - `App.registrarRuta(hash, {view, onShow, crumbs})` — añade una vista al enrutador. `hash` va SIN `#` (p. ej. `"/glucemia/cad"`); `onShow` se ejecuta al mostrar la vista (los módulos lo usan para prerrellenar desde `App.estado.paciente`); `crumbs` figura en las rutas pero core.js no lo usa.
 - `App.alIniciar(fn)` — registra una función de init del módulo (se ejecuta en DOMContentLoaded).
-- `App.navegar(hash)`, `App.ui.{pintarTarjetas, tarjetaHTML, insertarSintomas}`, `App.util.{fmt,parseNum,escHtml,toast,glosar}`.
+- `App.navegar(hash)`, `App.ui.{pintarTarjetas, tarjetaHTML, insertarSintomas}`, `App.util.{fmt,fmtDato,parseNum,escHtml,toast,glosar}`.
 - `App.estado.paciente` — almacén de un solo uso para pasar datos entre módulos: el módulo de origen lo rellena y navega; el `onShow` del destino lo lee y lo pone a `null`. Si ya había datos al cambiar de ruta, no sale el aviso «Para una valoración completa, empieza por Diagnóstico» (`gestionarAvisoDiagnostico`, solo en módulos con `aviso:true`; se silencia con `sessionStorage["aviso-dx-off"]`).
 - `App.formulas` (formulas.js), `App.informe` (informe.js).
 
@@ -123,7 +125,7 @@ Fuentes en `Apoyo/`. NO modificar valores clínicos sin validación.
 - Para publicar: insertar entrada AL PRINCIPIO de `NOVEDADES` y actualizar `APP_VERSION`.
 - Usuarios existentes ven el modal de novedades + campana 🔔 (`metabourg-version-vista` en localStorage). Nuevos solo la bienvenida.
 - Versión + año + autor se pintan desde `APP_VERSION` en el pie (`#app-version`), bienvenida y "Acerca de".
-- Versión actual: **2026.21** (`APP_VERSION` y `NOVEDADES[0]`); caché del SW: `metabourg-v17`. Son dos contadores independientes.
+- Versión actual: **2026.22** (`APP_VERSION` y `NOVEDADES[0]`); caché del SW: `metabourg-v18`. Son dos contadores independientes.
 - Claves localStorage: `metabourg-tema`, `metabourg-bienvenida-vista`, `metabourg-version-vista`. Además `sessionStorage["aviso-dx-off"]` (cierra el aviso «empieza por Diagnóstico» durante la sesión). No se guarda ningún dato de paciente: los formularios solo viven en la pantalla.
 - El historial de versiones de «Acerca de» sale de `NOVEDADES` (`renderHistorial`): solo se ve la última entrada y un botón «Ver todas las actualizaciones».
 - **Buzón de sugerencias** (modal en «Acerca de»): formulario que envía a Web3Forms (`WEB3FORMS_KEY` en core.js; asunto «MetaboUrg · <tipo>»). `autorespuesta-metabourg.gs` es un script aparte de Google Apps Script (cuenta Gmail del autor, se instala a mano con un activador de tiempo) que contesta automáticamente a quien deja su email.
@@ -154,6 +156,7 @@ Fuentes en `Apoyo/`. NO modificar valores clínicos sin validación.
 
 ## 7. Estado actual (noviembre 2026)
 
+- **v2026.22** (24/11/2026) — mejora interna: las cifras de los textos que repiten un dato se leen de los datos con `fmtDato` (calculadoras, informes, `CUADROS` y `NOTAS_FUENTE`); sin cambios de pauta ni de cálculo. Único cambio visible: «ACT 0,6×peso» en la CAD.
 - **v2026.21** (24/11/2026) — magnesio: en hipermagnesemia «ERC / en diálisis» y «Diuresis conservada» ajustan «Eliminar el magnesio» (`eliminarMg`); en hipomagnesemia «Insuficiencia renal» se aplica también a la vía oral.
 - **v2026.20** (24/11/2026) — hipocalcemia: la casilla «Tolera vía oral» vuelve y decide el calcio IV (IV si síntomas, Ca corregido < 7,0 o no tolera); el motivo aparece en la tarjeta y en el informe.
 - **v2026.19** (24/11/2026) — hiperpotasemia: las casillas «ERC avanzada / en diálisis» y «Diuresis conservada» vuelven y ajustan el paso «Eliminar el K» y el informe (`eliminarK`, `K_TXT.hiper_eliminar`).
@@ -181,7 +184,8 @@ bash /Users/Trabajo/.claude/skills/app-copia_seguridad/scripts/copia_seguridad.s
 
 Antes de cambiar un valor clínico, tener en cuenta:
 - **Un mismo dato clínico vive en varios sitios.** El resumen del Diagnóstico (`CUADROS[x].tratamiento`, protocolos.js) y las calculadoras llevan el texto por separado: si se cambia una cifra en `CAD_CFG`/`EHH_CFG`, cambiar también el texto de `CUADROS`. (Las diferencias de fluidos de la 1.ª hora y objetivo de glucemia del EHH se igualaron el 24/11/2026; ver §4.)
-- **Quedan cifras dentro de textos** que repiten un valor de los objetos de datos (p. ej. «0,1 UI/kg/h», «0,25 UI/kg», «50-75 mg/dl/h» en cad.js; «K < 6,5» en potasio.js; «2-3 veces» en sodio.js). Coinciden hoy con los datos, pero no se actualizan solas si se cambia el dato. Las del encargo del 24/11/2026 (gravedad de la CAD, bicarbonato, SC en début, «duplicar el ritmo», criterios 320/600/70 del Diagnóstico, glucemia > 200 de la pseudohiponatremia, 514 mEq/l, «reducir 25-50 %») ya se leen de los datos.
+- **Cifras de los textos**: desde el 24/11/2026 las que repiten un dato se leen de él con `fmtDato` (calculadoras, informes y los resúmenes `CUADROS`/`NOTAS_FUENTE`, que ahora se construyen con una función al cargar; por eso `CAD_CFG`, `EHH_CFG` y `HIPO_CFG` van declarados ANTES que `CUADROS` en `glucemia/protocolos.js`, y algunos textos de `HIPO_CFG`/`INSULINA_SC`/`INSULINA_IV` son getters). Siguen escritas a mano, a propósito: (a) cifras sin campo en los datos (extremos superiores de las etiquetas de rango como «5,9» o «6,4», «2-3 veces», tiempos de monitorización, «125-250 ml/h» del glucosado, «200-300 ml/h» de SSF en fósforo y magnesio, dosis dentro de `TIRO`/`SUPRA`…); (b) cifras que coinciden con un dato pero no está claro que sean el mismo («glucemias < 140» y «> 360» de la insulina IV, «50 % basal / 50 % bolus» del paso a SC en la CAD, «pH < 7,0» de la frase de la ADA); (c) los textos fijos de `index.html` (introducciones de cada pantalla, p. ej. «Potasio ≥ 5,5 mmol/l»), que no leen los datos.
+- **Batería de regresión** (`.claude/bateria.js`, local): 107 casos que rellenan los 26 formularios y guardan el HTML completo de cada resultado. En la consola de la vista previa: cargar el script, `await bateriaFoto("base")` antes de un cambio y `await bateriaComparar("base")` después. Úsala en cualquier refactorización que no deba cambiar lo que se ve.
 - **Casillas**: a 24/11/2026 todas cambian el resultado. Ese día se quitaron `hk-erc`, `hk-diuresis` y `lc-oral`, que no tenían efecto, y luego se volvieron a poner funcionando (las dos primeras ajustan «Eliminar el K»; `lc-oral` decide el calcio IV). Las de magnesio (`hm-erc`, `hm-diuresis`, `lm-erc`), que solo ponían negrita o actuaban a medias, también funcionan ya.
 - **Constantes sin uso eliminadas el 24/11/2026**: `UMBRAL.osm_ehh_ada` (el 300 de la ADA queda en el comentario de `osm_ehh`), `UMBRAL.hco3_ehh_min`, `EHH_CFG.na_descenso_max`, `NA_CFG.agudo_h`, `NA_CFG.hts_repeticiones`, `K_CFG.ecg12_k`, `K_CFG.monitor_k`, `MG_CFG.hiper`, `MG_CFG.hiper_sintomas`. `GRAVEDAD_CAD` y `K_CFG.hiper_leve` pasaron a usarse.
 - **Git a 24/11/2026**: sin seguimiento `AGENTS.md` (copia de este fichero) y `autorespuesta-metabourg.gs`. `autorespuesta-metabourg.gs` no está en el `git add` de §6, y ese `git add` incluye solo uno de los dos ficheros de instrucciones (el que lleva su nombre). `AGENTS.md` escribe `.Codex/` donde este fichero escribe `.claude/` (la carpeta real es `.claude/`). Mantener ambos ficheros sincronizados.

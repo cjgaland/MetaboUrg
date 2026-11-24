@@ -29,21 +29,21 @@ function renderHC() {
   const cont = document.getElementById("hc-resultado");
 
   const hidratacion = cardTrat("1 · Hidratación", null, null, [
-    "<b>Suero salino 0,9% " + cfg.ssf_mlh_min + "-" + cfg.ssf_mlh_max + " ml/h</b> (3-4 l/día) según la función cardíaca y renal: restaura el volumen y la calciuria.",
+    "<b>Suero salino 0,9% " + fmtDato(cfg.ssf_mlh_min) + "-" + fmtDato(cfg.ssf_mlh_max) + " ml/h</b> (3-4 l/día) según la función cardíaca y renal: restaura el volumen y la calciuria.",
     "Diuréticos de asa solo si hay sobrecarga de volumen (no de rutina)."
   ], "var(--c-hipo)");
 
   const calcitonina = urgente ? cardTrat("2 · Calcitonina (efecto rápido)", null, null, [
-    "<b>Calcitonina " + cfg.calcitonina_uikg + " UI/kg SC/IM cada " + cfg.calcitonina_h + " h</b>: baja el calcio en horas.",
-    "Pierde eficacia a las " + cfg.calcitonina_max_h + " h (taquifilaxia): es un puente hasta el bifosfonato."
+    "<b>Calcitonina " + fmtDato(cfg.calcitonina_uikg) + " UI/kg SC/IM cada " + fmtDato(cfg.calcitonina_h) + " h</b>: baja el calcio en horas.",
+    "Pierde eficacia a las " + fmtDato(cfg.calcitonina_max_h) + " h (taquifilaxia): es un puente hasta el bifosfonato."
   ], "var(--c-insulina)") : "";
 
   const antirresortivo = cardTrat((urgente ? "3" : "2") + " · Antirresortivo (efecto sostenido)", null, null, [
     erc
-      ? "Insuficiencia renal: <b>denosumab " + cfg.denosumab_mg + " mg SC</b> (los bifosfonatos están limitados por el filtrado)."
-      : "<b>Ácido zoledrónico " + cfg.zoledronico_mg + " mg IV</b> (preferido) o pamidronato " + cfg.pamidronato_min + "-" + cfg.pamidronato_max + " mg IV.",
+      ? "Insuficiencia renal: <b>denosumab " + fmtDato(cfg.denosumab_mg) + " mg SC</b> (los bifosfonatos están limitados por el filtrado)."
+      : "<b>Ácido zoledrónico " + fmtDato(cfg.zoledronico_mg) + " mg IV</b> (preferido) o pamidronato " + fmtDato(cfg.pamidronato_min) + "-" + fmtDato(cfg.pamidronato_max) + " mg IV.",
     "Efecto máximo en 2-4 días (bifosfonato) o más tarde (denosumab); no es para la urgencia inmediata.",
-    "Denosumab " + cfg.denosumab_mg + " mg SC también si es refractaria a bifosfonatos."
+    "Denosumab " + fmtDato(cfg.denosumab_mg) + " mg SC también si es refractaria a bifosfonatos."
   ], "var(--violet)");
 
   const otros = cardTrat("Otras medidas", null, null, [
@@ -53,7 +53,7 @@ function renderHC() {
     "Suspender calcio, vitamina D, tiazidas y litio; movilizar al paciente."
   ], "var(--brand)");
 
-  const etiqueta = { leve: "leve (< 12)", moderada: "moderada (12-14)", grave: "grave (> 14)" }[grav];
+  const etiqueta = { leve: "leve (< " + fmtDato(cfg.hiper_mod) + ")", moderada: "moderada (" + fmtDato(cfg.hiper_mod) + "-" + fmtDato(cfg.hiper_grave) + ")", grave: "grave (> " + fmtDato(cfg.hiper_grave) + ")" }[grav];
   cont.innerHTML =
     '<div class="result-card" style="--dx-color:var(--c-hiper)">' +
       '<div class="result-kicker">Hipercalcemia' + (urgente ? " · urgencia" : "") + "</div>" +
@@ -71,9 +71,9 @@ function informeHC() {
   const o = _ultimoHC, cfg = CA_CFG;
   let t = App.informe.cabecera("HIPERCALCEMIA — TRATAMIENTO") + "\n";
   t += "PACIENTE\n  - Calcio: " + fmt(o.ca, 1) + " mg/dl" + (o.alb !== null ? " (corregido " + fmt(o.caC, 1) + ", albúmina " + fmt(o.alb, 1) + ")" : "") + " · " + o.grav + (o.sintomas ? " · sintomática" : "") + "\n";
-  t += "\n1) HIDRATACIÓN\n  - SSF 0,9% " + cfg.ssf_mlh_min + "-" + cfg.ssf_mlh_max + " ml/h (3-4 l/día). Diuréticos de asa solo si sobrecarga.\n";
-  if (o.urgente) t += "\n2) CALCITONINA\n  - " + cfg.calcitonina_uikg + " UI/kg SC/IM cada " + cfg.calcitonina_h + " h (efecto rápido, máx " + cfg.calcitonina_max_h + " h).\n";
-  t += "\n" + (o.urgente ? "3" : "2") + ") ANTIRRESORTIVO\n  - " + (o.erc ? "Denosumab " + cfg.denosumab_mg + " mg SC (ERC)." : "Ácido zoledrónico " + cfg.zoledronico_mg + " mg IV o pamidronato " + cfg.pamidronato_min + "-" + cfg.pamidronato_max + " mg.") + " Efecto en 2-4 días.\n";
+  t += "\n1) HIDRATACIÓN\n  - SSF 0,9% " + fmtDato(cfg.ssf_mlh_min) + "-" + fmtDato(cfg.ssf_mlh_max) + " ml/h (3-4 l/día). Diuréticos de asa solo si sobrecarga.\n";
+  if (o.urgente) t += "\n2) CALCITONINA\n  - " + fmtDato(cfg.calcitonina_uikg) + " UI/kg SC/IM cada " + fmtDato(cfg.calcitonina_h) + " h (efecto rápido, máx " + fmtDato(cfg.calcitonina_max_h) + " h).\n";
+  t += "\n" + (o.urgente ? "3" : "2") + ") ANTIRRESORTIVO\n  - " + (o.erc ? "Denosumab " + fmtDato(cfg.denosumab_mg) + " mg SC (ERC)." : "Ácido zoledrónico " + fmtDato(cfg.zoledronico_mg) + " mg IV o pamidronato " + fmtDato(cfg.pamidronato_min) + "-" + fmtDato(cfg.pamidronato_max) + " mg.") + " Efecto en 2-4 días.\n";
   t += "\nOTRAS\n  - " + (o.vitd ? "Glucocorticoides (mediada por vit. D). " : "") + "Diálisis si grave+renal. Tratar la causa; suspender Ca/vit.D/tiazidas/litio.\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (Endocrine Society 2023 / Merck). Verificar por el facultativo.\n";
   return t;
@@ -90,7 +90,7 @@ function renderLC() {
   // Calcio IV si hay síntomas, si es grave o si no tolera la vía oral (misma regla que K, Mg y P)
   const motivosIV = [
     sintomas ? "síntomas" : null,
-    caC < cfg.hipo_grave ? "Ca corregido < " + fmt(cfg.hipo_grave, 1) : null,
+    caC < cfg.hipo_grave ? "Ca corregido < " + fmtDato(cfg.hipo_grave, 1) : null,
     !oral ? "no tolera vía oral" : null
   ].filter(Boolean);
   const iv = motivosIV.length > 0;
@@ -99,7 +99,7 @@ function renderLC() {
   const cont = document.getElementById("lc-resultado");
 
   const ivCard = iv ? cardTrat("Calcio IV (" + motivosIV.join(", ") + ")", null, null, [
-    "<b>Gluconato cálcico 10% " + cfg.gluconato_ml_min + "-" + cfg.gluconato_ml_max + " ml (" + cfg.gluconato_g_min + "-" + cfg.gluconato_g_max + " g)</b> diluido en 50-100 ml de glucosado 5%, IV en 10-20 min, con monitorización ECG.",
+    "<b>Gluconato cálcico 10% " + fmtDato(cfg.gluconato_ml_min) + "-" + fmtDato(cfg.gluconato_ml_max) + " ml (" + fmtDato(cfg.gluconato_g_min) + "-" + fmtDato(cfg.gluconato_g_max) + " g)</b> diluido en 50-100 ml de glucosado 5%, IV en 10-20 min, con monitorización ECG.",
     "Continuar con <b>perfusión</b> (p. ej. 10 g de gluconato cálcico en 1 l de glucosado 5% a 50-100 ml/h) y ajustar por controles.",
     "No mezclar con bicarbonato ni fosfato (precipitan)."
   ], "var(--c-cad)") : "";
@@ -108,9 +108,9 @@ function renderLC() {
   // o, si no tolera la vía oral, como paso a oral cuando la tolere.
   const tituloOral = !oral ? "Paso a oral (cuando tolere)" : (iv ? "Mantenimiento / paso a oral" : "Tratamiento oral");
   const oralCard = cardTrat(tituloOral, null, null, [
-    "<b>Calcio oral " + cfg.ca_oral_min + "-" + cfg.ca_oral_max + " mg de calcio elemental/día</b>, repartido en 2-3 tomas.",
+    "<b>Calcio oral " + fmtDato(cfg.ca_oral_min) + "-" + fmtDato(cfg.ca_oral_max) + " mg de calcio elemental/día</b>, repartido en 2-3 tomas.",
     "Asociar <b>vitamina D</b> activa (calcitriol/alfacalcidol) para mejorar la absorción.",
-    "Objetivo de calcio " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl; controlar cada 4-6 h en la fase aguda."
+    "Objetivo de calcio " + fmtDato(cfg.objetivo_min) + "-" + fmtDato(cfg.objetivo_max) + " mg/dl; controlar cada 4-6 h en la fase aguda."
   ], "var(--c-insulina)");
 
   const mgCard = cardTrat("Magnesio y causa", null, null, [
@@ -119,7 +119,7 @@ function renderLC() {
     "Buscar la causa: " + escHtml(CA_TXT.hipo_causas)
   ], "var(--violet)");
 
-  const etiqueta = { leve: "leve", moderada: "moderada", grave: "grave (< 7)" }[grav];
+  const etiqueta = { leve: "leve", moderada: "moderada", grave: "grave (< " + fmtDato(cfg.hipo_grave) + ")" }[grav];
   cont.innerHTML =
     '<div class="result-card" style="--dx-color:var(--c-hipo)">' +
       '<div class="result-kicker">Hipocalcemia' + (iv ? " · IV" : "") + "</div>" +
@@ -138,8 +138,8 @@ function informeLC() {
   const o = _ultimoLC, cfg = CA_CFG;
   let t = App.informe.cabecera("HIPOCALCEMIA — TRATAMIENTO") + "\n";
   t += "PACIENTE\n  - Calcio: " + fmt(o.ca, 1) + " mg/dl" + (o.alb !== null ? " (corregido " + fmt(o.caC, 1) + ")" : "") + " · " + o.grav + (o.sintomas ? " · sintomática" : "") + (o.oral ? "" : " · no tolera vía oral") + "\n";
-  if (o.iv) t += "\nCALCIO IV (" + o.motivosIV.join(", ") + ")\n  - Gluconato cálcico 10% " + cfg.gluconato_ml_min + "-" + cfg.gluconato_ml_max + " ml (" + cfg.gluconato_g_min + "-" + cfg.gluconato_g_max + " g) en glucosado 5% en 10-20 min, con monitor ECG; seguir con perfusión.\n";
-  t += "\n" + (o.oral ? "ORAL / MANTENIMIENTO" : "PASO A ORAL (CUANDO TOLERE)") + "\n  - Calcio oral " + cfg.ca_oral_min + "-" + cfg.ca_oral_max + " mg/día + vitamina D activa. Objetivo " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl.\n";
+  if (o.iv) t += "\nCALCIO IV (" + o.motivosIV.join(", ") + ")\n  - Gluconato cálcico 10% " + fmtDato(cfg.gluconato_ml_min) + "-" + fmtDato(cfg.gluconato_ml_max) + " ml (" + fmtDato(cfg.gluconato_g_min) + "-" + fmtDato(cfg.gluconato_g_max) + " g) en glucosado 5% en 10-20 min, con monitor ECG; seguir con perfusión.\n";
+  t += "\n" + (o.oral ? "ORAL / MANTENIMIENTO" : "PASO A ORAL (CUANDO TOLERE)") + "\n  - Calcio oral " + fmtDato(cfg.ca_oral_min) + "-" + fmtDato(cfg.ca_oral_max) + " mg/día + vitamina D activa. Objetivo " + fmtDato(cfg.objetivo_min) + "-" + fmtDato(cfg.objetivo_max) + " mg/dl.\n";
   t += "\nMAGNESIO Y CAUSA\n  - Corregir el Mg si está bajo (hipocalcemia refractaria). " + CA_TXT.hipo_causas + "\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (Merck / EMCrit). Verificar por el facultativo.\n";
   return t;

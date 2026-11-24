@@ -119,38 +119,38 @@ function renderHK() {
   // 1 · Proteger el corazón
   const calcioLineas = o.calcioIndicado
     ? [
-        "<b>Gluconato cálcico 10%: " + cfg.gluconato_ml + " ml (1 g = 1 ampolla) IV en " + cfg.gluconato_min + " min</b>, con monitorización ECG.",
-        "Repetir a los " + cfg.gluconato_repetir + " min si persisten los cambios ECG. Efecto rápido y transitorio (protege, no baja el K).",
+        "<b>Gluconato cálcico 10%: " + fmtDato(cfg.gluconato_ml) + " ml (" + fmtDato(cfg.gluconato_g) + " g = 1 ampolla) IV en " + fmtDato(cfg.gluconato_min) + " min</b>, con monitorización ECG.",
+        "Repetir a los " + fmtDato(cfg.gluconato_repetir) + " min si persisten los cambios ECG. Efecto rápido y transitorio (protege, no baja el K).",
         "Si vía central o parada/periparada, puede usarse cloruro cálcico 10% 10 ml."
       ]
-    : ["ECG normal y K < 6,5 mmol/l: el calcio no es imprescindible. Prioriza meter el K en la célula y eliminarlo.", "Si aparecen cambios ECG, administra gluconato cálcico de inmediato."];
+    : ["ECG normal y K < " + fmtDato(cfg.hiper_grave, 1) + " mmol/l: el calcio no es imprescindible. Prioriza meter el K en la célula y eliminarlo.", "Si aparecen cambios ECG, administra gluconato cálcico de inmediato."];
 
   // 2 · Meter K en la célula
   const celulaLineas = [
-    "<b>Insulina rápida " + cfg.insulina_ui + " UI + " + cfg.glucosa_g + " g de glucosa IV</b> (p. ej. 250 ml de glucosado al 10% o 50 ml al 50%) en 15-30 min.",
+    "<b>Insulina rápida " + fmtDato(cfg.insulina_ui) + " UI + " + fmtDato(cfg.glucosa_g) + " g de glucosa IV</b> (p. ej. 250 ml de glucosado al 10% o 50 ml al 50%) en 15-30 min.",
     o.glucosaMant
-      ? "Glucemia < " + cfg.glucosa_umbral_mgdl + " mg/dl: añadir glucosado 10% a " + cfg.glucosa_mant_ml_h + " ml/h durante " + cfg.glucosa_mant_h + " h (evita la hipoglucemia)."
+      ? "Glucemia < " + fmtDato(cfg.glucosa_umbral_mgdl) + " mg/dl: añadir glucosado 10% a " + fmtDato(cfg.glucosa_mant_ml_h) + " ml/h durante " + fmtDato(cfg.glucosa_mant_h) + " h (evita la hipoglucemia)."
       : "Vigilar la glucemia tras la insulina: riesgo de <b>hipoglucemia tardía</b> (controles hasta 6 h).",
-    "<b>Salbutamol nebulizado " + cfg.salbutamol_min + "-" + cfg.salbutamol_max + " mg</b> como adyuvante (no en monoterapia).",
+    "<b>Salbutamol nebulizado " + fmtDato(cfg.salbutamol_min) + "-" + fmtDato(cfg.salbutamol_max) + " mg</b> como adyuvante (no en monoterapia).",
     "Bicarbonato sódico: no de rutina (solo si acidosis metabólica grave asociada)."
   ];
 
   // 3 · Eliminar K
   const eliminarLineas = o.eliminar.map(x => x.destacar ? "<b>" + escHtml(x.txt) + "</b>" : escHtml(x.txt));
 
-  const etiqueta = { leve: "leve (5,5-5,9)", moderada: "moderada (6,0-6,4)", grave: "grave (≥ 6,5)" }[o.grav];
+  const etiqueta = { leve: "leve (" + fmtDato(cfg.hiper_leve, 1) + "-5,9)", moderada: "moderada (" + fmtDato(cfg.hiper_mod, 1) + "-6,4)", grave: "grave (≥ " + fmtDato(cfg.hiper_grave, 1) + ")" }[o.grav];
 
   cont.innerHTML =
     '<div class="result-card" style="--dx-color:var(--c-cad)">' +
       '<div class="result-kicker">Hiperpotasemia' + (o.calcioIndicado ? " · urgencia" : "") + "</div>" +
       '<div class="result-dx" style="font-size:1.2rem">K ' + fmt(d.k, 1) + " mmol/l — " + etiqueta + "</div>" +
-      '<p class="result-explica">' + (o.calcioIndicado ? "Cambios ECG o K ≥ 6,5: protege el corazón, mete el K en la célula y elimínalo." : "Sin cambios ECG y K < 6,5: mete el K en la célula y elimínalo; vigila el ECG.") + "</p></div>" +
+      '<p class="result-explica">' + (o.calcioIndicado ? "Cambios ECG o K ≥ " + fmtDato(cfg.hiper_grave, 1) + ": protege el corazón, mete el K en la célula y elimínalo." : "Sin cambios ECG y K < " + fmtDato(cfg.hiper_grave, 1) + ": mete el K en la célula y elimínalo; vigila el ECG.") + "</p></div>" +
     (d.ecg ? '<div class="alert alert-red"><span>⚠️</span><span>' + escHtml(K_TXT.ecg_hiper) + "</span></div>" : "") +
     cardTrat("1 · Proteger el corazón (calcio)", null, null, calcioLineas, "var(--c-cad)") +
     cardTrat("2 · Meter el K en la célula", null, null, celulaLineas, "var(--c-insulina)") +
     cardTrat("3 · Eliminar el K del cuerpo", null, null, eliminarLineas, "var(--violet)") +
     cardTrat("Medidas generales", null, null, K_TXT.hiper_general.map(escHtml), "var(--brand)") +
-    cardTrat("Monitorización", null, null, ["Controlar el K a las <b>" + cfg.control_k + "</b> (vigilar el efecto rebote).", "Glucemia capilar seriada tras la insulina (0-360 min)."], "var(--brand)") +
+    cardTrat("Monitorización", null, null, ["Controlar el K a las <b>" + fmtDato(cfg.control_k) + "</b> (vigilar el efecto rebote).", "Glucemia capilar seriada tras la insulina (0-360 min)."], "var(--brand)") +
     '<div class="acciones-result"><button class="btn btn-secundario" id="btn-hk-recal">Recalcular</button></div>' +
     App.informe.bloque(informeHK());
 
@@ -166,15 +166,15 @@ function informeHK() {
   t += "PACIENTE\n  - Potasio: " + fmt(d.k, 1) + " mmol/l (" + o.grav + ")" + (d.ecg ? " · cambios ECG" : "") + (d.erc ? " · ERC avanzada/diálisis" : "") + (d.diuresis ? "" : " · sin diuresis conservada") + (d.glu !== null ? " · glucemia " + fmt(d.glu, 0) + " mg/dl" : "") + "\n";
   t += "\n1) PROTEGER EL CORAZÓN (CALCIO)\n";
   if (o.calcioIndicado) {
-    t += "  - Gluconato cálcico 10% " + cfg.gluconato_ml + " ml (1 g) IV en " + cfg.gluconato_min + " min, con monitor ECG. Repetir a los " + cfg.gluconato_repetir + " min si persisten cambios.\n";
-  } else t += "  - ECG normal y K < 6,5: calcio no imprescindible; administrar si aparecen cambios ECG.\n";
+    t += "  - Gluconato cálcico 10% " + fmtDato(cfg.gluconato_ml) + " ml (" + fmtDato(cfg.gluconato_g) + " g) IV en " + fmtDato(cfg.gluconato_min) + " min, con monitor ECG. Repetir a los " + fmtDato(cfg.gluconato_repetir) + " min si persisten cambios.\n";
+  } else t += "  - ECG normal y K < " + fmtDato(cfg.hiper_grave, 1) + ": calcio no imprescindible; administrar si aparecen cambios ECG.\n";
   t += "\n2) METER EL K EN LA CÉLULA\n";
-  t += "  - Insulina rápida " + cfg.insulina_ui + " UI + " + cfg.glucosa_g + " g glucosa IV en 15-30 min.\n";
-  t += "  - " + (o.glucosaMant ? "Glucemia <" + cfg.glucosa_umbral_mgdl + ": glucosado 10% " + cfg.glucosa_mant_ml_h + " ml/h x " + cfg.glucosa_mant_h + " h." : "Vigilar glucemia (hipoglucemia tardía).") + "\n";
-  t += "  - Salbutamol nebulizado " + cfg.salbutamol_min + "-" + cfg.salbutamol_max + " mg (adyuvante). Bicarbonato no de rutina.\n";
+  t += "  - Insulina rápida " + fmtDato(cfg.insulina_ui) + " UI + " + fmtDato(cfg.glucosa_g) + " g glucosa IV en 15-30 min.\n";
+  t += "  - " + (o.glucosaMant ? "Glucemia <" + fmtDato(cfg.glucosa_umbral_mgdl) + ": glucosado 10% " + fmtDato(cfg.glucosa_mant_ml_h) + " ml/h x " + fmtDato(cfg.glucosa_mant_h) + " h." : "Vigilar glucemia (hipoglucemia tardía).") + "\n";
+  t += "  - Salbutamol nebulizado " + fmtDato(cfg.salbutamol_min) + "-" + fmtDato(cfg.salbutamol_max) + " mg (adyuvante). Bicarbonato no de rutina.\n";
   t += "\n3) ELIMINAR EL K\n"; o.eliminar.forEach(x => { t += "  - " + x.txt + "\n"; });
   t += "\nMEDIDAS GENERALES\n"; K_TXT.hiper_general.forEach(x => { t += "  - " + x + "\n"; });
-  t += "\nMONITORIZACIÓN\n  - K a las " + cfg.control_k + "; glucemia seriada tras la insulina.\n";
+  t += "\nMONITORIZACIÓN\n  - K a las " + fmtDato(cfg.control_k) + "; glucemia seriada tras la insulina.\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (UK Kidney 2023 / consenso español). Verificar por el facultativo.\n";
   return t;
 }
@@ -212,16 +212,16 @@ function renderPK() {
   const repoLineas = [];
   if (o.iv) {
     repoLineas.push("<b>Vía IV</b> (grave, cambios ECG o sin tolerancia oral):");
-    repoLineas.push("<b>Periférica:</b> <b>" + cfg.kcl_perif_meq + " mEq KCl en " + cfg.kcl_perif_vol_ml + " ml de SSF 0,9% a pasar en " + cfg.kcl_perif_h + " h</b> (= " + cfg.kcl_iv_perif + " mEq/h, concentración " + cfg.kcl_conc_perif + " mEq/l). Ritmo de bomba: <b>" + Math.round(cfg.kcl_perif_vol_ml / cfg.kcl_perif_h) + " ml/h</b>.");
-    repoLineas.push("<b>Vía central</b> (con monitor ECG, si grave o se necesita más velocidad): <b>" + cfg.kcl_central_meq + " mEq KCl en " + cfg.kcl_central_vol_ml + " ml de SSF 0,9% a pasar en " + cfg.kcl_central_h + " h</b> (= " + cfg.kcl_iv_central + " mEq/h). Ritmo de bomba: <b>" + Math.round(cfg.kcl_central_vol_ml / cfg.kcl_central_h) + " ml/h</b>.");
+    repoLineas.push("<b>Periférica:</b> <b>" + fmtDato(cfg.kcl_perif_meq) + " mEq KCl en " + fmtDato(cfg.kcl_perif_vol_ml) + " ml de SSF 0,9% a pasar en " + fmtDato(cfg.kcl_perif_h) + " h</b> (= " + fmtDato(cfg.kcl_iv_perif) + " mEq/h, concentración " + fmtDato(cfg.kcl_conc_perif) + " mEq/l). Ritmo de bomba: <b>" + Math.round(cfg.kcl_perif_vol_ml / cfg.kcl_perif_h) + " ml/h</b>.");
+    repoLineas.push("<b>Vía central</b> (con monitor ECG, si grave o se necesita más velocidad): <b>" + fmtDato(cfg.kcl_central_meq) + " mEq KCl en " + fmtDato(cfg.kcl_central_vol_ml) + " ml de SSF 0,9% a pasar en " + fmtDato(cfg.kcl_central_h) + " h</b> (= " + fmtDato(cfg.kcl_iv_central) + " mEq/h). Ritmo de bomba: <b>" + Math.round(cfg.kcl_central_vol_ml / cfg.kcl_central_h) + " ml/h</b>.");
     repoLineas.push("<b>" + escHtml(K_TXT.hipo_via) + "</b>");
   } else {
-    repoLineas.push("<b>Vía oral</b> (leve-moderada y tolera): KCl <b>" + cfg.kcl_oral_min + "-" + cfg.kcl_oral_max + " mEq por toma</b> (máx. ~60 por irritación gástrica), repartido en el día.");
+    repoLineas.push("<b>Vía oral</b> (leve-moderada y tolera): KCl <b>" + fmtDato(cfg.kcl_oral_min) + "-" + fmtDato(cfg.kcl_oral_max) + " mEq por toma</b> (máx. ~" + fmtDato(cfg.kcl_oral_max) + " por irritación gástrica), repartido en el día.");
     repoLineas.push("Si empeora, no tolera o aparecen cambios ECG, pasar a vía IV.");
   }
-  repoLineas.push("Objetivo: K > <b>" + fmt(o.objetivo, 1) + " mmol/l</b>" + (d.cardio ? " (más alto por cardiopatía/isquemia/digital)" : "") + ". Reevaluar el K cada 2-4 h (o cada ~60 mEq administrados).");
+  repoLineas.push("Objetivo: K > <b>" + fmtDato(o.objetivo, 1) + " mmol/l</b>" + (d.cardio ? " (más alto por cardiopatía/isquemia/digital)" : "") + ". Reevaluar el K cada 2-4 h (o cada ~60 mEq administrados).");
 
-  const etiqueta = { leve: "leve (3,0-3,4)", moderada: "moderada (2,5-2,9)", grave: "grave (< 2,5)" }[o.grav];
+  const etiqueta = { leve: "leve (" + fmtDato(cfg.hipo_leve, 1) + "-3,4)", moderada: "moderada (" + fmtDato(cfg.hipo_mod, 1) + "-2,9)", grave: "grave (< " + fmtDato(cfg.hipo_mod, 1) + ")" }[o.grav];
 
   cont.innerHTML =
     '<div class="result-card" style="--dx-color:var(--c-insulina)">' +
@@ -248,13 +248,13 @@ function informePK() {
   t += "\nMAGNESIO\n  - " + K_TXT.hipo_mg + "\n";
   t += "\nREPOSICIÓN\n";
   if (o.iv) {
-    t += "  - Periférica: " + cfg.kcl_perif_meq + " mEq KCl en " + cfg.kcl_perif_vol_ml + " ml SSF en " + cfg.kcl_perif_h + " h (" + Math.round(cfg.kcl_perif_vol_ml / cfg.kcl_perif_h) + " ml/h = " + cfg.kcl_iv_perif + " mEq/h).\n";
-    t += "  - Central (monitor ECG): " + cfg.kcl_central_meq + " mEq KCl en " + cfg.kcl_central_vol_ml + " ml SSF en " + cfg.kcl_central_h + " h (" + Math.round(cfg.kcl_central_vol_ml / cfg.kcl_central_h) + " ml/h = " + cfg.kcl_iv_central + " mEq/h).\n";
+    t += "  - Periférica: " + fmtDato(cfg.kcl_perif_meq) + " mEq KCl en " + fmtDato(cfg.kcl_perif_vol_ml) + " ml SSF en " + fmtDato(cfg.kcl_perif_h) + " h (" + Math.round(cfg.kcl_perif_vol_ml / cfg.kcl_perif_h) + " ml/h = " + fmtDato(cfg.kcl_iv_perif) + " mEq/h).\n";
+    t += "  - Central (monitor ECG): " + fmtDato(cfg.kcl_central_meq) + " mEq KCl en " + fmtDato(cfg.kcl_central_vol_ml) + " ml SSF en " + fmtDato(cfg.kcl_central_h) + " h (" + Math.round(cfg.kcl_central_vol_ml / cfg.kcl_central_h) + " ml/h = " + fmtDato(cfg.kcl_iv_central) + " mEq/h).\n";
     t += "  - " + K_TXT.hipo_via + "\n";
   } else {
-    t += "  - Oral: KCl " + cfg.kcl_oral_min + "-" + cfg.kcl_oral_max + " mEq/toma (máx ~60), repartido.\n";
+    t += "  - Oral: KCl " + fmtDato(cfg.kcl_oral_min) + "-" + fmtDato(cfg.kcl_oral_max) + " mEq/toma (máx ~" + fmtDato(cfg.kcl_oral_max) + "), repartido.\n";
   }
-  t += "  - Objetivo K > " + fmt(o.objetivo, 1) + " mmol/l. Reevaluar cada 2-4 h.\n";
+  t += "  - Objetivo K > " + fmtDato(o.objetivo, 1) + " mmol/l. Reevaluar cada 2-4 h.\n";
   t += "\nCAUSA\n  - " + K_TXT.hipo_causas + "\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (EMCrit / consenso español). Verificar por el facultativo.\n";
   return t;

@@ -36,7 +36,7 @@ function evaluarDiagnostico(d) {
 
   if (has(d.glu) && d.glu < UMBRAL.glucosa_hipo) {
     cuadroId = "hipoglucemia";
-    criterios.push([true, "Glucemia " + fmt(d.glu, 0) + " mg/dl (< " + UMBRAL.glucosa_hipo + ")"]);
+    criterios.push([true, "Glucemia " + fmt(d.glu, 0) + " mg/dl (< " + fmtDato(UMBRAL.glucosa_hipo) + ")"]);
   } else if (cetosis && acidosis) {
     cuadroId = (hiperosm || (has(d.glu) && d.glu >= UMBRAL.glucosa_ehh)) ? "mixto" : "cad";
     gravedad = gravedadCAD(d);
@@ -46,9 +46,9 @@ function evaluarDiagnostico(d) {
     if (cuadroId === "mixto") criterios.push([true, "Componente hiperosmolar (osm " + fmt(osm, 0) + " mOsm/kg)"]);
   } else if (has(d.glu) && d.glu >= UMBRAL.glucosa_ehh && hiperosm && !acidosis && (!has(d.bhb) || d.bhb < UMBRAL.bhb_cad)) {
     cuadroId = "ehh";
-    criterios.push([true, "Glucemia " + fmt(d.glu, 0) + " mg/dl (≥ " + UMBRAL.glucosa_ehh + ")"]);
-    criterios.push([true, "Osmolalidad efectiva " + fmt(osm, 0) + " mOsm/kg (> " + UMBRAL.osm_ehh + ")"]);
-    criterios.push([true, "Sin cetoacidosis relevante (pH > 7,3, HCO₃ conservado)"]);
+    criterios.push([true, "Glucemia " + fmt(d.glu, 0) + " mg/dl (≥ " + fmtDato(UMBRAL.glucosa_ehh) + ")"]);
+    criterios.push([true, "Osmolalidad efectiva " + fmt(osm, 0) + " mOsm/kg (> " + fmtDato(UMBRAL.osm_ehh) + ")"]);
+    criterios.push([true, "Sin cetoacidosis relevante (pH > " + fmtDato(UMBRAL.ph_cad, 1) + ", HCO₃ conservado)"]);
   } else if (cetosis && !acidosis && puedeValorarAcidosis) {
     cuadroId = "cetosis";
     criterios.push([true, "Cetosis presente" + (has(d.bhb) ? " (β-OHB " + fmt(d.bhb, 1) + ")" : "")]);
@@ -68,7 +68,7 @@ function evaluarDiagnostico(d) {
     avisos.push({ nivel: "red", txt: "Alteración de la consciencia: criterio de gravedad. Valora UCI y vía aérea." });
   }
   if (cuadroId && cuadroId !== "hipoglucemia" && !has(d.k)) {
-    avisos.push({ nivel: "amber", txt: "Falta el potasio (K⁺): es imprescindible antes de iniciar insulina (si K < 3,3 mEq/l, reponer primero)." });
+    avisos.push({ nivel: "amber", txt: "Falta el potasio (K⁺): es imprescindible antes de iniciar insulina (si K < " + fmtDato(CAD_CFG.k_bajo, 1) + " mEq/l, reponer primero)." });
   }
 
   // Avisos derivados de antecedentes y tratamiento previo

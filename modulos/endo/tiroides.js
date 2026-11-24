@@ -35,13 +35,13 @@ function renderTT() {
   const o = calcularBWPS(d);
   _ultimoTT = { d, o };
   const cont = document.getElementById("tt-resultado");
-  const etiqueta = { tormenta: "Tormenta tiroidea probable (≥ 45)", inminente: "Tormenta inminente (25-44)", improbable: "Improbable (< 25)" }[o.clase];
+  const etiqueta = { tormenta: "Tormenta tiroidea probable (≥ " + fmtDato(BWPS.umbral_tormenta) + ")", inminente: "Tormenta inminente (" + fmtDato(BWPS.umbral_inminente) + "-44)", improbable: "Improbable (< " + fmtDato(BWPS.umbral_inminente) + ")" }[o.clase];
   const color = o.clase === "improbable" ? "var(--text-2)" : "var(--c-cad)";
 
   const desglose = listaCard("Diagnóstico — Burch-Wartofsky", [
     "Temperatura: <b>" + o.tp + "</b> · Frecuencia cardíaca: <b>" + o.fp + "</b> · SNC: <b>" + o.sp + "</b>",
     "Gastrointestinal/hepático: <b>" + o.gp + "</b> · Insuf. cardíaca: <b>" + o.ip + "</b> · Fibrilación auricular: <b>" + o.ap + "</b> · Precipitante: <b>" + o.pp + "</b>",
-    "<b>Total " + o.total + " puntos</b>: ≥ 45 muy sugestivo de tormenta; 25-44 inminente; < 25 improbable. No sustituye el juicio clínico."
+    "<b>Total " + o.total + " puntos</b>: ≥ " + fmtDato(BWPS.umbral_tormenta) + " muy sugestivo de tormenta; " + fmtDato(BWPS.umbral_inminente) + "-44 inminente; < " + fmtDato(BWPS.umbral_inminente) + " improbable. No sustituye el juicio clínico."
   ], "var(--brand)");
 
   const trat = (o.clase === "improbable")

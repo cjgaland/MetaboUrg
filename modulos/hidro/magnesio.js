@@ -20,17 +20,17 @@ function renderLM() {
   _ultimoLM = { mg, sintomas, torsades, oral, erc, grav, iv };
   const cont = document.getElementById("lm-resultado");
   // Insuficiencia renal: afecta tanto a la pauta IV como a la oral
-  const ercLinea = "<b>Insuficiencia renal: reducir la dosis un " + cfg.erc_reduccion_pct + "%</b> y vigilar reflejos y ECG (riesgo de hipermagnesemia).";
+  const ercLinea = "<b>Insuficiencia renal: reducir la dosis un " + fmtDato(cfg.erc_reduccion_pct) + "%</b> y vigilar reflejos y ECG (riesgo de hipermagnesemia).";
 
   let repo;
   if (iv) {
     const lineas = [];
-    if (torsades) lineas.push("<b>Torsades / convulsiones:</b> <b>sulfato de Mg " + cfg.mgso4_torsades_g + " g en " + cfg.mgso4_torsades_vehiculo_ml + " ml de SG 5% IV en bolo de 5-10 min</b>, repetible.");
-    lineas.push("<b>Carga (grave / sintomática estable):</b> <b>sulfato de Mg " + cfg.mgso4_g_min + "-" + cfg.mgso4_g_max + " g en " + cfg.mgso4_carga_vehiculo_ml + " ml de SG 5% IV en " + cfg.mgso4_carga_min + " min</b> (bomba ≈ " + Math.round(cfg.mgso4_carga_vehiculo_ml * 60 / cfg.mgso4_carga_min) + " ml/h).");
+    if (torsades) lineas.push("<b>Torsades / convulsiones:</b> <b>sulfato de Mg " + fmtDato(cfg.mgso4_torsades_g) + " g en " + fmtDato(cfg.mgso4_torsades_vehiculo_ml) + " ml de SG 5% IV en bolo de 5-10 min</b>, repetible.");
+    lineas.push("<b>Carga (grave / sintomática estable):</b> <b>sulfato de Mg " + fmtDato(cfg.mgso4_g_min) + "-" + fmtDato(cfg.mgso4_g_max) + " g en " + fmtDato(cfg.mgso4_carga_vehiculo_ml) + " ml de SG 5% IV en " + fmtDato(cfg.mgso4_carga_min) + " min</b> (bomba ≈ " + Math.round(cfg.mgso4_carga_vehiculo_ml * 60 / cfg.mgso4_carga_min) + " ml/h).");
     // Ritmo de la perfusión de mantenimiento (vol total / horas) — usamos 12 h y 24 h como extremos
     const mlhMax = Math.round(cfg.perfusion_vehiculo_ml / 12); // más rápido (12 h)
     const mlhMin = Math.round(cfg.perfusion_vehiculo_ml / 24); // más lento (24 h)
-    lineas.push("<b>Perfusión de mantenimiento:</b> <b>" + cfg.perfusion_g_min + "-" + cfg.perfusion_g_max + " g en " + cfg.perfusion_vehiculo_ml + " ml de SG 5% a pasar en " + cfg.perfusion_h + " h</b> (bomba <b>" + mlhMin + "-" + mlhMax + " ml/h</b>). El Mg se elimina rápido por la orina, por eso conviene mantener la perfusión.");
+    lineas.push("<b>Perfusión de mantenimiento:</b> <b>" + fmtDato(cfg.perfusion_g_min) + "-" + fmtDato(cfg.perfusion_g_max) + " g en " + fmtDato(cfg.perfusion_vehiculo_ml) + " ml de SG 5% a pasar en " + fmtDato(cfg.perfusion_h) + " h</b> (bomba <b>" + mlhMin + "-" + mlhMax + " ml/h</b>). El Mg se elimina rápido por la orina, por eso conviene mantener la perfusión.");
     if (erc) lineas.push(ercLinea);
     repo = cardTrat("Sulfato de magnesio IV", null, null, lineas, "var(--c-cad)");
   } else {
@@ -68,13 +68,13 @@ function informeLM() {
   t += "PACIENTE\n  - Magnesio: " + fmt(o.mg, 1) + " mg/dl" + (o.grav ? " · grave/sintomática" : "") + (o.torsades ? " · torsades/convulsiones" : "") + (o.erc ? " · ERC" : "") + "\n";
   if (o.iv) {
     t += "\nSULFATO DE MAGNESIO IV\n";
-    if (o.torsades) t += "  - Torsades/convulsiones: " + cfg.mgso4_torsades_g + " g en " + cfg.mgso4_torsades_vehiculo_ml + " ml SG 5% IV en bolo 5-10 min, repetible.\n";
-    t += "  - Carga: " + cfg.mgso4_g_min + "-" + cfg.mgso4_g_max + " g en " + cfg.mgso4_carga_vehiculo_ml + " ml SG 5% en " + cfg.mgso4_carga_min + " min.\n";
-    t += "  - Perfusión: " + cfg.perfusion_g_min + "-" + cfg.perfusion_g_max + " g en " + cfg.perfusion_vehiculo_ml + " ml SG 5% a pasar en " + cfg.perfusion_h + " h (~" + Math.round(cfg.perfusion_vehiculo_ml / 24) + "-" + Math.round(cfg.perfusion_vehiculo_ml / 12) + " ml/h).\n";
-    if (o.erc) t += "  - ERC: reducir dosis " + cfg.erc_reduccion_pct + "% y vigilar.\n";
+    if (o.torsades) t += "  - Torsades/convulsiones: " + fmtDato(cfg.mgso4_torsades_g) + " g en " + fmtDato(cfg.mgso4_torsades_vehiculo_ml) + " ml SG 5% IV en bolo 5-10 min, repetible.\n";
+    t += "  - Carga: " + fmtDato(cfg.mgso4_g_min) + "-" + fmtDato(cfg.mgso4_g_max) + " g en " + fmtDato(cfg.mgso4_carga_vehiculo_ml) + " ml SG 5% en " + fmtDato(cfg.mgso4_carga_min) + " min.\n";
+    t += "  - Perfusión: " + fmtDato(cfg.perfusion_g_min) + "-" + fmtDato(cfg.perfusion_g_max) + " g en " + fmtDato(cfg.perfusion_vehiculo_ml) + " ml SG 5% a pasar en " + fmtDato(cfg.perfusion_h) + " h (~" + Math.round(cfg.perfusion_vehiculo_ml / 24) + "-" + Math.round(cfg.perfusion_vehiculo_ml / 12) + " ml/h).\n";
+    if (o.erc) t += "  - ERC: reducir dosis " + fmtDato(cfg.erc_reduccion_pct) + "% y vigilar.\n";
   } else {
     t += "\nORAL\n  - Sales de magnesio orales; pasar a IV si síntomas/arritmia.\n";
-    if (o.erc) t += "  - ERC: reducir dosis " + cfg.erc_reduccion_pct + "% y vigilar.\n";
+    if (o.erc) t += "  - ERC: reducir dosis " + fmtDato(cfg.erc_reduccion_pct) + "% y vigilar.\n";
   }
   t += "\nASOCIADOS/CAUSA\n  - Reponer K y Ca. " + MG_TXT.hipo_causas + "\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (Merck / EMCrit / SPS NHS). Verificar por el facultativo.\n";
@@ -88,7 +88,7 @@ function eliminarMg(d) {
   const cfg = MG_CFG, T = MG_TXT, l = [];
   if (d.erc) l.push({ txt: T.hiper_dialisis_erc, destacar: true });   // ERC/diálisis: la diálisis va primero
   l.push(d.diuresis
-    ? { txt: "SSF 0,9% 200-300 ml/h + furosemida " + cfg.furosemida_mg_min + "-" + cfg.furosemida_mg_max + " mg IV, si la función renal lo permite. Repetir furosemida según respuesta." }
+    ? { txt: "SSF 0,9% 200-300 ml/h + furosemida " + fmtDato(cfg.furosemida_mg_min) + "-" + fmtDato(cfg.furosemida_mg_max) + " mg IV, si la función renal lo permite. Repetir furosemida según respuesta." }
     : { txt: T.hiper_sin_diuresis, destacar: true });
   if (!d.erc) l.push({ txt: T.hiper_dialisis });
   return l;
@@ -108,7 +108,7 @@ function renderHM() {
   ], "var(--brand)");
 
   const calcio = sintomas ? cardTrat("Calcio IV (antagonista)", null, null, [
-    "<b>Gluconato cálcico 10% " + cfg.gluconato_ml_min + "-" + cfg.gluconato_ml_max + " ml (1-2 g) IV en 3-10 min</b>: antagoniza los efectos cardíacos y neuromusculares.",
+    "<b>Gluconato cálcico 10% " + fmtDato(cfg.gluconato_ml_min) + "-" + fmtDato(cfg.gluconato_ml_max) + " ml (1-2 g) IV en 3-10 min</b>: antagoniza los efectos cardíacos y neuromusculares.",
     "Repetir según la respuesta clínica y el ECG."
   ], "var(--c-cad)") : "";
 
@@ -136,7 +136,7 @@ function informeHM() {
   let t = App.informe.cabecera("HIPERMAGNESEMIA — TRATAMIENTO") + "\n";
   t += "PACIENTE\n  - Magnesio: " + fmt(o.mg, 1) + " mg/dl" + (o.sintomas ? " · sintomática" : "") + (o.erc ? " · ERC" : "") + (o.diuresis ? "" : " · sin diuresis conservada") + "\n";
   t += "\nSUSPENDER\n  - Retirar todo aporte de Mg (laxantes/antiácidos). " + MG_TXT.hiper_causas + "\n";
-  if (o.sintomas) t += "\nCALCIO IV\n  - Gluconato cálcico 10% " + cfg.gluconato_ml_min + "-" + cfg.gluconato_ml_max + " ml (1-2 g) IV en 3-10 min (antagonista), repetible.\n";
+  if (o.sintomas) t += "\nCALCIO IV\n  - Gluconato cálcico 10% " + fmtDato(cfg.gluconato_ml_min) + "-" + fmtDato(cfg.gluconato_ml_max) + " ml (1-2 g) IV en 3-10 min (antagonista), repetible.\n";
   t += "\nELIMINAR\n"; o.elim.forEach(x => { t += "  - " + x.txt + "\n"; });
   t += "  - Monitorizar reflejos, ECG y respiración.\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (Merck / EMCrit). Verificar por el facultativo.\n";

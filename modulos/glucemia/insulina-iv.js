@@ -70,7 +70,7 @@ function tablaPautasIV(pautaSel, idxFila) {
   for (let i = 0; i < 4; i++) h += "<th" + cls(i) + ">Pauta " + (i + 1) + "</th>";
   h += "</tr></thead><tbody>";
   // Fila de hipoglucemia
-  h += '<tr><td>&lt; 70</td><td colspan="4" style="text-align:center;color:var(--text-2);">Protocolo de hipoglucemia</td></tr>';
+  h += '<tr><td>&lt; ' + fmtDato(cfg.hipo_umbral) + '</td><td colspan="4" style="text-align:center;color:var(--text-2);">Protocolo de hipoglucemia</td></tr>';
   cfg.pautas_filas.forEach((f, idx) => {
     const activa = idx === idxFila ? ' class="fila-activa"' : "";
     h += "<tr" + activa + "><td>" + escHtml(f.rango) + "</td>";
@@ -98,7 +98,7 @@ function renderResultadoIV() {
 
   // Aviso de pauta de inicio
   const inicioLineas = [
-    "Iniciar si hay indicación establecida y <b>glucemia > " + cfg.glu_inicio + " mg/dl</b>.",
+    "Iniciar si hay indicación establecida y <b>glucemia > " + fmtDato(cfg.glu_inicio) + " mg/dl</b>.",
     o.criteriosP2.length
       ? "Sugerido <b>iniciar por Pauta 2</b> (" + escHtml(o.criteriosP2.map(k => cfg.pauta2_criterios[k]).join("; ")) + ")."
       : "Sugerido <b>iniciar por Pauta 1</b> (la mayoría de los pacientes)."
@@ -111,18 +111,18 @@ function renderResultadoIV() {
   } else if (o.uih !== undefined) {
     resultadoUih = card("Ritmo actual (Pauta " + d.pauta + ")", fmt(o.uih, 0) + " UI/h", "= " + fmt(o.uih, 0) + " ml/h (1 UI/ml)", [
       "Glucemia " + fmtGluIV(d.glu) + " mg/dl → tramo " + escHtml(cfg.pautas_filas[o.idxFila].rango) + " mg/dl.",
-      o.uih === 0 ? "Sin insulina en este tramo; mantener vigilancia y la línea de glucosa." : "Objetivo de glucemia " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl."
+      o.uih === 0 ? "Sin insulina en este tramo; mantener vigilancia y la línea de glucosa." : "Objetivo de glucemia " + fmtDato(cfg.objetivo_min) + "-" + fmtDato(cfg.objetivo_max) + " mg/dl."
     ], "var(--c-insulina)");
   }
 
   // Transición a SC
   const transLineas = cfg.transicion.map(escHtml);
-  if (o.dtiEstimada) transLineas.push("Con la insulina de las últimas 6 h (" + fmt(d.ins6h, 0) + " UI) → DTD estimada ≈ <b>" + fmt(o.dtiEstimada, 0) + " UI/día</b> (× 4).");
+  if (o.dtiEstimada) transLineas.push("Con la insulina de las últimas 6 h (" + fmt(d.ins6h, 0) + " UI) → DTD estimada ≈ <b>" + fmt(o.dtiEstimada, 0) + " UI/día</b> (× " + fmtDato(cfg.transicion_factor) + ").");
 
   cont.innerHTML =
     '<div class="result-card" style="--dx-color:var(--c-insulina)">' +
       '<div class="result-kicker">Insulinización IV en perfusión</div>' +
-      '<div class="result-dx" style="font-size:1.2rem">Objetivo de glucemia ' + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl</div>" +
+      '<div class="result-dx" style="font-size:1.2rem">Objetivo de glucemia ' + fmtDato(cfg.objetivo_min) + "-" + fmtDato(cfg.objetivo_max) + " mg/dl</div>" +
       '<p class="result-explica">Pauta en dos líneas separadas (Y). Verifica cada ritmo según el paciente.</p>' +
     "</div>" +
     card("Preparación", null, null, [cfg.prep_insulina, cfg.prep_liquidos], "var(--brand)") +
@@ -133,7 +133,7 @@ function renderResultadoIV() {
       '<p class="datos-pie" style="margin-top:6px;">Pauta ' + d.pauta + " resaltada" + (o.idxFila != null ? "; tramo de la glucemia actual marcado" : "") + ".</p></div>" +
     card("Cambio de pauta", null, null, cfg.cambio.map(escHtml), "var(--violet)") +
     card("Monitorización", null, null, cfg.monitor.map(escHtml), "var(--brand)") +
-    card("Hipoglucemia (< 70 mg/dl)", null, null, cfg.hipo.map(escHtml), "var(--c-hipo)") +
+    card("Hipoglucemia (< " + fmtDato(cfg.hipo_umbral) + " mg/dl)", null, null, cfg.hipo.map(escHtml), "var(--c-hipo)") +
     card("Cuándo avisar al médico", null, null, cfg.avisar.map(escHtml), "var(--c-cad)") +
     card("Control de potasio", null, null, ["Vigilar los niveles de potasio y comprobar una función renal adecuada (diuresis ~50 ml/h)."], "var(--violet)") +
     '<div class="trat-card" style="--trat-color:var(--c-ehh)"><h3>Transición a insulina SC</h3>' +
@@ -158,8 +158,8 @@ function construirInformeIV() {
   const { d, o } = _ultimoIV;
   const cfg = INSULINA_IV;
   let t = App.informe.cabecera("INSULINIZACIÓN IV — PERFUSIÓN") + "\n";
-  t += "OBJETIVO: glucemia " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl.\n";
-  t += "PREPARACIÓN\n  - " + cfg.prep_insulina + "\n  - " + cfg.prep_liquidos + "\n";
+  t += "OBJETIVO: glucemia " + fmtDato(cfg.objetivo_min) + "-" + fmtDato(cfg.objetivo_max) + " mg/dl.\n";
+  t += "PREPARACIÓN\n  - " + fmtDato(cfg.prep_insulina) + "\n  - " + fmtDato(cfg.prep_liquidos) + "\n";
 
   t += "\nPAUTA DE INICIO: " + (o.criteriosP2.length ? "Pauta 2 (" + o.criteriosP2.map(k => cfg.pauta2_criterios[k]).join("; ") + ")" : "Pauta 1") + ".\n";
 
@@ -174,11 +174,11 @@ function construirInformeIV() {
 
   t += "\nCAMBIO DE PAUTA\n";    cfg.cambio.forEach(x => { t += "  - " + x + "\n"; });
   t += "\nMONITORIZACIÓN\n";     cfg.monitor.forEach(x => { t += "  - " + x + "\n"; });
-  t += "\nHIPOGLUCEMIA (<70)\n"; cfg.hipo.forEach(x => { t += "  - " + x + "\n"; });
+  t += "\nHIPOGLUCEMIA (<" + fmtDato(cfg.hipo_umbral) + ")\n"; cfg.hipo.forEach(x => { t += "  - " + x + "\n"; });
   t += "\nAVISAR AL MÉDICO\n";   cfg.avisar.forEach(x => { t += "  - " + x + "\n"; });
   t += "\nPOTASIO\n  - Vigilar K y función renal (diuresis ~50 ml/h).\n";
   t += "\nTRANSICIÓN A SC\n";    cfg.transicion.forEach(x => { t += "  - " + x + "\n"; });
-  if (o.dtiEstimada) t += "  - Últimas 6 h (" + fmt(d.ins6h, 0) + " UI) × 4 → DTD estimada ≈ " + fmt(o.dtiEstimada, 0) + " UI/día.\n";
+  if (o.dtiEstimada) t += "  - Últimas 6 h (" + fmt(d.ins6h, 0) + " UI) × " + fmtDato(cfg.transicion_factor) + " → DTD estimada ≈ " + fmt(o.dtiEstimada, 0) + " UI/día.\n";
 
   t += "\n" + App.informe.SEP + "\nApoyo clínico (SAEDYN 2017). Verificar por el facultativo.\n";
   return t;
