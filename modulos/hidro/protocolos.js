@@ -135,11 +135,14 @@ const K_TXT = {
     "Descartar pseudohiperpotasemia (hemólisis, torniquete prolongado, trombocitosis/leucocitosis): repetir la muestra si la clínica no encaja.",
     "Dieta baja en potasio y tratar la causa (ERC, acidosis, lisis tisular, déficit de insulina)."
   ],
-  hiper_eliminar: [
-    "Quelantes del potasio: ciclosilicato de circonio sódico o patiromer (el resincalcio ya no se recomienda de rutina).",
-    "Diuréticos de asa (furosemida) si la volemia y la diuresis lo permiten.",
-    "Hemodiálisis urgente si es refractaria, hay ERC avanzada o el paciente ya está en diálisis."
-  ],
+  // «Eliminar el K»: potasio.js elige las líneas según las casillas ERC y diuresis
+  hiper_eliminar: {
+    quelantes: "Quelantes del potasio: ciclosilicato de circonio sódico o patiromer (el resincalcio ya no se recomienda de rutina).",
+    diureticos: "Diuréticos de asa (furosemida) si la volemia y la diuresis lo permiten.",
+    diureticos_no: "Sin diuresis conservada: los diuréticos de asa no sirven para eliminar el K; apóyate en los quelantes y la diálisis.",
+    dialisis: "Hemodiálisis urgente si es refractaria, hay ERC avanzada o el paciente ya está en diálisis.",
+    dialisis_erc: "ERC avanzada / en diálisis: la hemodiálisis es la vía principal para eliminar el K; avisa a Nefrología desde el principio."
+  },
   hipo_causas: "Pérdidas digestivas (vómitos, diarrea), diuréticos (tiazidas, asa), redistribución (insulina, β-agonistas, alcalosis), hiperaldosteronismo, hipomagnesemia.",
   hipo_mg: "Corrige el magnesio SIEMPRE: la hipomagnesemia provoca pérdida renal de potasio y hace la hipopotasemia refractaria. Sulfato de magnesio IV si está bajo.",
   hipo_via: "Diluir el KCl en SUERO FISIOLÓGICO, no en glucosado (la glucosa estimula la insulina y baja aún más el K)."

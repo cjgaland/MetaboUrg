@@ -89,13 +89,23 @@ function prefillHiperK() {
 }
 let _ultimoHK = null;
 function leerHK() {
-  return { k: parseNum("hk-k"), glu: parseNum("hk-glu"), ecg: chkVal("hk-ecg") };
+  return { k: parseNum("hk-k"), glu: parseNum("hk-glu"), ecg: chkVal("hk-ecg"), erc: chkVal("hk-erc"), diuresis: chkVal("hk-diuresis") };
+}
+// Líneas de «Eliminar el K» según ERC y diuresis: [{ txt, destacar }]
+function eliminarK(d) {
+  const T = K_TXT.hiper_eliminar, l = [];
+  if (d.erc) l.push({ txt: T.dialisis_erc, destacar: true });      // ERC/diálisis: la diálisis va primero
+  l.push({ txt: T.quelantes });
+  l.push(d.diuresis ? { txt: T.diureticos } : { txt: T.diureticos_no, destacar: true });
+  if (!d.erc) l.push({ txt: T.dialisis });
+  return l;
 }
 function calcularHK(d) {
   const cfg = K_CFG, has = v => v !== null && v !== undefined, o = {};
   o.grav = d.k >= cfg.hiper_grave ? "grave" : (d.k >= cfg.hiper_mod ? "moderada" : "leve");
   o.calcioIndicado = d.ecg || d.k >= cfg.hiper_grave;
   o.glucosaMant = has(d.glu) && d.glu < cfg.glucosa_umbral_mgdl;
+  o.eliminar = eliminarK(d);
   return o;
 }
 function renderHK() {
@@ -126,7 +136,7 @@ function renderHK() {
   ];
 
   // 3 · Eliminar K
-  const eliminarLineas = K_TXT.hiper_eliminar.map(x => escHtml(x));
+  const eliminarLineas = o.eliminar.map(x => x.destacar ? "<b>" + escHtml(x.txt) + "</b>" : escHtml(x.txt));
 
   const etiqueta = { leve: "leve (5,5-5,9)", moderada: "moderada (6,0-6,4)", grave: "grave (≥ 6,5)" }[o.grav];
 
@@ -153,7 +163,7 @@ function informeHK() {
   const { d, o } = _ultimoHK;
   const cfg = K_CFG;
   let t = App.informe.cabecera("HIPERPOTASEMIA — TRATAMIENTO") + "\n";
-  t += "PACIENTE\n  - Potasio: " + fmt(d.k, 1) + " mmol/l (" + o.grav + ")" + (d.ecg ? " · cambios ECG" : "") + (d.glu !== null ? " · glucemia " + fmt(d.glu, 0) + " mg/dl" : "") + "\n";
+  t += "PACIENTE\n  - Potasio: " + fmt(d.k, 1) + " mmol/l (" + o.grav + ")" + (d.ecg ? " · cambios ECG" : "") + (d.erc ? " · ERC avanzada/diálisis" : "") + (d.diuresis ? "" : " · sin diuresis conservada") + (d.glu !== null ? " · glucemia " + fmt(d.glu, 0) + " mg/dl" : "") + "\n";
   t += "\n1) PROTEGER EL CORAZÓN (CALCIO)\n";
   if (o.calcioIndicado) {
     t += "  - Gluconato cálcico 10% " + cfg.gluconato_ml + " ml (1 g) IV en " + cfg.gluconato_min + " min, con monitor ECG. Repetir a los " + cfg.gluconato_repetir + " min si persisten cambios.\n";
@@ -162,7 +172,7 @@ function informeHK() {
   t += "  - Insulina rápida " + cfg.insulina_ui + " UI + " + cfg.glucosa_g + " g glucosa IV en 15-30 min.\n";
   t += "  - " + (o.glucosaMant ? "Glucemia <" + cfg.glucosa_umbral_mgdl + ": glucosado 10% " + cfg.glucosa_mant_ml_h + " ml/h x " + cfg.glucosa_mant_h + " h." : "Vigilar glucemia (hipoglucemia tardía).") + "\n";
   t += "  - Salbutamol nebulizado " + cfg.salbutamol_min + "-" + cfg.salbutamol_max + " mg (adyuvante). Bicarbonato no de rutina.\n";
-  t += "\n3) ELIMINAR EL K\n"; K_TXT.hiper_eliminar.forEach(x => { t += "  - " + x + "\n"; });
+  t += "\n3) ELIMINAR EL K\n"; o.eliminar.forEach(x => { t += "  - " + x.txt + "\n"; });
   t += "\nMEDIDAS GENERALES\n"; K_TXT.hiper_general.forEach(x => { t += "  - " + x + "\n"; });
   t += "\nMONITORIZACIÓN\n  - K a las " + cfg.control_k + "; glucemia seriada tras la insulina.\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (UK Kidney 2023 / consenso español). Verificar por el facultativo.\n";
@@ -260,7 +270,8 @@ App.alIniciar(function () {
   document.getElementById("btn-hk-calcular").addEventListener("click", renderHK);
   document.getElementById("btn-hk-limpiar").addEventListener("click", () => {
     ["hk-k", "hk-glu"].forEach(id => { document.getElementById(id).value = ""; });
-    document.getElementById("hk-ecg").checked = false;
+    ["hk-ecg", "hk-erc"].forEach(id => { document.getElementById(id).checked = false; });
+    document.getElementById("hk-diuresis").checked = true;   // por defecto: diuresis conservada
     document.getElementById("hk-resultado").innerHTML = ""; _ultimoHK = null;
   });
   document.getElementById("btn-pk-calcular").addEventListener("click", renderPK);

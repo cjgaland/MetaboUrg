@@ -12,7 +12,7 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.18";
+const APP_VERSION = "2026.19";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 // Clave de acceso de Web3Forms para el buzón de sugerencias.
@@ -21,6 +21,16 @@ const APP_ANIO = APP_VERSION.split(".")[0];
 const WEB3FORMS_KEY = "f57ce774-9fbd-471e-b52d-7c3aa180094e";
 
 const NOVEDADES = [
+  {
+    version: "2026.19",
+    fecha: "Noviembre 2026",
+    titulo: "Hiperpotasemia: ERC y diuresis ya ajustan el tratamiento",
+    cambios: [
+      "Vuelven las casillas «ERC avanzada / en diálisis» y «Diuresis conservada» en Hiperpotasemia, ahora con efecto en el paso «Eliminar el K» y en el informe.",
+      "Con ERC avanzada o en diálisis, la hemodiálisis aparece la primera y destacada como vía principal, con aviso a Nefrología desde el principio.",
+      "Sin diuresis conservada, en lugar de la furosemida se avisa de que los diuréticos de asa no sirven para eliminar el K. La casilla de diuresis viene marcada por defecto."
+    ]
+  },
   {
     version: "2026.18",
     fecha: "Noviembre 2026",
