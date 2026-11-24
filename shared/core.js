@@ -12,7 +12,7 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.20";
+const APP_VERSION = "2026.21";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 // Clave de acceso de Web3Forms para el buzón de sugerencias.
@@ -21,6 +21,16 @@ const APP_ANIO = APP_VERSION.split(".")[0];
 const WEB3FORMS_KEY = "f57ce774-9fbd-471e-b52d-7c3aa180094e";
 
 const NOVEDADES = [
+  {
+    version: "2026.21",
+    fecha: "Noviembre 2026",
+    titulo: "Magnesio: ERC y diuresis ya ajustan el tratamiento",
+    cambios: [
+      "Hipermagnesemia: con «ERC / en diálisis», la hemodiálisis aparece la primera y destacada como vía principal, con aviso a Nefrología desde el principio.",
+      "Hipermagnesemia: sin diuresis conservada, en lugar de SSF + furosemida se avisa de que la diuresis forzada no sirve y la vía es la hemodiálisis. La casilla de diuresis viene marcada por defecto.",
+      "Hipomagnesemia: la casilla «Insuficiencia renal» (reducir la dosis un 25-50 % y vigilar) se aplica también al tratamiento oral, no solo al IV."
+    ]
+  },
   {
     version: "2026.20",
     fecha: "Noviembre 2026",

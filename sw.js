@@ -7,7 +7,7 @@
 //    para que los usuarios vean el banner "Nueva versión disponible".
 // ============================================================
 
-const CACHE_NAME = "metabourg-v16";
+const CACHE_NAME = "metabourg-v17";
 
 const ASSETS = [
   "./index.html",

@@ -217,7 +217,11 @@ const MG_TXT = {
   hipo_causas: "Pérdidas digestivas (diarrea), alcoholismo, diuréticos, inhibidores de la bomba de protones, fármacos (aminoglucósidos, cisplatino). Suele asociar hipopotasemia e hipocalcemia.",
   hipo_ecg: "QT largo, riesgo de torsades de pointes y arritmias; tetania y convulsiones.",
   hiper_causas: "Casi siempre insuficiencia renal con aporte de magnesio (laxantes/antiácidos, sulfato de Mg). ",
-  hiper_clinica: "Hiporreflexia (> 4 mEq/l), hipotensión, bradicardia/bloqueo, depresión respiratoria y parada en casos extremos."
+  hiper_clinica: "Hiporreflexia (> 4 mEq/l), hipotensión, bradicardia/bloqueo, depresión respiratoria y parada en casos extremos.",
+  // «Eliminar el magnesio»: magnesio.js elige las líneas según las casillas ERC y diuresis
+  hiper_dialisis: "Hemodiálisis si hay insuficiencia renal, es grave o no responde.",
+  hiper_dialisis_erc: "ERC / en diálisis: la hemodiálisis es la vía principal para eliminar el Mg; avisa a Nefrología desde el principio.",
+  hiper_sin_diuresis: "Sin diuresis conservada: la diuresis forzada (SSF + furosemida) no sirve para eliminar el Mg; la vía es la hemodiálisis."
 };
 
 window.NA_CFG = NA_CFG;
