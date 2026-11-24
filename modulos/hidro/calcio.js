@@ -85,11 +85,11 @@ function renderLC() {
   const cfg = CA_CFG;
   const ca = parseNum("lc-ca"), alb = parseNum("lc-alb");
   if (ca === null) { toast("Introduce el calcio.", true); return; }
-  const sintomas = chkVal("lc-sintomas"), mg = chkVal("lc-mg"), oral = chkVal("lc-oral");
+  const sintomas = chkVal("lc-sintomas"), mg = chkVal("lc-mg");
   const caC = caCorregido(ca, alb);
   const iv = sintomas || caC < cfg.hipo_grave;
   const grav = caC < cfg.hipo_grave ? "grave" : (caC < cfg.hipo_leve ? "moderada" : "leve");
-  _ultimoLC = { ca, alb, caC, sintomas, mg, oral, iv, grav };
+  _ultimoLC = { ca, alb, caC, sintomas, mg, iv, grav };
   const cont = document.getElementById("lc-resultado");
 
   const ivCard = iv ? cardTrat("Calcio IV (sintomática / grave)", null, null, [
@@ -98,11 +98,12 @@ function renderLC() {
     "No mezclar con bicarbonato ni fosfato (precipitan)."
   ], "var(--c-cad)") : "";
 
-  const oralCard = (!iv || true) ? cardTrat(iv ? "Mantenimiento / paso a oral" : "Tratamiento oral", null, null, [
+  // El calcio oral se muestra siempre: como tratamiento (sin IV) o como mantenimiento tras el IV.
+  const oralCard = cardTrat(iv ? "Mantenimiento / paso a oral" : "Tratamiento oral", null, null, [
     "<b>Calcio oral " + cfg.ca_oral_min + "-" + cfg.ca_oral_max + " mg de calcio elemental/día</b>, repartido en 2-3 tomas.",
     "Asociar <b>vitamina D</b> activa (calcitriol/alfacalcidol) para mejorar la absorción.",
     "Objetivo de calcio " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl; controlar cada 4-6 h en la fase aguda."
-  ], "var(--c-insulina)") : "";
+  ], "var(--c-insulina)");
 
   const mgCard = cardTrat("Magnesio y causa", null, null, [
     "Corrige el <b>magnesio</b> si está bajo: la hipomagnesemia causa hipocalcemia refractaria." + (mg ? " <b>(magnesio bajo: corrígelo)</b>" : ""),
@@ -148,7 +149,6 @@ App.alIniciar(function () {
   document.getElementById("btn-lc-limpiar").addEventListener("click", () => {
     ["lc-ca", "lc-alb"].forEach(id => { document.getElementById(id).value = ""; });
     ["lc-sintomas", "lc-mg"].forEach(id => { document.getElementById(id).checked = false; });
-    document.getElementById("lc-oral").checked = true;
     document.getElementById("lc-resultado").innerHTML = ""; _ultimoLC = null;
   });
 });

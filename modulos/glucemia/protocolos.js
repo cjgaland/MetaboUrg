@@ -19,12 +19,10 @@ const UMBRAL = {
   glucosa_ehh:     600,   // mg/dl — EHH
   glucosa_hipo:    70,    // mg/dl — hipoglucemia
   ph_cad:          7.30,  // pH venoso < 7,30
-  hco3_cad:        18,    // mEq/l — < 18 (acidosis); cetosis simple > 15
-  hco3_ehh_min:    18,    // EHH conserva HCO3 (> 18) y pH (> 7,30)
+  hco3_cad:        18,    // mEq/l — < 18 = acidosis; ≥ 18 = sin acidosis (cetosis simple / EHH)
   bhb_cetosis:     0.6,   // mmol/l — β-OHB normal < 0,6
   bhb_cad:         3.0,   // mmol/l — β-OHB > 3 apoya CAD
-  osm_ehh:         320,   // mOsm/kg — osmolalidad efectiva (SEEN: >320; ADA 2024: >300)
-  osm_ehh_ada:     300
+  osm_ehh:         320    // mOsm/kg — osmolalidad efectiva (SEEN: >320; ADA 2024 usa >300)
 };
 
 // ── Gravedad de la CAD (consenso 2024 / SEEN) ─────────────
@@ -54,7 +52,7 @@ const CUADROS = {
     id: "cetosis",
     nombre: "Cetosis simple",
     color: "var(--c-cad)",
-    explica: "Cetonemia/cetonuria con bicarbonato conservado (>15) y pH normal: aún no cumple criterios de cetoacidosis. Vigilar estrechamente — puede progresar a CAD. Asegurar hidratación e insulina; no omitir nunca la insulina.",
+    explica: "Cetonemia/cetonuria con bicarbonato conservado (≥ 18) y pH normal: aún no cumple criterios de cetoacidosis. Vigilar estrechamente — puede progresar a CAD. Asegurar hidratación e insulina; no omitir nunca la insulina.",
     tratamiento: [
       { titulo: "Manejo", puntos: [
         "Asegurar hidratación e insulina; NO omitir nunca la insulina.",
@@ -70,7 +68,7 @@ const CUADROS = {
     explica: "Tríada: hiperglucemia (o glucemia variable), cetonemia y acidosis metabólica. Emergencia. Manejo en 3 ejes: fluidos, insulina y potasio.",
     tratamiento: [
       { titulo: "1 · Fluidos", puntos: [
-        "SSF 0,9% 1000 ml en la 1ª hora (bolos de 500 ml en 10-15 min si TA sistólica < 90 mmHg).",
+        "SSF 0,9% 15-20 ml/kg en la 1ª hora (máx. 1500 ml; 5-10 ml/kg si IC, ERC u oligoanuria). Bolos de 500 ml en 10-15 min si TA sistólica < 90 mmHg.",
         "Continuar 0,9% según volemia y sodio corregido; cambiar a salino 0,45% si el sodio corregido es normal o alto.",
         "Cuando la glucemia baje a ~200-250 mg/dl, añadir suero glucosado 5-10% manteniendo glucemia 200-250 mg/dl." ] },
       { titulo: "2 · Insulina", puntos: [
@@ -95,12 +93,12 @@ const CUADROS = {
     explica: "Hiperglucemia extrema con hiperosmolalidad y deshidratación grave, sin cetoacidosis relevante. Corrección LENTA de la osmolalidad. Profilaxis de trombosis.",
     tratamiento: [
       { titulo: "1 · Fluidos (lento)", puntos: [
-        "SSF 0,9% 1000 ml en la 1ª hora (bolos de 500 ml si TA sistólica < 90 mmHg).",
+        "SSF 0,9% 15-20 ml/kg en la 1ª hora (máx. 1500 ml; 5-10 ml/kg si IC, ERC u oligoanuria). Bolos de 500 ml si TA sistólica < 90 mmHg.",
         "Objetivo: descenso LENTO de la osmolalidad 3-8 mOsm/kg/h y del sodio. Valorar salino 0,45% si el sodio es alto y el balance es correcto.",
         "Añadir glucosado cuando la glucemia baje a 250-300 mg/dl." ] },
       { titulo: "2 · Insulina", puntos: [
         "Solo si hay cetonemia significativa, o cuando la glucemia deja de bajar solo con fluidos: 0,05-0,1 UI/kg/h.",
-        "Objetivo: glucemia 200-250 mg/dl hasta que se normalicen la osmolalidad y el nivel de consciencia." ] },
+        "Objetivo: glucemia 250-300 mg/dl hasta que se normalicen la osmolalidad y el nivel de consciencia." ] },
       { titulo: "3 · Potasio", puntos: [
         "Igual que en la CAD: vigilar K y función renal; K < 3,3 retrasar insulina y reponer primero; objetivo K 4-5 mEq/l." ] },
       { titulo: "Otros", puntos: [
@@ -179,6 +177,7 @@ const CAD_CFG = {
   ritmo_mlh_min: 250, ritmo_mlh_max: 500,             // ritmo 2ª-6ª h estándar
   ritmo_mlh_cauto_min: 125, ritmo_mlh_cauto_max: 250, // IC/ERC/oliguria: ritmo reducido
   descenso_glu_min: 50, descenso_glu_max: 75,     // mg/dl/h objetivo
+  insulina_si_no_baja: "Si no baja, duplicar el ritmo.", // ajuste de la perfusión si no se alcanza el descenso
   na_corr_umbral_045: 135,       // Na corregido ≥ → considerar salino 0,45%
   k_bajo: 3.3, k_alto: 5.3, k_obj_min: 4, k_obj_max: 5,
   kcl_por_litro_min: 20, kcl_por_litro_max: 40,        // mEq KCl por litro de suero
@@ -186,6 +185,10 @@ const CAD_CFG = {
   kcl_reposicion_h_min: 10, kcl_reposicion_h_max: 20,  // mEq/h si K < 3,3
   basal_frac_dtd: 0.5,           // basal ≈ 50% de la dosis total diaria previa
   bicarbonato_ph_umbral: 7.0,    // variante SAEDYN: bicarbonato solo si pH ≤ 7,0
+  bicarbonato_ph_grave: 6.9,     // variante SAEDYN: por debajo de este pH, dosis alta
+  bicarbonato_grave:    { meq: 100, vol_ml: 500, kcl_meq: 20, h: 2 }, // pH < 6,9 (bicarbonato 1 M en salino; repetir cada 2 h)
+  bicarbonato_moderado: { meq: 50,  vol_ml: 250, kcl_meq: 10, h: 1 }, // pH 6,9-7,0
+  sc_debut_uikg_min: 0.5, sc_debut_uikg_max: 0.8, // paso a SC en début: DTD orientativa (UI/kg/día)
   na_deseado: 140,               // Na objetivo para el déficit de agua (mEq/l)
   act_factor: 0.6,               // factor de agua corporal total (×peso)
   perdidas_mlkg: 25              // pérdidas diarias estimadas en CAD (ml/kg)
@@ -321,7 +324,6 @@ const INSULINA_IV = {
 const EHH_CFG = {
   osm_descenso_min: 3, osm_descenso_max: 8,   // mOsm/kg/h — descenso LENTO
   osm_resolucion: 315,                         // osmolalidad objetivo / paciente alerta
-  na_descenso_max: 10,                         // mEq/l por 24 h (descenso prudente del Na)
   glu_objetivo_min: 250, glu_objetivo_max: 300,
   glu_anadir_glucosa: 300,                     // mg/dl: añadir glucosa al bajar a este nivel
   insulina_uikgh_min: 0.05, insulina_uikgh_max: 0.1

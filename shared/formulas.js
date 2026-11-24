@@ -45,10 +45,11 @@ function fena(naOrina, creaSuero, naSuero, creaOrina) {
   return (naOrina * creaSuero) / (naSuero * creaOrina) * 100;
 }
 
-// Déficit de bicarbonato (mEq) = 0,3 × peso × exceso de bases (EB suele ser negativo)
+// Déficit de bicarbonato (mEq) = 0,3 × peso × déficit de bases, donde déficit de bases = −EB.
+// En acidosis metabólica el EB es negativo y el déficit sale positivo; con EB ≥ 0 no hay déficit (≤ 0).
 function deficitHCO3(peso, eb) {
   if (peso === null || peso === undefined || eb === null || eb === undefined) return null;
-  return 0.3 * peso * eb;
+  return 0.3 * peso * -eb;
 }
 
 App.formulas = { osmolalidadEfectiva, naCorregido, osmolaridadTotal, aguaCorporalTotal, deficitAgua, perdidasEstimadas, fena, deficitHCO3 };

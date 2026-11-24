@@ -1,7 +1,7 @@
 {
   "name": "MetaboUrg · Urgencias endocrino-metabólicas",
   "short_name": "MetaboUrg",
-  "description": "Diagnóstico y tratamiento de urgencias endocrino-metabólicas: trastornos de la glucemia (CAD, EHH, hipoglucemia) y, a futuro, electrolitos. Apoyo clínico hospitalario.",
+  "description": "Diagnóstico y tratamiento de urgencias endocrino-metabólicas: trastornos de la glucemia (CAD, EHH, hipoglucemia), hidroelectrolíticos (Na, K, Ca, P, Mg), tiroideos y suprarrenales. Apoyo clínico hospitalario.",
   "id": "/MetaboUrg/",
   "scope": "./",
   "start_url": "./index.html",

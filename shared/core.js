@@ -12,7 +12,7 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.17";
+const APP_VERSION = "2026.18";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 // Clave de acceso de Web3Forms para el buzón de sugerencias.
@@ -21,6 +21,19 @@ const APP_ANIO = APP_VERSION.split(".")[0];
 const WEB3FORMS_KEY = "f57ce774-9fbd-471e-b52d-7c3aa180094e";
 
 const NOVEDADES = [
+  {
+    version: "2026.18",
+    fecha: "Noviembre 2026",
+    titulo: "Revisión de coherencia: umbrales, textos y cálculos",
+    cambios: [
+      "Hiperpotasemia a partir de K ≥ 5,5 mmol/l (leve 5,5-5,9, según UK Kidney Association 2023). Entre 5,0 y 5,4 el diagnóstico indica «potasio normal-alto».",
+      "El resumen del Diagnóstico de glucemia coincide ya con las calculadoras: fluidos de la 1.ª hora en CAD y EHH a 15-20 ml/kg (máx. 1500 ml), objetivo de glucemia del EHH 250-300 mg/dl y cetosis simple con HCO₃ ≥ 18.",
+      "Insulinización IV: una glucemia con decimales (p. ej. 139,5) ya encuentra su tramo de la tabla y se muestra tal cual se introdujo.",
+      "CAD: el déficit de bicarbonato se calcula con el signo correcto (positivo con exceso de bases negativo) y solo se muestra cuando hay déficit.",
+      "Se retiran las casillas que no cambiaban el resultado (ERC y diuresis en hiperpotasemia; tolerancia oral en hipocalcemia).",
+      "Las dosis y umbrales que estaban escritos dentro del código (bicarbonato, insulina SC en el début, SSH 3 %, magnesio en ERC…) pasan a los datos de protocolo, para poder auditarlos. Textos de presentación actualizados con las cuatro áreas."
+    ]
+  },
   {
     version: "2026.17",
     fecha: "Junio 2026",

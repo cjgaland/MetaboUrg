@@ -19,13 +19,12 @@ const NA_CFG = {
   hipo_leve_min: 130,   // 130-134 leve
   hipo_mod_min: 125,    // 125-129 moderada · < 125 profunda
   hiper: 145,
-  agudo_h: 48,          // < 48 h = aguda
+  pseudohipo_glu: 200,  // mg/dl — por encima, valorar hiponatremia por hiperglucemia (Na corregido)
 
   // ── Hiponatremia grave: salino hipertónico al 3% ──
   hts_ml: 150,          // ml por bolo
   hts_min: 20,          // minutos por bolo
   hts_mlkg: 2,          // alternativa por peso (ml/kg)
-  hts_repeticiones: 3,  // hasta 2-3 bolos
   hts_objetivo_1h: 5,   // subir Na +5 mmol/l en la 1ª hora / hasta mejorar
   limite_24h: 10,       // ascenso máximo en las primeras 24 h
   limite_24h_riesgo: 8, // alto riesgo de desmielinización osmótica
@@ -35,6 +34,7 @@ const NA_CFG = {
   // Preparación "casera" de SSH 3% (cuando no hay comercial)
   // SSF 0,9% 400 ml + 5 amp ClNa 20% (10 ml/amp) ≈ 450 ml · ~231 mEq · ≈ 3,0%
   ssh3_ssf_ml: 400, ssh3_clna_amp: 5, ssh3_clna_ml: 10, ssh3_total_ml: 450, ssh3_total_meq: 231,
+  ssh3_meq_l: 514,      // concentración del SSH 3% (mEq de Na por litro) para el ritmo de perfusión lenta
   // Hiponatremia hipovolémica: ritmo orientativo SSF 0,9%
   ssf_hipo_mlkgh_min: 0.5, ssf_hipo_mlkgh_max: 1,
 
@@ -105,11 +105,9 @@ const K_CFG = {
   normal_min: 3.5, normal_max: 5.0,
 
   // ── Hiperpotasemia (mmol/l = mEq/l) ──
-  hiper_leve: 5.5,   // 5,5-5,9 leve
+  hiper_leve: 5.5,   // umbral de hiperpotasemia · 5,5-5,9 leve (5,0-5,4 = normal-alto)
   hiper_mod: 6.0,    // 6,0-6,4 moderada
   hiper_grave: 6.5,  // ≥ 6,5 grave
-  ecg12_k: 6.0,      // ECG de 12 derivaciones si K ≥ 6,0
-  monitor_k: 6.5,    // monitor continuo si K ≥ 6,5
   // Calcio (ampolla clásica española)
   gluconato_ml: 10, gluconato_g: 1, gluconato_min: "2-3", gluconato_repetir: "5-10",
   // Insulina-glucosa
@@ -208,8 +206,8 @@ const MG_CFG = {
   mgso4_torsades_vehiculo_ml: 10,                                // torsades: 2 g en 10 ml SG 5% bolo 5-10 min
   perfusion_g_min: 4, perfusion_g_max: 8, perfusion_h: "12-24",
   perfusion_vehiculo_ml: 500,                                   // perfusión 4-8 g en 500 ml SG 5% a pasar en 12-24 h
+  erc_reduccion_pct: "25-50",                                   // insuficiencia renal: reducir la dosis (%)
   furosemida_mg_min: 20, furosemida_mg_max: 40,
-  hiper: 2.2, hiper_sintomas: 4.8,         // ~4 mEq/l: hiporreflexia
   gluconato_ml_min: 10, gluconato_ml_max: 20
 };
 const MG_TXT = {

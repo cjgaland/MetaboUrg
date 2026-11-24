@@ -54,7 +54,7 @@ function evaluarSodio(d) {
     o.severidad = d.graves ? "grave" : "no-grave";
     o.destino = { nombre: "Hiponatremia", hash: "#/hidro/hiponatremia" };
     // Pseudohiponatremia / hiperglucemia
-    if (has(d.glu) && d.glu > 200 && o.naCorr !== null && o.naCorr >= NA_CFG.normal_min) {
+    if (has(d.glu) && d.glu > NA_CFG.pseudohipo_glu && o.naCorr !== null && o.naCorr >= NA_CFG.normal_min) {
       o.avisos.push({ nivel: "amber", txt: "Hiponatremia por hiperglucemia: el Na corregido es " + fmt(o.naCorr, 0) + " mmol/l (normal). Corrige la glucemia; no es una hiponatremia verdadera." });
     } else if (has(d.glu) && o.naCorr !== null && o.naCorr - d.na >= 2) {
       o.avisos.push({ nivel: "amber", txt: "Hay hiperglucemia: el Na corregido es " + fmt(o.naCorr, 0) + " mmol/l. Interpreta la hiponatremia con el Na corregido." });
@@ -165,9 +165,9 @@ function calcularHO(d) {
     o.defNaMitad = Math.round(o.defNa / 2);
     o.naObj = naObj;
     o.act = act;
-    // SSH 3% (preparado casero) lleva ~514 mEq/l → ml/h para mitad en 12 h
-    o.ssh3_mlh_12h = Math.round((o.defNaMitad / 514) * 1000 / 12);
-    o.ssh3_mlh_24h = Math.round((o.defNaMitad / 514) * 1000 / 24);
+    // SSH 3% (NA_CFG.ssh3_meq_l mEq/l) → ml/h para reponer la mitad en 12 h y en 24 h
+    o.ssh3_mlh_12h = Math.round((o.defNaMitad / cfg.ssh3_meq_l) * 1000 / 12);
+    o.ssh3_mlh_24h = Math.round((o.defNaMitad / cfg.ssh3_meq_l) * 1000 / 24);
   }
   return o;
 }
@@ -226,7 +226,7 @@ function renderHO() {
     deficit = cardTrat("Déficit de Na y ritmo de perfusión lenta", fmt(o.defNa, 0) + " mEq", "déficit hasta Na " + fmt(o.naObj, 0) + " (techo seguro 24 h)", [
       "Déficit de Na = (Na objetivo − Na actual) × ACT = (" + fmt(o.naObj, 0) + " − " + fmt(d.na, 0) + ") × " + fmt(o.act, 1) + " l = <b>" + fmt(o.defNa, 0) + " mEq</b>.",
       "Estrategia clásica: reponer la <b>mitad (" + fmt(o.defNaMitad, 0) + " mEq) en 12 h</b>, el resto en las siguientes 24 h.",
-      "Con <b>SSH 3% casero</b> (≈ 514 mEq/l): ritmo ≈ <b>" + o.ssh3_mlh_12h + " ml/h en las primeras 12 h</b>, después ≈ <b>" + o.ssh3_mlh_24h + " ml/h</b> durante 24 h.",
+      "Con <b>SSH 3% casero</b> (≈ " + cfg.ssh3_meq_l + " mEq/l): ritmo ≈ <b>" + o.ssh3_mlh_12h + " ml/h en las primeras 12 h</b>, después ≈ <b>" + o.ssh3_mlh_24h + " ml/h</b> durante 24 h.",
       "Es una guía: el ritmo real se ajusta a los controles seriados de Na (cada " + cfg.control_na_h + " h) y a los límites de seguridad."
     ], "var(--brand)");
   }
@@ -264,7 +264,7 @@ function informeHO() {
     t += "\nDÉFICIT DE NA Y RITMO\n";
     t += "  - Déficit ≈ " + fmt(o.defNa, 0) + " mEq hasta Na " + fmt(o.naObj, 0) + " (techo seguro 24 h).\n";
     t += "  - Reponer la mitad (" + fmt(o.defNaMitad, 0) + " mEq) en 12 h y el resto en 24 h.\n";
-    t += "  - Con SSH 3% (≈514 mEq/l): ~" + o.ssh3_mlh_12h + " ml/h x 12 h, luego ~" + o.ssh3_mlh_24h + " ml/h x 24 h.\n";
+    t += "  - Con SSH 3% (≈" + cfg.ssh3_meq_l + " mEq/l): ~" + o.ssh3_mlh_12h + " ml/h x 12 h, luego ~" + o.ssh3_mlh_24h + " ml/h x 24 h.\n";
     if (d.volemia === "hipovolemia") t += "  - SSF 0,9% en hipovolémica: " + o.ssfMlhMin + "-" + o.ssfMlhMax + " ml/h (0,5-1 ml/kg/h).\n";
   }
   t += "\nLÍMITES DE SEGURIDAD\n";

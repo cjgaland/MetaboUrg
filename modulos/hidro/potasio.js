@@ -20,7 +20,9 @@ function leerDK() { return { k: parseNum("dk-k"), ecg: chkVal("dk-ecg") }; }
 function evaluarK(d) {
   const cfg = K_CFG, o = {};
   if (d.k === null) return o;
-  if (d.k > cfg.normal_max) {
+  // Hiperpotasemia desde hiper_leve (5,5; UK Kidney Association 2023: leve 5,5-5,9).
+  // Entre normal_max (5,0) y 5,5 es potasio normal-alto, no hiperpotasemia.
+  if (d.k >= cfg.hiper_leve) {
     o.tipo = "hiper"; o.nombre = "Hiperpotasemia";
     o.grav = d.k >= cfg.hiper_grave ? "grave" : (d.k >= cfg.hiper_mod ? "moderada" : "leve");
     if (d.ecg) o.grav = "grave";
@@ -30,7 +32,7 @@ function evaluarK(d) {
     o.grav = d.k < cfg.hipo_mod ? "grave" : (d.k < cfg.hipo_leve ? "moderada" : "leve");
     if (d.ecg) o.grav = "grave";
     o.destino = { nombre: "Hipopotasemia", hash: "#/hidro/hipopotasemia" };
-  } else { o.tipo = "normal"; o.nombre = "Potasio normal"; }
+  } else { o.tipo = "normal"; o.nombre = d.k > cfg.normal_max ? "Potasio normal-alto" : "Potasio normal"; }
   return o;
 }
 function renderDK() {
@@ -87,7 +89,7 @@ function prefillHiperK() {
 }
 let _ultimoHK = null;
 function leerHK() {
-  return { k: parseNum("hk-k"), glu: parseNum("hk-glu"), ecg: chkVal("hk-ecg"), erc: chkVal("hk-erc"), diuresis: chkVal("hk-diuresis") };
+  return { k: parseNum("hk-k"), glu: parseNum("hk-glu"), ecg: chkVal("hk-ecg") };
 }
 function calcularHK(d) {
   const cfg = K_CFG, has = v => v !== null && v !== undefined, o = {};
@@ -258,7 +260,7 @@ App.alIniciar(function () {
   document.getElementById("btn-hk-calcular").addEventListener("click", renderHK);
   document.getElementById("btn-hk-limpiar").addEventListener("click", () => {
     ["hk-k", "hk-glu"].forEach(id => { document.getElementById(id).value = ""; });
-    ["hk-ecg", "hk-erc", "hk-diuresis"].forEach(id => { document.getElementById(id).checked = false; });
+    document.getElementById("hk-ecg").checked = false;
     document.getElementById("hk-resultado").innerHTML = ""; _ultimoHK = null;
   });
   document.getElementById("btn-pk-calcular").addEventListener("click", renderPK);

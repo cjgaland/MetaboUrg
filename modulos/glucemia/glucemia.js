@@ -36,7 +36,7 @@ function evaluarDiagnostico(d) {
 
   if (has(d.glu) && d.glu < UMBRAL.glucosa_hipo) {
     cuadroId = "hipoglucemia";
-    criterios.push([true, "Glucemia " + fmt(d.glu, 0) + " mg/dl (< 70)"]);
+    criterios.push([true, "Glucemia " + fmt(d.glu, 0) + " mg/dl (< " + UMBRAL.glucosa_hipo + ")"]);
   } else if (cetosis && acidosis) {
     cuadroId = (hiperosm || (has(d.glu) && d.glu >= UMBRAL.glucosa_ehh)) ? "mixto" : "cad";
     gravedad = gravedadCAD(d);
@@ -46,8 +46,8 @@ function evaluarDiagnostico(d) {
     if (cuadroId === "mixto") criterios.push([true, "Componente hiperosmolar (osm " + fmt(osm, 0) + " mOsm/kg)"]);
   } else if (has(d.glu) && d.glu >= UMBRAL.glucosa_ehh && hiperosm && !acidosis && (!has(d.bhb) || d.bhb < UMBRAL.bhb_cad)) {
     cuadroId = "ehh";
-    criterios.push([true, "Glucemia " + fmt(d.glu, 0) + " mg/dl (≥ 600)"]);
-    criterios.push([true, "Osmolalidad efectiva " + fmt(osm, 0) + " mOsm/kg (> 320)"]);
+    criterios.push([true, "Glucemia " + fmt(d.glu, 0) + " mg/dl (≥ " + UMBRAL.glucosa_ehh + ")"]);
+    criterios.push([true, "Osmolalidad efectiva " + fmt(osm, 0) + " mOsm/kg (> " + UMBRAL.osm_ehh + ")"]);
     criterios.push([true, "Sin cetoacidosis relevante (pH > 7,3, HCO₃ conservado)"]);
   } else if (cetosis && !acidosis && puedeValorarAcidosis) {
     cuadroId = "cetosis";
@@ -100,8 +100,12 @@ function evaluarDiagnostico(d) {
 function gravedadCAD(d) {
   const has = v => v !== null && v !== undefined;
   if (d.consciencia) return "grave";
-  if ((has(d.ph) && d.ph < 7.00) || (has(d.hco3) && d.hco3 < 10)) return "grave";
-  if ((has(d.ph) && d.ph < 7.24) || (has(d.hco3) && d.hco3 < 15)) return "moderada";
+  // GRAVEDAD_CAD (protocolos.js) va de más a menos grave: manda el primer nivel
+  // cuyo pH o HCO₃ quede por debajo de su límite; si ninguno, CAD leve.
+  for (const g of GRAVEDAD_CAD) {
+    if (g.nivel === "leve") break;
+    if ((has(d.ph) && d.ph < g.ph_max) || (has(d.hco3) && d.hco3 < g.hco3_max)) return g.nivel;
+  }
   return "leve";
 }
 

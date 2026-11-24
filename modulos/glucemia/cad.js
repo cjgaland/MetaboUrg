@@ -108,14 +108,19 @@ function calcularCAD(d) {
 
   // Bicarbonato (variante SAEDYN, solo si pH ≤ 7,0)
   if (has(d.ph) && d.ph <= cfg.bicarbonato_ph_umbral) {
-    o.bicarbonato = d.ph < 6.9
-      ? "pH < 6,9 (variante SAEDYN): 100 mEq de bicarbonato 1 M en 500 ml de salino + 20 mEq de KCl, a pasar en 2 h. Repetir cada 2 h hasta pH > 7. Controlar K."
-      : "pH 6,9–7,0 (variante SAEDYN): 50 mEq de bicarbonato 1 M en 250 ml de salino + 10 mEq de KCl, a pasar en 1 h. Repetir hasta pH > 7. Controlar K.";
+    const grave = d.ph < cfg.bicarbonato_ph_grave;
+    const b = grave ? cfg.bicarbonato_grave : cfg.bicarbonato_moderado;
+    const tramo = grave
+      ? "pH < " + fmt(cfg.bicarbonato_ph_grave, 1)
+      : "pH " + fmt(cfg.bicarbonato_ph_grave, 1) + "–" + fmt(cfg.bicarbonato_ph_umbral, 1);
+    o.bicarbonato = tramo + " (variante SAEDYN): " + b.meq + " mEq de bicarbonato 1 M en " + b.vol_ml +
+      " ml de salino + " + b.kcl_meq + " mEq de KCl, a pasar en " + b.h + " h. " +
+      (grave ? "Repetir cada " + b.h + " h" : "Repetir") + " hasta pH > " + fmt(cfg.bicarbonato_ph_umbral, 0) + ". Controlar K.";
   } else o.bicarbonato = null;
 
   // Dosis SC orientativa (transición)
-  o.scMin = redondea(0.5 * d.peso, 0);
-  o.scMax = redondea(0.8 * d.peso, 0);
+  o.scMin = redondea(cfg.sc_debut_uikg_min * d.peso, 0);
+  o.scMax = redondea(cfg.sc_debut_uikg_max * d.peso, 0);
   return o;
 }
 function redondea(n, dec) { const f = Math.pow(10, dec); return Math.round(n * f) / f; }
@@ -152,7 +157,7 @@ function renderResultadoCAD() {
     add("Pérdidas estimadas (25 ml/kg)", o.perdidas !== null ? fmt(o.perdidas, 1) : null, "litros");
     add("Déficit total de agua", o.defTotal !== null ? fmt(o.defTotal, 1) : null, "litros");
     add("Fracción de excreción de Na", o.fena !== null ? fmt(o.fena, 1) : null, "%");
-    add("Déficit de HCO₃", o.defHCO3 !== null ? fmt(o.defHCO3, 0) : null, "mEq");
+    add("Déficit de HCO₃", o.defHCO3 !== null && o.defHCO3 > 0 ? fmt(o.defHCO3, 0) : null, "mEq"); // solo con EB negativo
     const filas = items.map(it =>
       '<div class="dato-item"><span class="dato-lab">' + escHtml(it[0]) + "</span>" +
       '<span class="dato-val">' + it[1] + ' <small>' + escHtml(it[2]) + "</small></span></div>"
@@ -179,8 +184,8 @@ function renderResultadoCAD() {
   const insLineas = [
     "<b>Preparación:</b> 50 UI de insulina rápida (regular: Actrapid®/Humulina Regular®) en 50 ml de SSF 0,9% → 1 UI/ml, es decir <b>" + fmt(o.insMlh, 1) + " ml/h</b> en bomba.",
     "Sin bolo inicial. " + basalTxt,
-    "<b>Al alcanzar glucemia ≤ " + cfg.glu_anadir_glucosa + " mg/dl:</b> reducir a <b>" + fmt(o.insUIhRed, 1) + " UI/h</b> (0,05 UI/kg/h) y añadir glucosa.",
-    "<b>Objetivo:</b> descenso de glucemia " + cfg.descenso_glu_min + "–" + cfg.descenso_glu_max + " mg/dl/h. Si no baja, duplicar el ritmo."
+    "<b>Al alcanzar glucemia ≤ " + cfg.glu_anadir_glucosa + " mg/dl:</b> reducir a <b>" + fmt(o.insUIhRed, 1) + " UI/h</b> (" + fmt(cfg.insulina_uikgh_reducida, 2) + " UI/kg/h) y añadir glucosa.",
+    "<b>Objetivo:</b> descenso de glucemia " + cfg.descenso_glu_min + "–" + cfg.descenso_glu_max + " mg/dl/h. " + cfg.insulina_si_no_baja
   ];
 
   // Bicarbonato
@@ -195,7 +200,7 @@ function renderResultadoCAD() {
     "Función renal y balance hídrico. Buscar y tratar el factor precipitante."
   ];
   let scTxt;
-  if (d.debut) scTxt = " (orientativo en début: <b>" + fmt(o.scMin, 0) + "–" + fmt(o.scMax, 0) + " UI/día</b> = 0,5–0,8 UI/kg, 50% basal / 50% bolus).";
+  if (d.debut) scTxt = " (orientativo en début: <b>" + fmt(o.scMin, 0) + "–" + fmt(o.scMax, 0) + " UI/día</b> = " + fmt(cfg.sc_debut_uikg_min, 1) + "–" + fmt(cfg.sc_debut_uikg_max, 1) + " UI/kg, 50% basal / 50% bolus).";
   else if (o.dtdPrevia !== null) scTxt = ", reanudando su pauta domiciliaria (DTD previa ≈ <b>" + fmt(o.dtdPrevia, 0) + " UI/día</b>).";
   else scTxt = ".";
   const resolucion = [
@@ -253,7 +258,7 @@ function construirInformeCAD() {
   if (o.perdidas !== null) t += "  - Pérdidas estimadas (25 ml/kg): " + fmt(o.perdidas, 1) + " l\n";
   if (o.defTotal !== null) t += "  - Déficit total de agua: " + fmt(o.defTotal, 1) + " l\n";
   if (o.fena !== null) t += "  - Fracción de excreción de Na: " + fmt(o.fena, 1) + " %\n";
-  if (o.defHCO3 !== null) t += "  - Déficit de HCO3: " + fmt(o.defHCO3, 0) + " mEq\n";
+  if (o.defHCO3 !== null && o.defHCO3 > 0) t += "  - Déficit de HCO3: " + fmt(o.defHCO3, 0) + " mEq\n";
   t += "\n1) FLUIDOTERAPIA\n";
   if (o.cautelaFluidos) t += "  - " + o.motivoCautela.join(" / ") + ": fluidoterapia más prudente (ritmos reducidos, vigilar sobrecarga).\n";
   if (d.shock) t += "  - Shock/TA<90: bolo " + cfg.bolo_shock_ml + " ml SSF 0,9% en 10-15 min, repetir hasta TA>90.\n";

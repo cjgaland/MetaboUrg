@@ -29,7 +29,7 @@ function renderLM() {
     const mlhMax = Math.round(cfg.perfusion_vehiculo_ml / 12); // más rápido (12 h)
     const mlhMin = Math.round(cfg.perfusion_vehiculo_ml / 24); // más lento (24 h)
     lineas.push("<b>Perfusión de mantenimiento:</b> <b>" + cfg.perfusion_g_min + "-" + cfg.perfusion_g_max + " g en " + cfg.perfusion_vehiculo_ml + " ml de SG 5% a pasar en " + cfg.perfusion_h + " h</b> (bomba <b>" + mlhMin + "-" + mlhMax + " ml/h</b>). El Mg se elimina rápido por la orina, por eso conviene mantener la perfusión.");
-    if (erc) lineas.push("<b>Insuficiencia renal: reducir la dosis un 25-50%</b> y vigilar reflejos y ECG (riesgo de hipermagnesemia).");
+    if (erc) lineas.push("<b>Insuficiencia renal: reducir la dosis un " + cfg.erc_reduccion_pct + "%</b> y vigilar reflejos y ECG (riesgo de hipermagnesemia).");
     repo = cardTrat("Sulfato de magnesio IV", null, null, lineas, "var(--c-cad)");
   } else {
     repo = cardTrat("Magnesio oral (leve)", null, null, [
@@ -67,7 +67,7 @@ function informeLM() {
     if (o.torsades) t += "  - Torsades/convulsiones: " + cfg.mgso4_torsades_g + " g en " + cfg.mgso4_torsades_vehiculo_ml + " ml SG 5% IV en bolo 5-10 min, repetible.\n";
     t += "  - Carga: " + cfg.mgso4_g_min + "-" + cfg.mgso4_g_max + " g en " + cfg.mgso4_carga_vehiculo_ml + " ml SG 5% en " + cfg.mgso4_carga_min + " min.\n";
     t += "  - Perfusión: " + cfg.perfusion_g_min + "-" + cfg.perfusion_g_max + " g en " + cfg.perfusion_vehiculo_ml + " ml SG 5% a pasar en " + cfg.perfusion_h + " h (~" + Math.round(cfg.perfusion_vehiculo_ml / 24) + "-" + Math.round(cfg.perfusion_vehiculo_ml / 12) + " ml/h).\n";
-    if (o.erc) t += "  - ERC: reducir dosis 25-50% y vigilar.\n";
+    if (o.erc) t += "  - ERC: reducir dosis " + cfg.erc_reduccion_pct + "% y vigilar.\n";
   } else t += "\nORAL\n  - Sales de magnesio orales; pasar a IV si síntomas/arritmia.\n";
   t += "\nASOCIADOS/CAUSA\n  - Reponer K y Ca. " + MG_TXT.hipo_causas + "\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (Merck / EMCrit / SPS NHS). Verificar por el facultativo.\n";

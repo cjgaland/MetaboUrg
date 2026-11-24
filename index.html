@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MetaboUrg" />
-  <meta name="description" content="MetaboUrg · Urgencias endocrino-metabólicas: diagnóstico y tratamiento de los trastornos de la glucemia (CAD, EHH, hipoglucemia) y, a futuro, electrolitos. Apoyo clínico hospitalario." />
+  <meta name="description" content="MetaboUrg · Urgencias endocrino-metabólicas: diagnóstico y tratamiento de los trastornos de la glucemia (CAD, EHH, hipoglucemia), hidroelectrolíticos (Na, K, Ca, P, Mg), tiroideos y suprarrenales. Apoyo clínico hospitalario." />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icon-192.svg" />
   <link rel="apple-touch-icon" href="icon-192.svg" />
@@ -523,7 +523,7 @@
     <!-- VISTA: TRASTORNOS HIDROELECTROLÍTICOS (sub-hub) -->
     <section class="view" id="view-hidro" data-titulo="Trastornos Hidroelectrolíticos">
       <h1 class="view-titulo">Trastornos Hidroelectrolíticos</h1>
-      <p class="view-intro">Empieza por <b>Diagnóstico (Na)</b>: clasifica el trastorno del sodio y te recomienda el manejo. Potasio, calcio, fósforo y magnesio, en desarrollo.</p>
+      <p class="view-intro">Empieza por <b>Diagnóstico (Na)</b>: clasifica el trastorno del sodio y te recomienda el manejo. El potasio tiene su propio Diagnóstico (K); calcio, fósforo y magnesio van directos al tratamiento.</p>
       <div class="card-grid" id="hidro-cards"></div>
     </section>
 
@@ -688,7 +688,7 @@
     <!-- VISTA: HIPERPOTASEMIA -->
     <section class="view" id="view-hiperpotasemia" data-titulo="Hiperpotasemia">
       <h1 class="view-titulo">Hiperpotasemia — tratamiento</h1>
-      <p class="view-intro">Potasio &gt; 5 mmol/l. Tres ejes: proteger el corazón (calcio), meter el K en la célula (insulina-glucosa + salbutamol) y eliminarlo. Cualquier cambio ECG es una emergencia. Verifica cada dosis.</p>
+      <p class="view-intro">Potasio ≥ 5,5 mmol/l. Tres ejes: proteger el corazón (calcio), meter el K en la célula (insulina-glucosa + salbutamol) y eliminarlo. Cualquier cambio ECG es una emergencia. Verifica cada dosis.</p>
 
       <div class="form-card">
         <div class="form-card-titulo">Datos</div>
@@ -706,8 +706,6 @@
         <div class="form-card-titulo" style="margin-top:18px;">Situación clínica</div>
         <div class="toggle-grid">
           <label class="toggle"><input type="checkbox" id="hk-ecg"><span class="dot"></span>Cambios en el ECG</label>
-          <label class="toggle"><input type="checkbox" id="hk-erc"><span class="dot"></span>ERC avanzada / en diálisis</label>
-          <label class="toggle"><input type="checkbox" id="hk-diuresis"><span class="dot"></span>Diuresis conservada</label>
         </div>
         <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-primario" id="btn-hk-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
@@ -783,7 +781,6 @@
         <div class="toggle-grid">
           <label class="toggle"><input type="checkbox" id="lc-sintomas"><span class="dot"></span>Síntomas (tetania, convulsiones, ECG)</label>
           <label class="toggle"><input type="checkbox" id="lc-mg"><span class="dot"></span>Magnesio bajo</label>
-          <label class="toggle"><input type="checkbox" id="lc-oral" checked><span class="dot"></span>Tolera vía oral</label>
         </div>
         <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-primario" id="btn-lc-calcular" style="flex:1;min-width:200px;">Calcular tratamiento</button>
@@ -1049,7 +1046,8 @@
           <li>Triaje diagnóstico: hiperglucemia, cetosis, cetoacidosis (CAD), estado hiperosmolar (EHH) e hipoglucemia.</li>
           <li>Protocolos de tratamiento con cálculos por peso y analítica.</li>
           <li>Informe copiable para pegar en la historia clínica.</li>
-          <li><b>Próximamente:</b> trastornos hidroelectrolíticos (Na, K, Ca, P, Mg).</li>
+          <li>Trastornos hidroelectrolíticos: sodio, potasio, calcio, fósforo y magnesio.</li>
+          <li>Patología tiroidea (tormenta tiroidea, coma mixedematoso) y trastornos suprarrenales.</li>
         </ul>
         <h4>Fuentes</h4>
         <ul>

@@ -41,7 +41,13 @@ function calcularIV(d) {
   o.idxFila = null;
   o.hipo = has(d.glu) && d.glu < cfg.hipo_umbral;
   if (has(d.glu) && !o.hipo) {
-    o.idxFila = cfg.pautas_filas.findIndex(f => d.glu >= f.min && d.glu <= f.max);
+    // Las filas van en orden ascendente y son contiguas: la fila es la última cuyo
+    // mínimo no supera la glucemia. Así un valor con decimales (p. ej. 139,5) cae en
+    // su tramo (70-139) en vez de quedar en el hueco entre dos filas enteras.
+    o.idxFila = -1;
+    for (let i = cfg.pautas_filas.length - 1; i >= 0; i--) {
+      if (d.glu >= cfg.pautas_filas[i].min) { o.idxFila = i; break; }
+    }
     if (o.idxFila >= 0) o.uih = cfg.pautas_filas[o.idxFila].p[d.pauta - 1];
   }
 
@@ -53,6 +59,9 @@ function calcularIV(d) {
 
 // ── Render ─────────────────────────────────────────────────
 let _ultimoIV = null;
+// Glucemia tal cual se introdujo: con un decimal si lo tiene (139,5 no debe verse como 140
+// junto al tramo 70-139, ni 69,5 como «70» junto al aviso de hipoglucemia).
+function fmtGluIV(g) { return fmt(g, g % 1 ? 1 : 0); }
 
 function tablaPautasIV(pautaSel, idxFila) {
   const cfg = INSULINA_IV;
@@ -101,7 +110,7 @@ function renderResultadoIV() {
     resultadoUih = card("⚠️ Hipoglucemia", "PARAR", "perfusión de insulina", cfg.hipo.map(escHtml), "var(--c-hipo)");
   } else if (o.uih !== undefined) {
     resultadoUih = card("Ritmo actual (Pauta " + d.pauta + ")", fmt(o.uih, 0) + " UI/h", "= " + fmt(o.uih, 0) + " ml/h (1 UI/ml)", [
-      "Glucemia " + fmt(d.glu, 0) + " mg/dl → tramo " + escHtml(cfg.pautas_filas[o.idxFila].rango) + " mg/dl.",
+      "Glucemia " + fmtGluIV(d.glu) + " mg/dl → tramo " + escHtml(cfg.pautas_filas[o.idxFila].rango) + " mg/dl.",
       o.uih === 0 ? "Sin insulina en este tramo; mantener vigilancia y la línea de glucosa." : "Objetivo de glucemia " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl."
     ], "var(--c-insulina)");
   }
@@ -155,9 +164,9 @@ function construirInformeIV() {
   t += "\nPAUTA DE INICIO: " + (o.criteriosP2.length ? "Pauta 2 (" + o.criteriosP2.map(k => cfg.pauta2_criterios[k]).join("; ") + ")" : "Pauta 1") + ".\n";
 
   if (o.hipo) {
-    t += "\nGLUCEMIA " + fmt(d.glu, 0) + " mg/dl: HIPOGLUCEMIA — parar la perfusión y aplicar protocolo de hipoglucemia.\n";
+    t += "\nGLUCEMIA " + fmtGluIV(d.glu) + " mg/dl: HIPOGLUCEMIA — parar la perfusión y aplicar protocolo de hipoglucemia.\n";
   } else if (o.uih !== undefined) {
-    t += "\nGLUCEMIA " + fmt(d.glu, 0) + " mg/dl (tramo " + cfg.pautas_filas[o.idxFila].rango + ") · Pauta " + d.pauta + " → " + fmt(o.uih, 0) + " UI/h (= " + fmt(o.uih, 0) + " ml/h).\n";
+    t += "\nGLUCEMIA " + fmtGluIV(d.glu) + " mg/dl (tramo " + cfg.pautas_filas[o.idxFila].rango + ") · Pauta " + d.pauta + " → " + fmt(o.uih, 0) + " UI/h (= " + fmt(o.uih, 0) + " ml/h).\n";
   }
 
   t += "\nTABLA DE PAUTAS (UI/h) · Pauta " + d.pauta + "\n";
