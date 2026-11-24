@@ -12,7 +12,7 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.22";
+const APP_VERSION = "2026.23";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 // Clave de acceso de Web3Forms para el buzón de sugerencias.
@@ -21,6 +21,15 @@ const APP_ANIO = APP_VERSION.split(".")[0];
 const WEB3FORMS_KEY = "f57ce774-9fbd-471e-b52d-7c3aa180094e";
 
 const NOVEDADES = [
+  {
+    version: "2026.23",
+    fecha: "Noviembre 2026",
+    titulo: "Mejora interna: las introducciones de cada pantalla también leen los datos",
+    cambios: [
+      "Los umbrales que aparecen en las frases de presentación (potasio ≥ 5,5 y < 3,5; sodio < 135 y > 145; glucemia < 70; objetivo 140-180 mg/dl y «> 80 UI/día» de la insulina IV) se leen ya de los datos de protocolo, igual que las tarjetas y los informes.",
+      "No cambia ninguna pauta ni ningún cálculo: todo se ve igual que en la versión anterior."
+    ]
+  },
   {
     version: "2026.22",
     fecha: "Noviembre 2026",
@@ -713,7 +722,22 @@ function enviarSugerencia(e) {
 // ============================================================
 //  ARRANQUE DEL PORTAL
 // ============================================================
+// ── Cifras de los textos fijos de index.html ───────────────
+// <span data-dato="K_CFG.hiper_leve" data-dec="1">5,5</span>: al arrancar, el contenido se sustituye
+// por el valor del dato de protocolo (con fmtDato; data-dec = decimales mínimos). El número escrito
+// en el HTML es solo el valor de reserva. Así las frases fijas siguen al dato igual que las tarjetas.
+function rellenarDatosFijos() {
+  document.querySelectorAll("[data-dato]").forEach(el => {
+    const [obj, ...campos] = el.dataset.dato.split(".");
+    let v = window[obj];
+    for (const c of campos) v = (v === null || v === undefined) ? undefined : v[c];
+    if (v === null || v === undefined) { console.warn("data-dato sin valor:", el.dataset.dato); return; }
+    el.textContent = fmtDato(v, parseInt(el.dataset.dec, 10) || 0);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  rellenarDatosFijos();
   pintarTarjetas("hub-cards", HUB);
   pintarSubHubs();
   construirSidebar();

@@ -374,7 +374,7 @@
     <!-- VISTA: INSULINIZACIÓN INTRAVENOSA -->
     <section class="view" id="view-insulina-iv" data-titulo="Insulinización IV">
       <h1 class="view-titulo">Insulinización intravenosa — perfusión</h1>
-      <p class="view-intro">Protocolo en perfusión para el paciente crítico/perioperatorio (SAEDYN 2017). Objetivo de glucemia <b>140-180 mg/dl</b>. Selecciona la pauta, introduce la glucemia actual y obtén el ritmo en UI/h. Verifica según el paciente.</p>
+      <p class="view-intro">Protocolo en perfusión para el paciente crítico/perioperatorio (SAEDYN 2017). Objetivo de glucemia <b><span data-dato="INSULINA_IV.objetivo_min">140</span>-<span data-dato="INSULINA_IV.objetivo_max">180</span> mg/dl</b>. Selecciona la pauta, introduce la glucemia actual y obtén el ritmo en UI/h. Verifica según el paciente.</p>
 
       <div class="form-card">
         <div class="form-card-titulo">Datos</div>
@@ -407,7 +407,7 @@
           <label class="toggle"><input type="checkbox" id="iv-cardio"><span class="dot"></span>Cirugía cardiovascular</label>
           <label class="toggle"><input type="checkbox" id="iv-trasplante"><span class="dot"></span>Trasplante órgano/islotes</label>
           <label class="toggle"><input type="checkbox" id="iv-corticoides"><span class="dot"></span>Altas dosis de corticoides</label>
-          <label class="toggle"><input type="checkbox" id="iv-altorreq"><span class="dot"></span>Requerimientos &gt; 80 UI/día</label>
+          <label class="toggle"><input type="checkbox" id="iv-altorreq"><span class="dot"></span>Requerimientos &gt; <span data-dato="INSULINA_IV.req_alto_uidia">80</span> UI/día</label>
         </div>
 
         <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -486,7 +486,7 @@
     <!-- VISTA: HIPOGLUCEMIA -->
     <section class="view" id="view-hipoglucemia" data-titulo="Hipoglucemia">
       <h1 class="view-titulo">Hipoglucemia — tratamiento</h1>
-      <p class="view-intro">Glucemia &lt; 70 mg/dl o síntomas. La vía de tratamiento depende del nivel de consciencia y de la disponibilidad de vía venosa. Marca la situación para ver la pauta.</p>
+      <p class="view-intro">Glucemia &lt; <span data-dato="HIPO_CFG.umbral">70</span> mg/dl o síntomas. La vía de tratamiento depende del nivel de consciencia y de la disponibilidad de vía venosa. Marca la situación para ver la pauta.</p>
 
       <div class="form-card">
         <div class="form-card-titulo">Glucemia</div>
@@ -583,7 +583,7 @@
     <!-- VISTA: HIPONATREMIA -->
     <section class="view" id="view-hiponatremia" data-titulo="Hiponatremia">
       <h1 class="view-titulo">Hiponatremia — tratamiento</h1>
-      <p class="view-intro">Sodio &lt; 135 mmol/l. Con síntomas graves prima el salino hipertónico; en todos los casos se respetan los límites de ascenso para evitar la mielinólisis. Verifica cada dosis y ritmo.</p>
+      <p class="view-intro">Sodio &lt; <span data-dato="NA_CFG.normal_min">135</span> mmol/l. Con síntomas graves prima el salino hipertónico; en todos los casos se respetan los límites de ascenso para evitar la mielinólisis. Verifica cada dosis y ritmo.</p>
 
       <div class="form-card">
         <div class="form-card-titulo">Datos</div>
@@ -623,7 +623,7 @@
     <!-- VISTA: HIPERNATREMIA -->
     <section class="view" id="view-hipernatremia" data-titulo="Hipernatremia">
       <h1 class="view-titulo">Hipernatremia — tratamiento</h1>
-      <p class="view-intro">Sodio &gt; 145 mmol/l: casi siempre déficit de agua. Calcula el déficit de agua libre y repón de forma controlada. Verifica cada cálculo y ritmo.</p>
+      <p class="view-intro">Sodio &gt; <span data-dato="NA_CFG.hiper">145</span> mmol/l: casi siempre déficit de agua. Calcula el déficit de agua libre y repón de forma controlada. Verifica cada cálculo y ritmo.</p>
 
       <div class="form-card">
         <div class="form-card-titulo">Datos</div>
@@ -688,7 +688,7 @@
     <!-- VISTA: HIPERPOTASEMIA -->
     <section class="view" id="view-hiperpotasemia" data-titulo="Hiperpotasemia">
       <h1 class="view-titulo">Hiperpotasemia — tratamiento</h1>
-      <p class="view-intro">Potasio ≥ 5,5 mmol/l. Tres ejes: proteger el corazón (calcio), meter el K en la célula (insulina-glucosa + salbutamol) y eliminarlo. Cualquier cambio ECG es una emergencia. Verifica cada dosis.</p>
+      <p class="view-intro">Potasio ≥ <span data-dato="K_CFG.hiper_leve" data-dec="1">5,5</span> mmol/l. Tres ejes: proteger el corazón (calcio), meter el K en la célula (insulina-glucosa + salbutamol) y eliminarlo. Cualquier cambio ECG es una emergencia. Verifica cada dosis.</p>
 
       <div class="form-card">
         <div class="form-card-titulo">Datos</div>
@@ -720,7 +720,7 @@
     <!-- VISTA: HIPOPOTASEMIA -->
     <section class="view" id="view-hipopotasemia" data-titulo="Hipopotasemia">
       <h1 class="view-titulo">Hipopotasemia — tratamiento</h1>
-      <p class="view-intro">Potasio &lt; 3,5 mmol/l. Repón el potasio (oral o IV según gravedad) y corrige siempre el magnesio. Verifica la vía y el ritmo.</p>
+      <p class="view-intro">Potasio &lt; <span data-dato="K_CFG.normal_min" data-dec="1">3,5</span> mmol/l. Repón el potasio (oral o IV según gravedad) y corrige siempre el magnesio. Verifica la vía y el ritmo.</p>
 
       <div class="form-card">
         <div class="form-card-titulo">Datos</div>
