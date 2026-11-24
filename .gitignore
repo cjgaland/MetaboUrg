@@ -7,3 +7,6 @@ Apoyo/
 
 # Configuración local de Claude Code (servidor de preview, permisos)
 .claude/
+
+# Copias de seguridad locales (rotación de 5)
+Backup/
