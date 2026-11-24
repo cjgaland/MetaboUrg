@@ -85,21 +85,29 @@ function renderLC() {
   const cfg = CA_CFG;
   const ca = parseNum("lc-ca"), alb = parseNum("lc-alb");
   if (ca === null) { toast("Introduce el calcio.", true); return; }
-  const sintomas = chkVal("lc-sintomas"), mg = chkVal("lc-mg");
+  const sintomas = chkVal("lc-sintomas"), mg = chkVal("lc-mg"), oral = chkVal("lc-oral");
   const caC = caCorregido(ca, alb);
-  const iv = sintomas || caC < cfg.hipo_grave;
+  // Calcio IV si hay síntomas, si es grave o si no tolera la vía oral (misma regla que K, Mg y P)
+  const motivosIV = [
+    sintomas ? "síntomas" : null,
+    caC < cfg.hipo_grave ? "Ca corregido < " + fmt(cfg.hipo_grave, 1) : null,
+    !oral ? "no tolera vía oral" : null
+  ].filter(Boolean);
+  const iv = motivosIV.length > 0;
   const grav = caC < cfg.hipo_grave ? "grave" : (caC < cfg.hipo_leve ? "moderada" : "leve");
-  _ultimoLC = { ca, alb, caC, sintomas, mg, iv, grav };
+  _ultimoLC = { ca, alb, caC, sintomas, mg, oral, iv, motivosIV, grav };
   const cont = document.getElementById("lc-resultado");
 
-  const ivCard = iv ? cardTrat("Calcio IV (sintomática / grave)", null, null, [
+  const ivCard = iv ? cardTrat("Calcio IV (" + motivosIV.join(", ") + ")", null, null, [
     "<b>Gluconato cálcico 10% " + cfg.gluconato_ml_min + "-" + cfg.gluconato_ml_max + " ml (" + cfg.gluconato_g_min + "-" + cfg.gluconato_g_max + " g)</b> diluido en 50-100 ml de glucosado 5%, IV en 10-20 min, con monitorización ECG.",
     "Continuar con <b>perfusión</b> (p. ej. 10 g de gluconato cálcico en 1 l de glucosado 5% a 50-100 ml/h) y ajustar por controles.",
     "No mezclar con bicarbonato ni fosfato (precipitan)."
   ], "var(--c-cad)") : "";
 
-  // El calcio oral se muestra siempre: como tratamiento (sin IV) o como mantenimiento tras el IV.
-  const oralCard = cardTrat(iv ? "Mantenimiento / paso a oral" : "Tratamiento oral", null, null, [
+  // El calcio oral se muestra siempre: como tratamiento (sin IV), como mantenimiento tras el IV
+  // o, si no tolera la vía oral, como paso a oral cuando la tolere.
+  const tituloOral = !oral ? "Paso a oral (cuando tolere)" : (iv ? "Mantenimiento / paso a oral" : "Tratamiento oral");
+  const oralCard = cardTrat(tituloOral, null, null, [
     "<b>Calcio oral " + cfg.ca_oral_min + "-" + cfg.ca_oral_max + " mg de calcio elemental/día</b>, repartido en 2-3 tomas.",
     "Asociar <b>vitamina D</b> activa (calcitriol/alfacalcidol) para mejorar la absorción.",
     "Objetivo de calcio " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl; controlar cada 4-6 h en la fase aguda."
@@ -116,7 +124,7 @@ function renderLC() {
     '<div class="result-card" style="--dx-color:var(--c-hipo)">' +
       '<div class="result-kicker">Hipocalcemia' + (iv ? " · IV" : "") + "</div>" +
       '<div class="result-dx" style="font-size:1.2rem">Ca ' + fmt(caC, 1) + " mg/dl — " + etiqueta + "</div>" +
-      '<p class="result-explica">' + (alb !== null ? "Calcio corregido por albúmina (" + fmt(alb, 1) + " g/dl). " : "") + (sintomas ? "Síntomas: calcio IV." : "Sin síntomas: vía oral.") + "</p></div>" +
+      '<p class="result-explica">' + (alb !== null ? "Calcio corregido por albúmina (" + fmt(alb, 1) + " g/dl). " : "") + (iv ? "Calcio IV (" + motivosIV.join(", ") + ")." : "Sin síntomas y tolera vía oral: tratamiento oral.") + "</p></div>" +
     (sintomas ? '<div class="alert alert-red"><span>⚠️</span><span>' + escHtml(CA_TXT.hipo_ecg) + "</span></div>" : "") +
     ivCard + oralCard + mgCard +
     '<div class="acciones-result"><button class="btn btn-secundario" id="btn-lc-recal">Recalcular</button></div>' +
@@ -129,9 +137,9 @@ function informeLC() {
   if (!_ultimoLC) return "";
   const o = _ultimoLC, cfg = CA_CFG;
   let t = App.informe.cabecera("HIPOCALCEMIA — TRATAMIENTO") + "\n";
-  t += "PACIENTE\n  - Calcio: " + fmt(o.ca, 1) + " mg/dl" + (o.alb !== null ? " (corregido " + fmt(o.caC, 1) + ")" : "") + " · " + o.grav + (o.sintomas ? " · sintomática" : "") + "\n";
-  if (o.iv) t += "\nCALCIO IV\n  - Gluconato cálcico 10% " + cfg.gluconato_ml_min + "-" + cfg.gluconato_ml_max + " ml (" + cfg.gluconato_g_min + "-" + cfg.gluconato_g_max + " g) en glucosado 5% en 10-20 min, con monitor ECG; seguir con perfusión.\n";
-  t += "\nORAL / MANTENIMIENTO\n  - Calcio oral " + cfg.ca_oral_min + "-" + cfg.ca_oral_max + " mg/día + vitamina D activa. Objetivo " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl.\n";
+  t += "PACIENTE\n  - Calcio: " + fmt(o.ca, 1) + " mg/dl" + (o.alb !== null ? " (corregido " + fmt(o.caC, 1) + ")" : "") + " · " + o.grav + (o.sintomas ? " · sintomática" : "") + (o.oral ? "" : " · no tolera vía oral") + "\n";
+  if (o.iv) t += "\nCALCIO IV (" + o.motivosIV.join(", ") + ")\n  - Gluconato cálcico 10% " + cfg.gluconato_ml_min + "-" + cfg.gluconato_ml_max + " ml (" + cfg.gluconato_g_min + "-" + cfg.gluconato_g_max + " g) en glucosado 5% en 10-20 min, con monitor ECG; seguir con perfusión.\n";
+  t += "\n" + (o.oral ? "ORAL / MANTENIMIENTO" : "PASO A ORAL (CUANDO TOLERE)") + "\n  - Calcio oral " + cfg.ca_oral_min + "-" + cfg.ca_oral_max + " mg/día + vitamina D activa. Objetivo " + cfg.objetivo_min + "-" + cfg.objetivo_max + " mg/dl.\n";
   t += "\nMAGNESIO Y CAUSA\n  - Corregir el Mg si está bajo (hipocalcemia refractaria). " + CA_TXT.hipo_causas + "\n";
   t += "\n" + App.informe.SEP + "\nApoyo clínico (Merck / EMCrit). Verificar por el facultativo.\n";
   return t;
@@ -149,6 +157,7 @@ App.alIniciar(function () {
   document.getElementById("btn-lc-limpiar").addEventListener("click", () => {
     ["lc-ca", "lc-alb"].forEach(id => { document.getElementById(id).value = ""; });
     ["lc-sintomas", "lc-mg"].forEach(id => { document.getElementById(id).checked = false; });
+    document.getElementById("lc-oral").checked = true;   // por defecto: tolera vía oral
     document.getElementById("lc-resultado").innerHTML = ""; _ultimoLC = null;
   });
 });

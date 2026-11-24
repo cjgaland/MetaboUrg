@@ -12,7 +12,7 @@ const KEY_VERSION = "metabourg-version-vista";
 
 // ── Versión y novedades (changelog del portal completo) ───
 // APP_VERSION debe coincidir con NOVEDADES[0].version.
-const APP_VERSION = "2026.19";
+const APP_VERSION = "2026.20";
 const APP_ANIO = APP_VERSION.split(".")[0];
 
 // Clave de acceso de Web3Forms para el buzón de sugerencias.
@@ -21,6 +21,16 @@ const APP_ANIO = APP_VERSION.split(".")[0];
 const WEB3FORMS_KEY = "f57ce774-9fbd-471e-b52d-7c3aa180094e";
 
 const NOVEDADES = [
+  {
+    version: "2026.20",
+    fecha: "Noviembre 2026",
+    titulo: "Hipocalcemia: la tolerancia oral decide el calcio IV",
+    cambios: [
+      "Vuelve la casilla «Tolera vía oral» en Hipocalcemia, ahora con efecto: si no tolera, se indica calcio IV aunque no haya síntomas ni sea grave (misma regla que potasio, magnesio y fósforo).",
+      "La tarjeta del calcio IV y el informe indican el motivo (síntomas, Ca corregido < 7,0 o intolerancia oral). Sin tolerancia oral, el calcio oral aparece como «paso a oral cuando tolere».",
+      "Corregido el texto que, con Ca < 7 sin síntomas, decía «vía oral» mientras pautaba calcio IV."
+    ]
+  },
   {
     version: "2026.19",
     fecha: "Noviembre 2026",
